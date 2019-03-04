@@ -1,29 +1,29 @@
 # machine-learning
 常用机器学习源码整理：
-NB  
-SVM  
-Kmeans  
-CF  
-LR  
-id3  
-c45  
-CART  
-adaboost  
-Apriori  
-FP-growth  
-PCA  
-SVD  
-HMM  
-GBDT  
-XGBOOST  
-RF  
-FM  
-Word2vec  
-CRF  
-CNN  
-RNN  
-LSTM  
-DNN  
-BiLSTM+CRF  
-IDCNN+CRF  
+* NB  
+* SVM  
+* Kmeans  
+* CF  
+* LR  
+* id3  
+* c45  
+* CART  
+* adaboost  
+* Apriori  
+* FP-growth  
+* PCA  
+* SVD  
+* HMM  
+* GBDT  
+* XGBOOST  
+* RF  
+* FM  
+* Word2vec  
+* CRF  
+* CNN  
+* RNN  
+* LSTM  
+* DNN  
+* BiLSTM+CRF  
+* IDCNN+CRF   
 
