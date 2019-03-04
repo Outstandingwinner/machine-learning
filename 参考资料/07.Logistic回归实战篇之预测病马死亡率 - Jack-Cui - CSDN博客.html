@@ -1,0 +1,3592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="canonical" href="https://blog.csdn.net/c406495762/article/details/77851973"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="referrer" content="always">
+    <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+    <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848">
+        <meta name="csdn-baidu-search"  content='{"autorun":true,"install":true,"keyword":"Python3《机器学习实战》学习笔记（七）：Logistic回归实战篇之预测病马死亡率 - Jack-Cui"}'>
+    
+    <link href="https://csdnimg.cn/public/favicon.ico" rel="SHORTCUT ICON">
+    <title>Python3《机器学习实战》学习笔记（七）：Logistic回归实战篇之预测病马死亡率 - Jack-Cui - CSDN博客</title>
+
+        
+                    <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/detail-d59e2413cb.min.css">
+            
+            <script type="application/ld+json">{"@context":"https:\/\/ziyuan.baidu.com\/contexts\/cambrian.jsonld","@id":"https:\/\/blog.csdn.net\/c406495762\/article\/details\/77851973","appid":"1563894916825412","title":"Python3\u300a\u673a\u5668\u5b66\u4e60\u5b9e\u6218\u300b\u5b66\u4e60\u7b14\u8bb0\uff08\u4e03\uff09\uff1aLogistic\u56de\u5f52\u5b9e\u6218\u7bc7\u4e4b\u9884\u6d4b\u75c5\u9a6c\u6b7b\u4ea1\u7387 - Jack-Cui","images":["https:\/\/img-blog.csdn.net\/20170905150231497?watermark\/2\/text\/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==\/font\/5a6L5L2T\/fontsize\/400\/fill\/I0JBQkFCMA==\/dissolve\/70\/gravity\/SouthEast","https:\/\/img-blog.csdn.net\/20170905150333168?watermark\/2\/text\/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==\/font\/5a6L5L2T\/fontsize\/400\/fill\/I0JBQkFCMA==\/dissolve\/70\/gravity\/SouthEast","https:\/\/img-blog.csdn.net\/20170905150632235?watermark\/2\/text\/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==\/font\/5a6L5L2T\/fontsize\/400\/fill\/I0JBQkFCMA==\/dissolve\/70\/gravity\/SouthEast"],"pubDate":"2019-02-09T19:40:35"}</script>
+        
+          <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/themes/skin-blackboard/skin-blackboard-1340d63bd5.min.css">
+        <script type="text/javascript">
+        var username = "c406495762";
+        var blog_address = "https://blog.csdn.net/c406495762";
+        var static_host = "https://csdnimg.cn/release/phoenix/";
+        var currentUserName = "qq_37507975";
+        var isShowAds = false;
+        var isOwner = false;
+        var loginUrl = "http://passport.csdn.net/account/login?from=https://blog.csdn.net/c406495762/article/details/77851973"
+        var blogUrl = "https://blog.csdn.net/";
+        //页面皮肤样式
+        var curSkin = "skin-blackboard";
+        // 第四范式所需数据
+        var articleTitles = "Python3《机器学习实战》学习笔记（七）：Logistic回归实战篇之预测病马死亡率 - Jack-Cui";
+        var articleID = "77851973";
+        
+        var nickName = "Jack-Cui";
+        var isCorporate = false;
+        var subDomainBlogUrl = "https://blog.csdn.net/"
+    </script>
+    <script type="text/javascript">
+        // Traffic Stats of the entire Web site By baidu
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?6bcd52f51e9b3dce32bec4a3997715ac";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+        // Traffic Stats of the entire Web site By baidu end
+    </script>
+    <script src="https://csdnimg.cn/public/common/libs/jquery/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="https://csdnimg.cn/rabbit/exposure-click/main-1.0.6.js"></script>
+    <script src="//g.csdnimg.cn/fixed-sidebar/1.1.3/fixed-sidebar.js" type="text/javascript"></script>
+    <!-- 新版上报 -->
+    <script src="//g.csdnimg.cn/track/1.2.4/track.js" type="text/javascript"></script>
+    <!-- 新版上报end -->
+            <link rel="stylesheet" href="https://csdnimg.cn/public/sandalstrap/1.4/css/sandalstrap.min.css">
+    <style>
+        .MathJax, .MathJax_Message, .MathJax_Preview{
+            display: none
+        }
+    </style>
+</head>
+<!-- nodata 第三栏接口无数据时样式不变 -->
+<body class="nodata " > 
+    <link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+    <script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+<script type="text/javascript">
+	// 容错处理
+	var NEWS_FEED = function(){}
+</script>
+<script type="text/javascript" src="//static.mediav.com/js/mvf_news_feed.js"></script>
+<script type="text/javascript" src="//g.csdnimg.cn/copyright/1.0.3/copyright.js"></script>
+<div style="display:none;">
+	<img src="" onerror='setTimeout(function(){if(!/(csdn.net|iteye.com|baiducontent.com|googleusercontent.com|360webcache.com|sogoucdn.com|bingj.com|baidu.com)$/.test(window.location.hostname)){window.location.href="\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x63\x73\x64\x6e\x2e\x6e\x65\x74"}},3000);'>
+</div>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/chart-3456820cac.css" />
+<script src="https://dup.baidustatic.com/js/ds.js"></script>
+<div class="container clearfix" id="mainBox">
+			<div class="recommend-right">
+  <ul class="recommend-fixed-box">
+    
+  </ul>
+</div>	
+    <main>
+        <div class="blog-content-box">
+	<div class="article-header-box">
+		<div class="article-header">
+			<div class="article-title-box">
+				<span class="article-type type-1 float-left">原</span>				<h1 class="title-article">Python3《机器学习实战》学习笔记（七）：Logistic回归实战篇之预测病马死亡率</h1>
+			</div>
+			<div class="article-info-box">
+				<div class="article-bar-top">
+																				<span class="time">2017年09月05日 15:22:49</span>
+					<a class="follow-nickName" href="https://me.csdn.net/c406495762" target="_blank">Jack-Cui</a>
+						<span class="read-count">阅读数：10328</span>
+						
+														<span class="tags-box artic-tag-box">
+								<span class="label">标签：</span>
+																<a data-track-click='{"mod":"popu_626","con":"机器学习实战"}' data-track-view='{"mod":"popu_626","con":"机器学习实战"}' class="tag-link" href="http://so.csdn.net/so/search/s.do?q=机器学习实战&t=blog" target="_blank">机器学习实战																<a data-track-click='{"mod":"popu_626","con":"sklearn-教程"}' data-track-view='{"mod":"popu_626","con":"sklearn-教程"}' class="tag-link" href="http://so.csdn.net/so/search/s.do?q=sklearn-教程&t=blog" target="_blank">sklearn-教程																<a data-track-click='{"mod":"popu_626","con":"Logistic回归"}' data-track-view='{"mod":"popu_626","con":"Logistic回归"}' class="tag-link" href="http://so.csdn.net/so/search/s.do?q=Logistic回归&t=blog" target="_blank">Logistic回归																<a data-track-click='{"mod":"popu_626","con":"Python3"}' data-track-view='{"mod":"popu_626","con":"Python3"}' class="tag-link" href="http://so.csdn.net/so/search/s.do?q=Python3&t=blog" target="_blank">Python3																</a>
+							</span>
+																					<div class="tags-box space">
+								<span class="label">个人分类：</span>
+																<a class="tag-link" href="https://blog.csdn.net/c406495762/article/category/7029976"  target="_blank">机器学习																</a>
+							</div>
+																					<div class="tags-box space">
+								<span class="label">所属专栏：</span>
+																<a class="tag-link" href="https://blog.csdn.net/column/details/16415.html" target="_blank">Python3机器学习</a>
+																</a>
+							</div>
+																	</div>
+				<div class="operating">
+									</div>
+			</div>
+		</div>
+	</div>
+	<article class="baidu_pl">
+		<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog"  data-mod=popu_307  data-dsm = "post" >
+								<div class="article-copyright">
+                  					<svg class="icon" title="CSDN认证原创" aria-hidden="true" style="width:53px; height: 18px; vertical-align: -4px;">
+							<use xlink:href="#CSDN_Cert"></use>
+					</svg>
+                  					
+					版权声明：本文为博主原创文章，未经博主允许不得转载。个人网站：http://cuijiahua.com。					https://blog.csdn.net/c406495762/article/details/77851973				</div>
+								            <div id="content_views" class="markdown_views prism-atom-one-dark">
+							<!-- flowchart 箭头图标 勿删 -->
+							<svg xmlns="http://www.w3.org/2000/svg" style="display: none;"><path stroke-linecap="round" d="M5,0 0,2.5 5,5z" id="raphael-marker-block" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path></svg>
+							<p><strong>转载请注明作者和出处：</strong> <a href="http://blog.csdn.net/c406495762" rel="nofollow" target="_blank">http://blog.csdn.net/c406495762</a> <br>
+<strong>机器学习知乎专栏：</strong><a href="https://zhuanlan.zhihu.com/ml-jack" rel="nofollow" target="_blank">https://zhuanlan.zhihu.com/ml-jack</a> <br>
+<strong>CSDN博客专栏：</strong><a href="http://blog.csdn.net/column/details/16415.html" rel="nofollow" target="_blank">http://blog.csdn.net/column/details/16415.html</a> <br>
+<strong>Github代码获取：</strong><a href="https://github.com/Jack-Cherish/Machine-Learning/" rel="nofollow" target="_blank">https://github.com/Jack-Cherish/Machine-Learning/</a> <br>
+<strong>Python版本：</strong> Python3.x <br>
+<strong>运行平台：</strong> Windows <br>
+<strong>IDE：</strong> Sublime text3</p>
+
+<p><div class="toc"><div class="toc">
+<ul>
+<li><a href="#一-前言" rel="nofollow" target="_blank">一 前言</a></li>
+<li><a href="#二-改进的随机梯度上升算法" rel="nofollow" target="_blank">二 改进的随机梯度上升算法</a><ul>
+<li><a href="#1-随机梯度上升算法" rel="nofollow" target="_blank">随机梯度上升算法</a></li>
+<li><a href="#2-回归系数与迭代次数的关系" rel="nofollow" target="_blank">回归系数与迭代次数的关系</a></li>
+</ul>
+</li>
+<li><a href="#三-从疝气病症状预测病马的死亡率" rel="nofollow" target="_blank">三 从疝气病症状预测病马的死亡率</a><ul>
+<li><a href="#1-实战背景" rel="nofollow" target="_blank">实战背景</a></li>
+<li><a href="#2-准备数据" rel="nofollow" target="_blank">准备数据</a></li>
+<li><a href="#3-使用python构建logistic回归分类器" rel="nofollow" target="_blank">使用Python构建Logistic回归分类器</a></li>
+</ul>
+</li>
+<li><a href="#四-使用sklearn构建logistic回归分类器" rel="nofollow" target="_blank">四 使用Sklearn构建Logistic回归分类器</a><ul>
+<li><a href="#1-logisticregression" rel="nofollow" target="_blank">LogisticRegression</a></li>
+<li><a href="#2-编写代码" rel="nofollow" target="_blank">编写代码</a></li>
+</ul>
+</li>
+<li><a href="#五-总结" rel="nofollow" target="_blank">五 总结</a><ul>
+<li><a href="#1-logistic回归的优缺点" rel="nofollow" target="_blank">Logistic回归的优缺点</a></li>
+</ul>
+</li>
+<li><a href="#2-其他" rel="nofollow" target="_blank">其他</a></li>
+</ul>
+</div>
+</div>
+</p>
+
+<hr>
+
+
+
+<h1 id="一-前言">一 前言</h1>
+
+<p>本文对梯度上升算法和改进的随机梯度上升算法进行了对比，总结了各自的优缺点，并对sklearn.linear_model.LogisticRegression进行了详细介绍。</p>
+
+<hr>
+
+<h1 id="二-改进的随机梯度上升算法">二 改进的随机梯度上升算法</h1>
+
+<p>梯度上升算法在每次更新回归系数(最优参数)时，都需要遍历整个数据集。可以看一下我们之前写的梯度上升算法：</p>
+
+
+
+<pre class="prettyprint"><code class="language-Python hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">gradAscent</span><span class="hljs-params">(dataMatIn, classLabels)</span>:</span>
+    dataMatrix = np.mat(dataMatIn)                                        <span class="hljs-comment">#转换成numpy的mat</span>
+    labelMat = np.mat(classLabels).transpose()                            <span class="hljs-comment">#转换成numpy的mat,并进行转置</span>
+    m, n = np.shape(dataMatrix)                                            <span class="hljs-comment">#返回dataMatrix的大小。m为行数,n为列数。</span>
+    alpha = <span class="hljs-number">0.01</span>                                                        <span class="hljs-comment">#移动步长,也就是学习速率,控制更新的幅度。</span>
+    maxCycles = <span class="hljs-number">500</span>                                                        <span class="hljs-comment">#最大迭代次数</span>
+    weights = np.ones((n,<span class="hljs-number">1</span>))
+    <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> range(maxCycles):
+        h = sigmoid(dataMatrix * weights)                                <span class="hljs-comment">#梯度上升矢量化公式</span>
+        error = labelMat - h
+        weights = weights + alpha * dataMatrix.transpose() * error
+    <span class="hljs-keyword">return</span> weights.getA(),weights_array                                    <span class="hljs-comment">#将矩阵转换为数组，返回权重数组</span></code></pre>
+
+<p>假设，我们使用的数据集一共有100个样本。那么，dataMatrix就是一个100*3的矩阵。每次计算h的时候，都要计算dataMatrix*weights这个矩阵乘法运算，要进行100*3次乘法运算和100*2次加法运算。同理，更新回归系数(最优参数)weights时，也需要用到整个数据集，要进行矩阵乘法运算。总而言之，该方法处理100个左右的数据集时尚可，但如果有数十亿样本和成千上万的特征，那么该方法的计算复杂度就太高了。因此，需要对算法进行改进，我们每次更新回归系数(最优参数)的时候，能不能不用所有样本呢？一次只用一个样本点去更新回归系数(最优参数)？这样就可以有效减少计算量了，这种方法就叫做<strong>随机梯度上升算法。</strong></p>
+
+<h2 id="1-随机梯度上升算法">1 随机梯度上升算法</h2>
+
+<p>让我们直接看代码：</p>
+
+
+
+<pre class="prettyprint"><code class="language-Python hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">stocGradAscent1</span><span class="hljs-params">(dataMatrix, classLabels, numIter=<span class="hljs-number">150</span>)</span>:</span>
+    m,n = np.shape(dataMatrix)                                                <span class="hljs-comment">#返回dataMatrix的大小。m为行数,n为列数。</span>
+    weights = np.ones(n)                                                       <span class="hljs-comment">#参数初始化</span>
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> range(numIter):                                           
+        dataIndex = list(range(m))
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(m):           
+            alpha = <span class="hljs-number">4</span>/(<span class="hljs-number">1.0</span>+j+i)+<span class="hljs-number">0.01</span>                                            <span class="hljs-comment">#降低alpha的大小，每次减小1/(j+i)。</span>
+            randIndex = int(random.uniform(<span class="hljs-number">0</span>,len(dataIndex)))                <span class="hljs-comment">#随机选取样本</span>
+            h = sigmoid(sum(dataMatrix[randIndex]*weights))                    <span class="hljs-comment">#选择随机选取的一个样本，计算h</span>
+            error = classLabels[randIndex] - h                                 <span class="hljs-comment">#计算误差</span>
+            weights = weights + alpha * error * dataMatrix[randIndex]       <span class="hljs-comment">#更新回归系数</span>
+            <span class="hljs-keyword">del</span>(dataIndex[randIndex])                                         <span class="hljs-comment">#删除已经使用的样本</span>
+    <span class="hljs-keyword">return</span> weights                                                      <span class="hljs-comment">#返回</span></code></pre>
+
+<p>该算法第一个改进之处在于，alpha在每次迭代的时候都会调整，并且，虽然alpha会随着迭代次数不断减小，但永远不会减小到0，因为这里还存在一个常数项。必须这样做的原因是为了保证在多次迭代之后新数据仍然具有一定的影响。如果需要处理的问题是动态变化的，那么可以适当加大上述常数项，来确保新的值获得更大的回归系数。另一点值得注意的是，在降低alpha的函数中，alpha每次减少1/(j+i)，其中j是迭代次数，i是样本点的下标。第二个改进的地方在于跟新回归系数(最优参数)时，只使用一个样本点，并且选择的样本点是随机的，每次迭代不使用已经用过的样本点。这样的方法，就有效地减少了计算量，并保证了回归效果。</p>
+
+<p>编写代码如下，看下改进的随机梯度上升算法分类效果如何：</p>
+
+<pre class="prettyprint"><code class="language-Python hljs python"><span class="hljs-comment"># -*- coding:UTF-8 -*-</span>
+<span class="hljs-keyword">from</span> matplotlib.font_manager <span class="hljs-keyword">import</span> FontProperties
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">import</span> random
+
+<span class="hljs-string">"""
+函数说明:加载数据
+
+Parameters:
+    无
+Returns:
+    dataMat - 数据列表
+    labelMat - 标签列表
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-08-28
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">loadDataSet</span><span class="hljs-params">()</span>:</span>
+    dataMat = []                                                        <span class="hljs-comment">#创建数据列表</span>
+    labelMat = []                                                        <span class="hljs-comment">#创建标签列表</span>
+    fr = open(<span class="hljs-string">'testSet.txt'</span>)                                            <span class="hljs-comment">#打开文件</span>
+    <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> fr.readlines():                                            <span class="hljs-comment">#逐行读取</span>
+        lineArr = line.strip().split()                                    <span class="hljs-comment">#去回车，放入列表</span>
+        dataMat.append([<span class="hljs-number">1.0</span>, float(lineArr[<span class="hljs-number">0</span>]), float(lineArr[<span class="hljs-number">1</span>])])        <span class="hljs-comment">#添加数据</span>
+        labelMat.append(int(lineArr[<span class="hljs-number">2</span>]))                                <span class="hljs-comment">#添加标签</span>
+    fr.close()                                                            <span class="hljs-comment">#关闭文件</span>
+    <span class="hljs-keyword">return</span> dataMat, labelMat                                            <span class="hljs-comment">#返回</span>
+
+<span class="hljs-string">"""
+函数说明:sigmoid函数
+
+Parameters:
+    inX - 数据
+Returns:
+    sigmoid函数
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-08-28
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">sigmoid</span><span class="hljs-params">(inX)</span>:</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-number">1.0</span> / (<span class="hljs-number">1</span> + np.exp(-inX))
+
+<span class="hljs-string">"""
+函数说明:绘制数据集
+
+Parameters:
+    weights - 权重参数数组
+Returns:
+    无
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-08-30
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">plotBestFit</span><span class="hljs-params">(weights)</span>:</span>
+    dataMat, labelMat = loadDataSet()                                    <span class="hljs-comment">#加载数据集</span>
+    dataArr = np.array(dataMat)                                            <span class="hljs-comment">#转换成numpy的array数组</span>
+    n = np.shape(dataMat)[<span class="hljs-number">0</span>]                                            <span class="hljs-comment">#数据个数</span>
+    xcord1 = []; ycord1 = []                                            <span class="hljs-comment">#正样本</span>
+    xcord2 = []; ycord2 = []                                            <span class="hljs-comment">#负样本</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(n):                                                    <span class="hljs-comment">#根据数据集标签进行分类</span>
+        <span class="hljs-keyword">if</span> int(labelMat[i]) == <span class="hljs-number">1</span>:
+            xcord1.append(dataArr[i,<span class="hljs-number">1</span>]); ycord1.append(dataArr[i,<span class="hljs-number">2</span>])    <span class="hljs-comment">#1为正样本</span>
+        <span class="hljs-keyword">else</span>:
+            xcord2.append(dataArr[i,<span class="hljs-number">1</span>]); ycord2.append(dataArr[i,<span class="hljs-number">2</span>])    <span class="hljs-comment">#0为负样本</span>
+    fig = plt.figure()
+    ax = fig.add_subplot(<span class="hljs-number">111</span>)                                            <span class="hljs-comment">#添加subplot</span>
+    ax.scatter(xcord1, ycord1, s = <span class="hljs-number">20</span>, c = <span class="hljs-string">'red'</span>, marker = <span class="hljs-string">'s'</span>,alpha=<span class="hljs-number">.5</span>)<span class="hljs-comment">#绘制正样本</span>
+    ax.scatter(xcord2, ycord2, s = <span class="hljs-number">20</span>, c = <span class="hljs-string">'green'</span>,alpha=<span class="hljs-number">.5</span>)            <span class="hljs-comment">#绘制负样本</span>
+    x = np.arange(-<span class="hljs-number">3.0</span>, <span class="hljs-number">3.0</span>, <span class="hljs-number">0.1</span>)
+    y = (-weights[<span class="hljs-number">0</span>] - weights[<span class="hljs-number">1</span>] * x) / weights[<span class="hljs-number">2</span>]
+    ax.plot(x, y)
+    plt.title(<span class="hljs-string">'BestFit'</span>)                                                <span class="hljs-comment">#绘制title</span>
+    plt.xlabel(<span class="hljs-string">'X1'</span>); plt.ylabel(<span class="hljs-string">'X2'</span>)                                    <span class="hljs-comment">#绘制label</span>
+    plt.show()
+
+<span class="hljs-string">"""
+函数说明:改进的随机梯度上升算法
+
+Parameters:
+    dataMatrix - 数据数组
+    classLabels - 数据标签
+    numIter - 迭代次数
+Returns:
+    weights - 求得的回归系数数组(最优参数)
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-08-31
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">stocGradAscent1</span><span class="hljs-params">(dataMatrix, classLabels, numIter=<span class="hljs-number">150</span>)</span>:</span>
+    m,n = np.shape(dataMatrix)                                                <span class="hljs-comment">#返回dataMatrix的大小。m为行数,n为列数。</span>
+    weights = np.ones(n)                                                       <span class="hljs-comment">#参数初始化</span>
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> range(numIter):
+        dataIndex = list(range(m))
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(m):
+            alpha = <span class="hljs-number">4</span>/(<span class="hljs-number">1.0</span>+j+i)+<span class="hljs-number">0.01</span>                                            <span class="hljs-comment">#降低alpha的大小，每次减小1/(j+i)。</span>
+            randIndex = int(random.uniform(<span class="hljs-number">0</span>,len(dataIndex)))                <span class="hljs-comment">#随机选取样本</span>
+            h = sigmoid(sum(dataMatrix[randIndex]*weights))                    <span class="hljs-comment">#选择随机选取的一个样本，计算h</span>
+            error = classLabels[randIndex] - h                                 <span class="hljs-comment">#计算误差</span>
+            weights = weights + alpha * error * dataMatrix[randIndex]       <span class="hljs-comment">#更新回归系数</span>
+            <span class="hljs-keyword">del</span>(dataIndex[randIndex])                                         <span class="hljs-comment">#删除已经使用的样本</span>
+    <span class="hljs-keyword">return</span> weights                                                            <span class="hljs-comment">#返回</span>
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>:
+    dataMat, labelMat = loadDataSet()
+    weights = stocGradAscent1(np.array(dataMat), labelMat)
+    plotBestFit(weights)</code></pre>
+
+<p>代码运行结果：</p>
+
+<p></p>
+
+<div align="center"><img src="https://img-blog.csdn.net/20170905150231497?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+
+
+
+
+
+</div>
+
+<h2 id="2-回归系数与迭代次数的关系">2 回归系数与迭代次数的关系</h2>
+
+<p>可以看到分类效果也是不错的。不过，从这个分类结果中，我们不好看出迭代次数和回归系数的关系，也就不能直观的看到每个回归方法的收敛情况。因此，我们编写程序，绘制出回归系数和迭代次数的关系曲线：</p>
+
+<pre class="prettyprint"><code class="language-Python hljs python"><span class="hljs-comment"># -*- coding:UTF-8 -*-</span>
+<span class="hljs-keyword">from</span> matplotlib.font_manager <span class="hljs-keyword">import</span> FontProperties
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">import</span> random
+
+
+<span class="hljs-string">"""
+函数说明:加载数据
+
+Parameters:
+    无
+Returns:
+    dataMat - 数据列表
+    labelMat - 标签列表
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-08-28
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">loadDataSet</span><span class="hljs-params">()</span>:</span>
+    dataMat = []                                                        <span class="hljs-comment">#创建数据列表</span>
+    labelMat = []                                                        <span class="hljs-comment">#创建标签列表</span>
+    fr = open(<span class="hljs-string">'testSet.txt'</span>)                                            <span class="hljs-comment">#打开文件   </span>
+    <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> fr.readlines():                                            <span class="hljs-comment">#逐行读取</span>
+        lineArr = line.strip().split()                                    <span class="hljs-comment">#去回车，放入列表</span>
+        dataMat.append([<span class="hljs-number">1.0</span>, float(lineArr[<span class="hljs-number">0</span>]), float(lineArr[<span class="hljs-number">1</span>])])        <span class="hljs-comment">#添加数据</span>
+        labelMat.append(int(lineArr[<span class="hljs-number">2</span>]))                                <span class="hljs-comment">#添加标签</span>
+    fr.close()                                                            <span class="hljs-comment">#关闭文件</span>
+    <span class="hljs-keyword">return</span> dataMat, labelMat                                            <span class="hljs-comment">#返回</span>
+
+<span class="hljs-string">"""
+函数说明:sigmoid函数
+
+Parameters:
+    inX - 数据
+Returns:
+    sigmoid函数
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-08-28
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">sigmoid</span><span class="hljs-params">(inX)</span>:</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-number">1.0</span> / (<span class="hljs-number">1</span> + np.exp(-inX))
+
+<span class="hljs-string">"""
+函数说明:梯度上升算法
+
+Parameters:
+    dataMatIn - 数据集
+    classLabels - 数据标签
+Returns:
+    weights.getA() - 求得的权重数组(最优参数)
+    weights_array - 每次更新的回归系数
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-08-28
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">gradAscent</span><span class="hljs-params">(dataMatIn, classLabels)</span>:</span>
+    dataMatrix = np.mat(dataMatIn)                                        <span class="hljs-comment">#转换成numpy的mat</span>
+    labelMat = np.mat(classLabels).transpose()                            <span class="hljs-comment">#转换成numpy的mat,并进行转置</span>
+    m, n = np.shape(dataMatrix)                                            <span class="hljs-comment">#返回dataMatrix的大小。m为行数,n为列数。</span>
+    alpha = <span class="hljs-number">0.01</span>                                                        <span class="hljs-comment">#移动步长,也就是学习速率,控制更新的幅度。</span>
+    maxCycles = <span class="hljs-number">500</span>                                                        <span class="hljs-comment">#最大迭代次数</span>
+    weights = np.ones((n,<span class="hljs-number">1</span>))
+    weights_array = np.array([])
+    <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> range(maxCycles):
+        h = sigmoid(dataMatrix * weights)                                <span class="hljs-comment">#梯度上升矢量化公式</span>
+        error = labelMat - h
+        weights = weights + alpha * dataMatrix.transpose() * error
+        weights_array = np.append(weights_array,weights)
+    weights_array = weights_array.reshape(maxCycles,n)
+    <span class="hljs-keyword">return</span> weights.getA(),weights_array                                    <span class="hljs-comment">#将矩阵转换为数组，并返回</span>
+
+
+
+<span class="hljs-string">"""
+函数说明:改进的随机梯度上升算法
+
+Parameters:
+    dataMatrix - 数据数组
+    classLabels - 数据标签
+    numIter - 迭代次数
+Returns:
+    weights - 求得的回归系数数组(最优参数)
+    weights_array - 每次更新的回归系数
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-08-31
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">stocGradAscent1</span><span class="hljs-params">(dataMatrix, classLabels, numIter=<span class="hljs-number">150</span>)</span>:</span>
+    m,n = np.shape(dataMatrix)                                                <span class="hljs-comment">#返回dataMatrix的大小。m为行数,n为列数。</span>
+    weights = np.ones(n)                                                       <span class="hljs-comment">#参数初始化</span>
+    weights_array = np.array([])                                            <span class="hljs-comment">#存储每次更新的回归系数</span>
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> range(numIter):                                           
+        dataIndex = list(range(m))
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(m):           
+            alpha = <span class="hljs-number">4</span>/(<span class="hljs-number">1.0</span>+j+i)+<span class="hljs-number">0.01</span>                                            <span class="hljs-comment">#降低alpha的大小，每次减小1/(j+i)。</span>
+            randIndex = int(random.uniform(<span class="hljs-number">0</span>,len(dataIndex)))                <span class="hljs-comment">#随机选取样本</span>
+            h = sigmoid(sum(dataMatrix[randIndex]*weights))                    <span class="hljs-comment">#选择随机选取的一个样本，计算h</span>
+            error = classLabels[randIndex] - h                                 <span class="hljs-comment">#计算误差</span>
+            weights = weights + alpha * error * dataMatrix[randIndex]       <span class="hljs-comment">#更新回归系数</span>
+            weights_array = np.append(weights_array,weights,axis=<span class="hljs-number">0</span>)         <span class="hljs-comment">#添加回归系数到数组中</span>
+            <span class="hljs-keyword">del</span>(dataIndex[randIndex])                                         <span class="hljs-comment">#删除已经使用的样本</span>
+    weights_array = weights_array.reshape(numIter*m,n)                         <span class="hljs-comment">#改变维度</span>
+    <span class="hljs-keyword">return</span> weights,weights_array                                             <span class="hljs-comment">#返回</span>
+
+<span class="hljs-string">"""
+函数说明:绘制回归系数与迭代次数的关系
+
+Parameters:
+    weights_array1 - 回归系数数组1
+    weights_array2 - 回归系数数组2
+Returns:
+    无
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-08-30
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">plotWeights</span><span class="hljs-params">(weights_array1,weights_array2)</span>:</span>
+    <span class="hljs-comment">#设置汉字格式</span>
+    font = FontProperties(fname=<span class="hljs-string">r"c:\windows\fonts\simsun.ttc"</span>, size=<span class="hljs-number">14</span>)
+    <span class="hljs-comment">#将fig画布分隔成1行1列,不共享x轴和y轴,fig画布的大小为(13,8)</span>
+    <span class="hljs-comment">#当nrow=3,nclos=2时,代表fig画布被分为六个区域,axs[0][0]表示第一行第一列</span>
+    fig, axs = plt.subplots(nrows=<span class="hljs-number">3</span>, ncols=<span class="hljs-number">2</span>,sharex=<span class="hljs-keyword">False</span>, sharey=<span class="hljs-keyword">False</span>, figsize=(<span class="hljs-number">20</span>,<span class="hljs-number">10</span>))
+    x1 = np.arange(<span class="hljs-number">0</span>, len(weights_array1), <span class="hljs-number">1</span>)
+    <span class="hljs-comment">#绘制w0与迭代次数的关系</span>
+    axs[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>].plot(x1,weights_array1[:,<span class="hljs-number">0</span>])
+    axs0_title_text = axs[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>].set_title(<span class="hljs-string">u'梯度上升算法：回归系数与迭代次数关系'</span>,FontProperties=font)
+    axs0_ylabel_text = axs[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>].set_ylabel(<span class="hljs-string">u'W0'</span>,FontProperties=font)
+    plt.setp(axs0_title_text, size=<span class="hljs-number">20</span>, weight=<span class="hljs-string">'bold'</span>, color=<span class="hljs-string">'black'</span>) 
+    plt.setp(axs0_ylabel_text, size=<span class="hljs-number">20</span>, weight=<span class="hljs-string">'bold'</span>, color=<span class="hljs-string">'black'</span>)
+    <span class="hljs-comment">#绘制w1与迭代次数的关系</span>
+    axs[<span class="hljs-number">1</span>][<span class="hljs-number">0</span>].plot(x1,weights_array1[:,<span class="hljs-number">1</span>])
+    axs1_ylabel_text = axs[<span class="hljs-number">1</span>][<span class="hljs-number">0</span>].set_ylabel(<span class="hljs-string">u'W1'</span>,FontProperties=font)
+    plt.setp(axs1_ylabel_text, size=<span class="hljs-number">20</span>, weight=<span class="hljs-string">'bold'</span>, color=<span class="hljs-string">'black'</span>)
+    <span class="hljs-comment">#绘制w2与迭代次数的关系</span>
+    axs[<span class="hljs-number">2</span>][<span class="hljs-number">0</span>].plot(x1,weights_array1[:,<span class="hljs-number">2</span>])
+    axs2_xlabel_text = axs[<span class="hljs-number">2</span>][<span class="hljs-number">0</span>].set_xlabel(<span class="hljs-string">u'迭代次数'</span>,FontProperties=font)
+    axs2_ylabel_text = axs[<span class="hljs-number">2</span>][<span class="hljs-number">0</span>].set_ylabel(<span class="hljs-string">u'W1'</span>,FontProperties=font)
+    plt.setp(axs2_xlabel_text, size=<span class="hljs-number">20</span>, weight=<span class="hljs-string">'bold'</span>, color=<span class="hljs-string">'black'</span>) 
+    plt.setp(axs2_ylabel_text, size=<span class="hljs-number">20</span>, weight=<span class="hljs-string">'bold'</span>, color=<span class="hljs-string">'black'</span>)
+
+
+    x2 = np.arange(<span class="hljs-number">0</span>, len(weights_array2), <span class="hljs-number">1</span>)
+    <span class="hljs-comment">#绘制w0与迭代次数的关系</span>
+    axs[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>].plot(x2,weights_array2[:,<span class="hljs-number">0</span>])
+    axs0_title_text = axs[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>].set_title(<span class="hljs-string">u'改进的随机梯度上升算法：回归系数与迭代次数关系'</span>,FontProperties=font)
+    axs0_ylabel_text = axs[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>].set_ylabel(<span class="hljs-string">u'W0'</span>,FontProperties=font)
+    plt.setp(axs0_title_text, size=<span class="hljs-number">20</span>, weight=<span class="hljs-string">'bold'</span>, color=<span class="hljs-string">'black'</span>) 
+    plt.setp(axs0_ylabel_text, size=<span class="hljs-number">20</span>, weight=<span class="hljs-string">'bold'</span>, color=<span class="hljs-string">'black'</span>)
+    <span class="hljs-comment">#绘制w1与迭代次数的关系</span>
+    axs[<span class="hljs-number">1</span>][<span class="hljs-number">1</span>].plot(x2,weights_array2[:,<span class="hljs-number">1</span>])
+    axs1_ylabel_text = axs[<span class="hljs-number">1</span>][<span class="hljs-number">1</span>].set_ylabel(<span class="hljs-string">u'W1'</span>,FontProperties=font)
+    plt.setp(axs1_ylabel_text, size=<span class="hljs-number">20</span>, weight=<span class="hljs-string">'bold'</span>, color=<span class="hljs-string">'black'</span>)
+    <span class="hljs-comment">#绘制w2与迭代次数的关系</span>
+    axs[<span class="hljs-number">2</span>][<span class="hljs-number">1</span>].plot(x2,weights_array2[:,<span class="hljs-number">2</span>])
+    axs2_xlabel_text = axs[<span class="hljs-number">2</span>][<span class="hljs-number">1</span>].set_xlabel(<span class="hljs-string">u'迭代次数'</span>,FontProperties=font)
+    axs2_ylabel_text = axs[<span class="hljs-number">2</span>][<span class="hljs-number">1</span>].set_ylabel(<span class="hljs-string">u'W1'</span>,FontProperties=font)
+    plt.setp(axs2_xlabel_text, size=<span class="hljs-number">20</span>, weight=<span class="hljs-string">'bold'</span>, color=<span class="hljs-string">'black'</span>) 
+    plt.setp(axs2_ylabel_text, size=<span class="hljs-number">20</span>, weight=<span class="hljs-string">'bold'</span>, color=<span class="hljs-string">'black'</span>)
+
+    plt.show()       
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>:
+    dataMat, labelMat = loadDataSet()           
+    weights1,weights_array1 = stocGradAscent1(np.array(dataMat), labelMat)
+
+    weights2,weights_array2 = gradAscent(dataMat, labelMat)
+    plotWeights(weights_array1, weights_array2)</code></pre>
+
+<p>运行结果如下：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170905150333168?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"> <br>
+<a href="https://img-blog.csdn.net/20170905150333168?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" rel="nofollow" target="_blank">点击查看大图</a></div><p></p>
+
+<p></p>
+
+<p>由于改进的随机梯度上升算法，随机选取样本点，所以每次的运行结果是不同的。但是大体趋势是一样的。我们改进的随机梯度上升算法收敛效果更好。为什么这么说呢？让我们分析一下。我们一共有100个样本点，改进的随机梯度上升算法迭代次数为150。而上图显示15000次迭代次数的原因是，使用一次样本就更新一下回归系数。因此，迭代150次，相当于更新回归系数150*100=15000次。简而言之，迭代150次，更新1.5万次回归参数。从上图左侧的改进随机梯度上升算法回归效果中可以看出，其实在更新2000次回归系数的时候，已经收敛了。相当于遍历整个数据集20次的时候，回归系数已收敛。训练已完成。</p>
+
+<p>再让我们看看上图右侧的梯度上升算法回归效果，梯度上升算法每次更新回归系数都要遍历整个数据集。从图中可以看出，当迭代次数为300多次的时候，回归系数才收敛。凑个整，就当它在遍历整个数据集300次的时候已经收敛好了。</p>
+
+<p><strong>没有对比就没有伤害，改进的随机梯度上升算法，在遍历数据集的第20次开始收敛。而梯度上升算法，在遍历数据集的第300次才开始收敛。想像一下，大量数据的情况下，谁更牛逼？</strong></p>
+
+<hr>
+
+<h1 id="三-从疝气病症状预测病马的死亡率">三 从疝气病症状预测病马的死亡率</h1>
+
+
+
+<h2 id="1-实战背景">1 实战背景</h2>
+
+<p>本次实战内容，将使用Logistic回归来预测患疝气病的马的存活问题。原始数据集下载地址：<a href="http://archive.ics.uci.edu/ml/datasets/Horse+Colic" rel="nofollow" target="_blank">http://archive.ics.uci.edu/ml/datasets/Horse+Colic</a></p>
+
+<p>这里的数据包含了368个样本和28个特征。这种病不一定源自马的肠胃问题，其他问题也可能引发马疝病。该数据集中包含了医院检测马疝病的一些指标，有的指标比较主观，有的指标难以测量，例如马的疼痛级别。另外需要说明的是，除了部分指标主观和难以测量外，该数据还存在一个问题，数据集中有30%的值是缺失的。下面将首先介绍如何处理数据集中的数据缺失问题，然后再利用Logistic回归和随机梯度上升算法来预测病马的生死。</p>
+
+
+
+<h2 id="2-准备数据">2 准备数据</h2>
+
+<p>数据中的缺失值是一个非常棘手的问题，很多文献都致力于解决这个问题。那么，数据缺失究竟带来了什么问题？假设有100个样本和20个特征，这些数据都是机器收集回来的。若机器上的某个传感器损坏导致一个特征无效时该怎么办？它们是否还可用？答案是肯定的。因为有时候数据相当昂贵，扔掉和重新获取都是不可取的，所以必须采用一些方法来解决这个问题。下面给出了一些可选的做法：</p>
+
+<ul>
+<li>使用可用特征的均值来填补缺失值；</li>
+<li>使用特殊值来填补缺失值，如-1；</li>
+<li>忽略有缺失值的样本；</li>
+<li>使用相似样本的均值添补缺失值；</li>
+<li>使用另外的机器学习算法预测缺失值。</li>
+</ul>
+
+<p>预处理数据做两件事：</p>
+
+<ul>
+<li>如果测试集中一条数据的特征值已经确实，那么我们选择实数0来替换所有缺失值，因为本文使用Logistic回归。因此这样做不会影响回归系数的值。sigmoid(0)=0.5，即它对结果的预测不具有任何倾向性。</li>
+<li>如果测试集中一条数据的类别标签已经缺失，那么我们将该类别数据丢弃，因为类别标签与特征不同，很难确定采用某个合适的值来替换。</li>
+</ul>
+
+<p>原始的数据集经过处理，保存为两个文件：horseColicTest.txt和horseColicTraining.txt。已经处理好的“干净”可用的数据集下载地址：</p>
+
+<ul>
+<li><a href="https://github.com/Jack-Cherish/Machine-Learning/blob/master/Logistic/horseColicTraining.txt" rel="nofollow" target="_blank">https://github.com/Jack-Cherish/Machine-Learning/blob/master/Logistic/horseColicTraining.txt</a></li>
+<li><a href="https://github.com/Jack-Cherish/Machine-Learning/blob/master/Logistic/horseColicTest.txt" rel="nofollow" target="_blank">https://github.com/Jack-Cherish/Machine-Learning/blob/master/Logistic/horseColicTest.txt</a></li>
+</ul>
+
+<p>有了这些数据集，我们只需要一个Logistic分类器，就可以利用该分类器来预测病马的生死问题了。</p>
+
+<h2 id="3-使用python构建logistic回归分类器">3 使用Python构建Logistic回归分类器</h2>
+
+<p>在使用Sklearn构建Logistic回归分类器之前，我们先用自己写的改进的随机梯度上升算法进行预测，先热热身。使用Logistic回归方法进行分类并不需要做很多工作，所需做的只是把测试集上每个特征向量乘以最优化方法得来的回归系数，再将乘积结果求和，最后输入到Sigmoid函数中即可。如果对应的Sigmoid值大于0.5就预测类别标签为1，否则为0。</p>
+
+<pre class="prettyprint"><code class="language-Python hljs python"><span class="hljs-comment"># -*- coding:UTF-8 -*-</span>
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">import</span> random
+
+<span class="hljs-string">"""
+函数说明:sigmoid函数
+
+Parameters:
+    inX - 数据
+Returns:
+    sigmoid函数
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-09-05
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">sigmoid</span><span class="hljs-params">(inX)</span>:</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-number">1.0</span> / (<span class="hljs-number">1</span> + np.exp(-inX))
+
+<span class="hljs-string">"""
+函数说明:改进的随机梯度上升算法
+
+Parameters:
+    dataMatrix - 数据数组
+    classLabels - 数据标签
+    numIter - 迭代次数
+Returns:
+    weights - 求得的回归系数数组(最优参数)
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-09-05
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">stocGradAscent1</span><span class="hljs-params">(dataMatrix, classLabels, numIter=<span class="hljs-number">150</span>)</span>:</span>
+    m,n = np.shape(dataMatrix)                                                <span class="hljs-comment">#返回dataMatrix的大小。m为行数,n为列数。</span>
+    weights = np.ones(n)                                                       <span class="hljs-comment">#参数初始化                                        #存储每次更新的回归系数</span>
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> range(numIter):                                           
+        dataIndex = list(range(m))
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(m):           
+            alpha = <span class="hljs-number">4</span>/(<span class="hljs-number">1.0</span>+j+i)+<span class="hljs-number">0.01</span>                                            <span class="hljs-comment">#降低alpha的大小，每次减小1/(j+i)。</span>
+            randIndex = int(random.uniform(<span class="hljs-number">0</span>,len(dataIndex)))                <span class="hljs-comment">#随机选取样本</span>
+            h = sigmoid(sum(dataMatrix[randIndex]*weights))                    <span class="hljs-comment">#选择随机选取的一个样本，计算h</span>
+            error = classLabels[randIndex] - h                                 <span class="hljs-comment">#计算误差</span>
+            weights = weights + alpha * error * dataMatrix[randIndex]       <span class="hljs-comment">#更新回归系数</span>
+            <span class="hljs-keyword">del</span>(dataIndex[randIndex])                                         <span class="hljs-comment">#删除已经使用的样本</span>
+    <span class="hljs-keyword">return</span> weights                                                             <span class="hljs-comment">#返回</span>
+
+<span class="hljs-string">"""
+函数说明:使用Python写的Logistic分类器做预测
+
+Parameters:
+    无
+Returns:
+    无
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-09-05
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">colicTest</span><span class="hljs-params">()</span>:</span>
+    frTrain = open(<span class="hljs-string">'horseColicTraining.txt'</span>)                                        <span class="hljs-comment">#打开训练集</span>
+    frTest = open(<span class="hljs-string">'horseColicTest.txt'</span>)                                                <span class="hljs-comment">#打开测试集</span>
+    trainingSet = []; trainingLabels = []
+    <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> frTrain.readlines():
+        currLine = line.strip().split(<span class="hljs-string">'\t'</span>)
+        lineArr = []
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(len(currLine)-<span class="hljs-number">1</span>):
+            lineArr.append(float(currLine[i]))
+        trainingSet.append(lineArr)
+        trainingLabels.append(float(currLine[-<span class="hljs-number">1</span>]))
+    trainWeights = stocGradAscent1(np.array(trainingSet), trainingLabels, <span class="hljs-number">500</span>)        <span class="hljs-comment">#使用改进的随即上升梯度训练</span>
+    errorCount = <span class="hljs-number">0</span>; numTestVec = <span class="hljs-number">0.0</span>
+    <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> frTest.readlines():
+        numTestVec += <span class="hljs-number">1.0</span>
+        currLine = line.strip().split(<span class="hljs-string">'\t'</span>)
+        lineArr =[]
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(len(currLine)-<span class="hljs-number">1</span>):
+            lineArr.append(float(currLine[i]))
+        <span class="hljs-keyword">if</span> int(classifyVector(np.array(lineArr), trainWeights))!= int(currLine[-<span class="hljs-number">1</span>]):
+            errorCount += <span class="hljs-number">1</span>
+    errorRate = (float(errorCount)/numTestVec) * <span class="hljs-number">100</span>                                 <span class="hljs-comment">#错误率计算</span>
+    print(<span class="hljs-string">"测试集错误率为: %.2f%%"</span> % errorRate)
+
+<span class="hljs-string">"""
+函数说明:分类函数
+
+Parameters:
+    inX - 特征向量
+    weights - 回归系数
+Returns:
+    分类结果
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-09-05
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">classifyVector</span><span class="hljs-params">(inX, weights)</span>:</span>
+    prob = sigmoid(sum(inX*weights))
+    <span class="hljs-keyword">if</span> prob &gt; <span class="hljs-number">0.5</span>: <span class="hljs-keyword">return</span> <span class="hljs-number">1.0</span>
+    <span class="hljs-keyword">else</span>: <span class="hljs-keyword">return</span> <span class="hljs-number">0.0</span>
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>:
+    colicTest()</code></pre>
+
+<p>运行结果如下：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170905150632235?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>错误率还是蛮高的，而且耗时1.9s，并且每次运行的错误率也是不同的，错误率高的时候可能达到40%多。为啥这样？首先，因为数据集本身有30%的数据缺失，这个是不能避免的。另一个主要原因是，我们使用的是改进的随机梯度上升算法，因为数据集本身就很小，就几百的数据量。用改进的随机梯度上升算法显然不合适。让我们再试试梯度上升算法，看看它的效果如何？</p>
+
+<pre class="prettyprint"><code class="language-Python hljs python"><span class="hljs-comment"># -*- coding:UTF-8 -*-</span>
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">import</span> random
+
+<span class="hljs-string">"""
+函数说明:sigmoid函数
+
+Parameters:
+    inX - 数据
+Returns:
+    sigmoid函数
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-09-05
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">sigmoid</span><span class="hljs-params">(inX)</span>:</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-number">1.0</span> / (<span class="hljs-number">1</span> + np.exp(-inX))
+
+<span class="hljs-string">"""
+函数说明:梯度上升算法
+
+Parameters:
+    dataMatIn - 数据集
+    classLabels - 数据标签
+Returns:
+    weights.getA() - 求得的权重数组(最优参数)
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-08-28
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">gradAscent</span><span class="hljs-params">(dataMatIn, classLabels)</span>:</span>
+    dataMatrix = np.mat(dataMatIn)                                        <span class="hljs-comment">#转换成numpy的mat</span>
+    labelMat = np.mat(classLabels).transpose()                            <span class="hljs-comment">#转换成numpy的mat,并进行转置</span>
+    m, n = np.shape(dataMatrix)                                            <span class="hljs-comment">#返回dataMatrix的大小。m为行数,n为列数。</span>
+    alpha = <span class="hljs-number">0.01</span>                                                        <span class="hljs-comment">#移动步长,也就是学习速率,控制更新的幅度。</span>
+    maxCycles = <span class="hljs-number">500</span>                                                        <span class="hljs-comment">#最大迭代次数</span>
+    weights = np.ones((n,<span class="hljs-number">1</span>))
+    <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> range(maxCycles):
+        h = sigmoid(dataMatrix * weights)                                <span class="hljs-comment">#梯度上升矢量化公式</span>
+        error = labelMat - h
+        weights = weights + alpha * dataMatrix.transpose() * error
+    <span class="hljs-keyword">return</span> weights.getA()                                                <span class="hljs-comment">#将矩阵转换为数组，并返回</span>
+
+
+
+<span class="hljs-string">"""
+函数说明:使用Python写的Logistic分类器做预测
+
+Parameters:
+    无
+Returns:
+    无
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-09-05
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">colicTest</span><span class="hljs-params">()</span>:</span>
+    frTrain = open(<span class="hljs-string">'horseColicTraining.txt'</span>)                                        <span class="hljs-comment">#打开训练集</span>
+    frTest = open(<span class="hljs-string">'horseColicTest.txt'</span>)                                                <span class="hljs-comment">#打开测试集</span>
+    trainingSet = []; trainingLabels = []
+    <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> frTrain.readlines():
+        currLine = line.strip().split(<span class="hljs-string">'\t'</span>)
+        lineArr = []
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(len(currLine)-<span class="hljs-number">1</span>):
+            lineArr.append(float(currLine[i]))
+        trainingSet.append(lineArr)
+        trainingLabels.append(float(currLine[-<span class="hljs-number">1</span>]))
+    trainWeights = gradAscent(np.array(trainingSet), trainingLabels)        <span class="hljs-comment">#使用改进的随即上升梯度训练</span>
+    errorCount = <span class="hljs-number">0</span>; numTestVec = <span class="hljs-number">0.0</span>
+    <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> frTest.readlines():
+        numTestVec += <span class="hljs-number">1.0</span>
+        currLine = line.strip().split(<span class="hljs-string">'\t'</span>)
+        lineArr =[]
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(len(currLine)-<span class="hljs-number">1</span>):
+            lineArr.append(float(currLine[i]))
+        <span class="hljs-keyword">if</span> int(classifyVector(np.array(lineArr), trainWeights[:,<span class="hljs-number">0</span>]))!= int(currLine[-<span class="hljs-number">1</span>]):
+            errorCount += <span class="hljs-number">1</span>
+    errorRate = (float(errorCount)/numTestVec) * <span class="hljs-number">100</span>                                 <span class="hljs-comment">#错误率计算</span>
+    print(<span class="hljs-string">"测试集错误率为: %.2f%%"</span> % errorRate)
+
+<span class="hljs-string">"""
+函数说明:分类函数
+
+Parameters:
+    inX - 特征向量
+    weights - 回归系数
+Returns:
+    分类结果
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-09-05
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">classifyVector</span><span class="hljs-params">(inX, weights)</span>:</span>
+    prob = sigmoid(sum(inX*weights))
+    <span class="hljs-keyword">if</span> prob &gt; <span class="hljs-number">0.5</span>: <span class="hljs-keyword">return</span> <span class="hljs-number">1.0</span>
+    <span class="hljs-keyword">else</span>: <span class="hljs-keyword">return</span> <span class="hljs-number">0.0</span>
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>:
+    colicTest()</code></pre>
+
+<p>运行结果如下：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170905150748980?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>可以看到算法耗时减少了，错误率稳定且较低。很显然，使用随机梯度上升算法，反而得不偿失了。所以可以得到如下结论：</p>
+
+<ul>
+<li>当数据集较小时，我们使用梯度上升算法</li>
+<li>当数据集较大时，我们使用改进的随机梯度上升算法</li>
+</ul>
+
+<p><strong>对应的，在Sklearn中，我们就可以根据数据情况选择优化算法，比如数据较小的时候，我们使用liblinear，数据较大时，我们使用sag和saga。</strong></p>
+
+<hr>
+
+<h1 id="四-使用sklearn构建logistic回归分类器">四 使用Sklearn构建Logistic回归分类器</h1>
+
+<p>开始新一轮的征程，让我们看下Sklearn的Logistic回归分类器！</p>
+
+<p>官方英文文档地址：<a href="http://scikit-learn.org/dev/modules/generated/sklearn.linear_model.LogisticRegression.html#sklearn.linear_model.LogisticRegression" rel="nofollow" target="_blank">http://scikit-learn.org/dev/modules/generated/sklearn.linear_model.LogisticRegression.html#sklearn.linear_model.LogisticRegression</a></p>
+
+<p>sklearn.linear_model模块提供了很多模型供我们使用，比如Logistic回归、Lasso回归、贝叶斯脊回归等，可见需要学习的东西还有很多很多。本篇文章，我们使用LogisticRegressioin。</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170905150949860?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"> <br>
+<a href="https://img-blog.csdn.net/20170905150949860?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" rel="nofollow" target="_blank">点击查看大图</a></div><p></p>
+
+<p></p>
+
+<h2 id="1-logisticregression">1 LogisticRegression</h2>
+
+<p>让我们先看下LogisticRegression这个函数，一共有14个参数：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170905151033751?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p><strong>参数说明如下：</strong></p>
+
+<ul>
+<li><strong>penalty：</strong>惩罚项，str类型，可选参数为l1和l2，默认为l2。用于指定惩罚项中使用的规范。newton-cg、sag和lbfgs求解算法只支持L2规范。L1G规范假设的是模型的参数满足拉普拉斯分布，L2假设的模型参数满足高斯分布，所谓的范式就是加上对参数的约束，使得模型更不会过拟合(overfit)，但是如果要说是不是加了约束就会好，这个没有人能回答，只能说，加约束的情况下，理论上应该可以获得泛化能力更强的结果。</li>
+<li><strong>dual：</strong>对偶或原始方法，bool类型，默认为False。对偶方法只用在求解线性多核(liblinear)的L2惩罚项上。当样本数量&gt;样本特征的时候，dual通常设置为False。</li>
+<li><strong>tol：</strong>停止求解的标准，float类型，默认为1e-4。就是求解到多少的时候，停止，认为已经求出最优解。</li>
+<li><strong>c：</strong>正则化系数λ的倒数，float类型，默认为1.0。必须是正浮点型数。像SVM一样，越小的数值表示越强的正则化。</li>
+<li><strong>fit_intercept：</strong>是否存在截距或偏差，bool类型，默认为True。</li>
+<li><strong>intercept_scaling：</strong>仅在正则化项为”liblinear”，且fit_intercept设置为True时有用。float类型，默认为1。</li>
+<li><strong>class_weight：</strong>用于标示分类模型中各种类型的权重，可以是一个字典或者<code>balanced</code>字符串，默认为不输入，也就是不考虑权重，即为None。如果选择输入的话，可以选择balanced让类库自己计算类型权重，或者自己输入各个类型的权重。举个例子，比如对于0,1的二元模型，我们可以定义<code>class_weight={0:0.9,1:0.1}</code>，这样类型0的权重为90%，而类型1的权重为10%。如果<code>class_weight</code>选择<code>balanced</code>，那么类库会根据训练样本量来计算权重。某种类型样本量越多，则权重越低，样本量越少，则权重越高。当class_weight为balanced时，类权重计算方法如下：<code>n_samples / (n_classes * np.bincount(y))</code>。<code>n_samples</code>为样本数，<code>n_classes</code>为类别数量，<code>np.bincount(y)</code>会输出每个类的样本数，例如<code>y=[1,0,0,1,1]</code>,则<code>np.bincount(y)=[2,3]</code>。 <br>
+<ul><li>那么class_weight有什么作用呢？ <br>
+<ul><li>在分类模型中，我们经常会遇到两类问题：</li>
+<li>1.第一种是误分类的代价很高。比如对合法用户和非法用户进行分类，将非法用户分类为合法用户的代价很高，我们宁愿将合法用户分类为非法用户，这时可以人工再甄别，但是却不愿将非法用户分类为合法用户。这时，我们可以适当提高非法用户的权重。</li>
+<li>第二种是样本是高度失衡的，比如我们有合法用户和非法用户的二元样本数据10000条，里面合法用户有9995条，非法用户只有5条，如果我们不考虑权重，则我们可以将所有的测试集都预测为合法用户，这样预测准确率理论上有99.95%，但是却没有任何意义。这时，我们可以选择balanced，让类库自动提高非法用户样本的权重。提高了某种分类的权重，相比不考虑权重，会有更多的样本分类划分到高权重的类别，从而可以解决上面两类问题。</li></ul></li></ul></li>
+<li><strong>random_state：</strong>随机数种子，int类型，可选参数，默认为无，仅在正则化优化算法为sag,liblinear时有用。</li>
+<li><strong>solver：</strong>优化算法选择参数，只有五个可选参数，即newton-cg,lbfgs,liblinear,sag,saga。默认为liblinear。solver参数决定了我们对逻辑回归损失函数的优化方法，有四种算法可以选择，分别是： <br>
+<ul><li><strong>liblinear：</strong>使用了开源的liblinear库实现，内部使用了坐标轴下降法来迭代优化损失函数。</li>
+<li><strong>lbfgs：</strong>拟牛顿法的一种，利用损失函数二阶导数矩阵即海森矩阵来迭代优化损失函数。</li>
+<li><strong>newton-cg：</strong>也是牛顿法家族的一种，利用损失函数二阶导数矩阵即海森矩阵来迭代优化损失函数。</li>
+<li><strong>sag：</strong>即随机平均梯度下降，是梯度下降法的变种，和普通梯度下降法的区别是每次迭代仅仅用一部分的样本来计算梯度，适合于样本数据多的时候。</li>
+<li><strong>saga：</strong>线性收敛的随机优化算法的的变重。</li>
+<li><strong>总结：</strong> <br>
+<ul><li>liblinear适用于小数据集，而sag和saga适用于大数据集因为速度更快。</li>
+<li>对于多分类问题，只有newton-cg,sag,saga和lbfgs能够处理多项损失，而liblinear受限于一对剩余(OvR)。啥意思，就是用liblinear的时候，如果是多分类问题，得先把一种类别作为一个类别，剩余的所有类别作为另外一个类别。一次类推，遍历所有类别，进行分类。</li>
+<li>newton-cg,sag和lbfgs这三种优化算法时都需要损失函数的一阶或者二阶连续导数，因此不能用于没有连续导数的L1正则化，只能用于L2正则化。而liblinear和saga通吃L1正则化和L2正则化。</li>
+<li>同时，sag每次仅仅使用了部分样本进行梯度迭代，所以当样本量少的时候不要选择它，而如果样本量非常大，比如大于10万，sag是第一选择。但是sag不能用于L1正则化，所以当你有大量的样本，又需要L1正则化的话就要自己做取舍了。要么通过对样本采样来降低样本量，要么回到L2正则化。</li>
+<li>从上面的描述，大家可能觉得，既然newton-cg, lbfgs和sag这么多限制，如果不是大样本，我们选择liblinear不就行了嘛！错，因为liblinear也有自己的弱点！我们知道，逻辑回归有二元逻辑回归和多元逻辑回归。对于多元逻辑回归常见的有one-vs-rest(OvR)和many-vs-many(MvM)两种。而MvM一般比OvR分类相对准确一些。郁闷的是liblinear只支持OvR，不支持MvM，这样如果我们需要相对精确的多元逻辑回归时，就不能选择liblinear了。也意味着如果我们需要相对精确的多元逻辑回归不能使用L1正则化了。</li></ul></li></ul></li>
+<li><strong>max_iter：</strong>算法收敛最大迭代次数，int类型，默认为10。仅在正则化优化算法为newton-cg, sag和lbfgs才有用，算法收敛的最大迭代次数。</li>
+<li><strong>multi_class：</strong>分类方式选择参数，str类型，可选参数为ovr和multinomial，默认为ovr。ovr即前面提到的one-vs-rest(OvR)，而multinomial即前面提到的many-vs-many(MvM)。如果是二元逻辑回归，ovr和multinomial并没有任何区别，区别主要在多元逻辑回归上。 <br>
+<ul><li>OvR和MvM有什么不同？ <br>
+<ul><li>OvR的思想很简单，无论你是多少元逻辑回归，我们都可以看做二元逻辑回归。具体做法是，对于第K类的分类决策，我们把所有第K类的样本作为正例，除了第K类样本以外的所有样本都作为负例，然后在上面做二元逻辑回归，得到第K类的分类模型。其他类的分类模型获得以此类推。</li>
+<li>而MvM则相对复杂，这里举MvM的特例one-vs-one(OvO)作讲解。如果模型有T类，我们每次在所有的T类样本里面选择两类样本出来，不妨记为T1类和T2类，把所有的输出为T1和T2的样本放在一起，把T1作为正例，T2作为负例，进行二元逻辑回归，得到模型参数。我们一共需要T(T-1)/2次分类。</li>
+<li>可以看出OvR相对简单，但分类效果相对略差（这里指大多数样本分布情况，某些样本分布下OvR可能更好）。而MvM分类相对精确，但是分类速度没有OvR快。如果选择了ovr，则4种损失函数的优化方法liblinear，newton-cg,lbfgs和sag都可以选择。但是如果选择了multinomial,则只能选择newton-cg, lbfgs和sag了。</li></ul></li></ul></li>
+<li><strong>verbose：</strong>日志冗长度，int类型。默认为0。就是不输出训练过程，1的时候偶尔输出结果，大于1，对于每个子模型都输出。</li>
+<li><strong>warm_start：</strong>热启动参数，bool类型。默认为False。如果为True，则下一次训练是以追加树的形式进行（重新使用上一次的调用作为初始化）。</li>
+<li><strong>n_jobs：</strong>并行数。int类型，默认为1。1的时候，用CPU的一个内核运行程序，2的时候，用CPU的2个内核运行程序。为-1的时候，用所有CPU的内核运行程序。</li>
+</ul>
+
+<p><strong>累死我了….终于写完所有参数了。</strong></p>
+
+<p>除此之外，LogisticRegression也有一些方法供我们使用：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170905151613672?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>有一些方法和MultinomialNB的方法都是类似的，因此不再累述。 <br>
+对于每个函数的具体使用，可以看下官方文档：<a href="http://scikit-learn.org/dev/modules/generated/sklearn.linear_model.LogisticRegression.html#sklearn.linear_model.LogisticRegression" rel="nofollow" target="_blank">http://scikit-learn.org/dev/modules/generated/sklearn.linear_model.LogisticRegression.html#sklearn.linear_model.LogisticRegression</a></p>
+
+<p>同时，如果对于过拟合、正则化、L1范数、L2范数不了解的，可以看这位大牛的博客：<a href="http://blog.csdn.net/zouxy09/article/details/24971995" rel="nofollow" target="_blank">http://blog.csdn.net/zouxy09/article/details/24971995</a></p>
+
+<h2 id="2-编写代码">2 编写代码</h2>
+
+<p>了解到这些，我们就可以编写Sklearn分类器的代码了。代码非常短：</p>
+
+
+
+<pre class="prettyprint"><code class="language-Python hljs python"><span class="hljs-comment"># -*- coding:UTF-8 -*-</span>
+<span class="hljs-keyword">from</span> sklearn.linear_model <span class="hljs-keyword">import</span> LogisticRegression
+
+<span class="hljs-string">"""
+函数说明:使用Sklearn构建Logistic回归分类器
+
+Parameters:
+    无
+Returns:
+    无
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-09-05
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">colicSklearn</span><span class="hljs-params">()</span>:</span>
+    frTrain = open(<span class="hljs-string">'horseColicTraining.txt'</span>)                                        <span class="hljs-comment">#打开训练集</span>
+    frTest = open(<span class="hljs-string">'horseColicTest.txt'</span>)                                                <span class="hljs-comment">#打开测试集</span>
+    trainingSet = []; trainingLabels = []
+    testSet = []; testLabels = []
+    <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> frTrain.readlines():
+        currLine = line.strip().split(<span class="hljs-string">'\t'</span>)
+        lineArr = []
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(len(currLine)-<span class="hljs-number">1</span>):
+            lineArr.append(float(currLine[i]))
+        trainingSet.append(lineArr)
+        trainingLabels.append(float(currLine[-<span class="hljs-number">1</span>]))
+    <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> frTest.readlines():
+        currLine = line.strip().split(<span class="hljs-string">'\t'</span>)
+        lineArr =[]
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(len(currLine)-<span class="hljs-number">1</span>):
+            lineArr.append(float(currLine[i]))
+        testSet.append(lineArr)
+        testLabels.append(float(currLine[-<span class="hljs-number">1</span>]))
+    classifier = LogisticRegression(solver=<span class="hljs-string">'liblinear'</span>,max_iter=<span class="hljs-number">10</span>).fit(trainingSet, trainingLabels)
+    test_accurcy = classifier.score(testSet, testLabels) * <span class="hljs-number">100</span>
+    print(<span class="hljs-string">'正确率:%f%%'</span> % test_accurcy)
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>:
+    colicSklearn()</code></pre>
+
+<p>运行结果如下：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170905151722573?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>可以看到，正确率又高一些了。更改solver参数，比如设置为sag，使用随机平均梯度下降算法，看一看效果。你会发现，有警告了。</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170905151755527?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>显而易见，警告是因为算法还没有收敛。更改max_iter=5000，再运行代码：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170905151821417?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>可以看到，对于我们这样的小数据集，sag算法需要迭代上千次才收敛，而liblinear只需要不到10次。</p>
+
+<p><strong>还是那句话，我们需要根据数据集情况，选择最优化算法。</strong></p>
+
+<hr>
+
+<h1 id="五-总结">五 总结</h1>
+
+<h2 id="1-logistic回归的优缺点">1 Logistic回归的优缺点</h2>
+
+<p><strong>优点：</strong></p>
+
+<ul>
+<li>实现简单，易于理解和实现；计算代价不高，速度很快，存储资源低。</li>
+</ul>
+
+<p><strong>缺点：</strong></p>
+
+<ul>
+<li>容易欠拟合，分类精度可能不高。</li>
+</ul>
+
+
+
+<h1 id="2-其他">2 其他</h1>
+
+<ul>
+<li>Logistic回归的目的是寻找一个非线性函数Sigmoid的最佳拟合参数，求解过程可以由最优化算法完成。</li>
+<li>改进的一些最优化算法，比如sag。它可以在新数据到来时就完成参数更新，而不需要重新读取整个数据集来进行批量处理。</li>
+<li>机器学习的一个重要问题就是如何处理缺失数据。这个问题没有标准答案，取决于实际应用中的需求。现有一些解决方案，每种方案都各有优缺点。</li>
+<li>我们需要根据数据的情况，这是Sklearn的参数，以期达到更好的分类效果。</li>
+<li>下篇文章将讲解支持向量机SVM。</li>
+<li>如有问题，请留言。如有错误，还望指正，谢谢！</li>
+</ul>
+
+<p><strong>PS： 如果觉得本篇本章对您有所帮助，欢迎关注、评论、赞！</strong></p>
+
+<p>本文出现的所有代码和数据集，均可在我的github上下载，欢迎Follow、Star：<a href="https://github.com/Jack-Cherish/Machine-Learning" rel="nofollow" target="_blank">https://github.com/Jack-Cherish/Machine-Learning</a></p>
+
+<p><strong>参考文献：</strong></p>
+
+<ul>
+<li>《机器学习实战》的第五章内容。</li>
+</ul>            </div>
+						<link href="https://csdnimg.cn/release/phoenix/mdeditor/markdown_views-7b4cdcb592.css" rel="stylesheet">
+                </div>
+	</article>
+</div>
+  <div class="hide-article-box hide-article-pos text-center">
+    <div class="border"></div>
+        <a class="btn article-footer-btn" id="btn-readmore" data-track-view='{"mod":"popu_376","con":",https://blog.csdn.net/c406495762/article/details/77851973,"}' data-track-click='{"mod":"popu_376","con":",https://blog.csdn.net/c406495762/article/details/77851973,"}'>阅读更多</a>
+        <a class="btn article-footer-btn article-footer-bookmark-btn" >
+      <svg class="icon no-active hover-hide" aria-hidden="true">
+        <use xlink:href="#csdnc-bookmark"></use>
+      </svg>
+      <span>收藏</span>
+    </a>
+    <div class="btn article-footer-btn  bds_weixin article-footer-share-btn" data-cmd="weixin" title="分享">
+      <svg class="icon no-active hover-hide" aria-hidden="true">
+        <use xlink:href="#csdnc-share"></use>
+      </svg>
+      <span>分享</span>
+      <div class="bdsharebuttonbox">
+        <a href="#"class="bds_weixin clear-share-style-article-footer" data-cmd="weixin" title="分享"></a>
+      </div>
+    </div>
+    
+  </div>
+  <script>
+  (function(){
+    function collection(){
+      if (currentUserName) {
+        if (!$(this).hasClass("liked")) {
+          $.ajax({
+            url: 'https://my.csdn.net/my/favorite/do_add/2',
+            dataType: 'json',
+            type: 'POST',
+            xhrFields: {
+              withCredentials: true
+            },
+            data: {
+              title: articleTit,
+              url: curentUrl,
+              share: 1,
+              map_name: ''
+            },
+            success: function(data) {
+              if (data.succ == 1) {
+                $('.btn-bookmark').addClass("liked");
+                $('.article-footer-bookmark-btn').addClass("liked").children('span').text('已收藏');
+                
+                alert('收藏成功,可以在个人中心查看我的收藏');
+              } else {
+                if (data.msg === "您已经收藏过") {
+                  $('.btn-bookmark').addClass("liked");
+                  $('.article-footer-bookmark-btn').addClass("liked").children('span').text('已收藏');
+                }
+                alert(data.msg);
+              }
+            }
+          });
+        } else {
+          alert('您已经收藏过');
+        }
+      } else {
+        window.csdn.loginBox.show();
+      }
+    }
+    window.csdn = window.csdn ? window.csdn : {};
+    window.csdn.articleCollection = collection;
+    function setArticleH(btnReadmore,posi){
+      var winH = $(window).height();
+      var articleBox = $("div.article_content");
+      var artH = articleBox.height();
+      if(artH > winH*posi){
+        articleBox.css({
+          'height':winH*posi+'px',
+          'overflow':'hidden'
+        })
+        btnReadmore.click(function(){
+          articleBox.removeAttr("style");
+          $(this).parent().remove()
+        })
+      }else{
+        btnReadmore.parent().remove()
+      }
+    }
+    var btnReadmore = $("#btn-readmore");
+    $('.article-footer-bookmark-btn').click(window.csdn.articleCollection)
+    if(btnReadmore.length>0){
+      if(currentUserName){
+        setArticleH(btnReadmore,3);
+      }else{
+        setArticleH(btnReadmore,1.2);
+      }
+    }else{
+      $('.hide-article-box').addClass('hide-article-style');
+    }
+  })()
+</script>
+<script>
+		$(".MathJax").remove();
+		if($('div.markdown_views pre.prettyprint code.hljs').length > 0 ){
+				$('div.markdown_views')[0].className = 'markdown_views';
+		}
+</script>
+                <a id="commentBox"></a>
+<div class="comment-box">
+	
+	<div class="comment-edit-box d-flex">
+		<a id="commentsedit"></a>
+		<div class="user-img">
+			<a href="//me.csdn.net/qq_37507975" target="_blank">
+				<img class="" src="https://avatar.csdn.net/1/6/8/3_qq_37507975.jpg">
+			</a>
+		</div>
+		<form id="commentform">
+			<input type="hidden" id="comment_replyId">
+			<textarea class="comment-content" name="comment_content" id="comment_content" placeholder="想对作者说点什么"></textarea>
+			<div class="opt-box"> <!-- d-flex -->
+				<div id="ubbtools" class="add_code">
+					<a href="#insertcode" code="code" target="_self"><i class="icon iconfont icon-daima"></i></a>
+				</div>
+				<input type="hidden" id="comment_replyId" name="comment_replyId">
+				<input type="hidden" id="article_id" name="article_id" value="77851973">
+				<input type="hidden" id="comment_userId" name="comment_userId" value="">
+				<input type="hidden" id="commentId" name="commentId" value="">
+				<div style="display: none;" class="csdn-tracking-statistics tracking-click" data-mod="popu_384"><a href="#" target="_blank" class="comment_area_btn">发表评论</a></div>
+				<div class="dropdown" id="myDrap">
+					<a class="dropdown-face d-flex align-items-center" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					<div class="txt-selected text-truncate">添加代码片</div>
+					<svg class="icon d-block" aria-hidden="true">
+						<use xlink:href="#csdnc-triangledown"></use>
+					</svg>
+					</a>
+					<ul class="dropdown-menu" id="commentCode" aria-labelledby="drop4">
+						<li><a data-code="html">HTML/XML</a></li>
+						<li><a data-code="objc">objective-c</a></li>
+						<li><a data-code="ruby">Ruby</a></li>
+						<li><a data-code="php">PHP</a></li>
+						<li><a data-code="csharp">C</a></li>
+						<li><a data-code="cpp">C++</a></li>
+						<li><a data-code="javascript">JavaScript</a></li>
+						<li><a data-code="python">Python</a></li>
+						<li><a data-code="java">Java</a></li>
+						<li><a data-code="css">CSS</a></li>
+						<li><a data-code="sql">SQL</a></li>
+						<li><a data-code="plain">其它</a></li>
+					</ul>
+				</div>  
+				<div class="right-box">
+					<span id="tip_comment" class="tip">还能输入<em>1000</em>个字符</span>
+					<input type="submit" class="btn btn-sm btn-red btn-comment" value="发表评论">
+				</div>
+			</div>
+		</form>
+	</div>
+
+		<div class="comment-list-container">
+		<a id="comments"></a>
+		<div class="comment-list-box">
+		</div>
+		<div id="commentPage" class="pagination-box d-none"></div>
+		<div class="opt-box text-center">
+			<button class="btn btn-sm btn-link-blue" id="btnMoreComment"></button>
+		</div>
+	</div>
+</div>
+        <div class="recommend-box">
+            		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/feilong_csdn/article/details/64128443,BlogCommendFromBaidu_0"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/feilong_csdn/article/details/64128443" target="_blank" title="logistic回归原理解析及Python应用实例">
+				<h4 class="text-truncate oneline">
+						<em>logistic回归</em>原理解析及Python应用实例				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-20</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1.7万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/feilong_csdn/article/details/64128443" target="_blank" title="logistic回归原理解析及Python应用实例">
+							<span class="desc oneline">logistic回归，又叫对数几率回归（从后文中便可此名由来）。首先给大家强调一点，这是一个分类模型而不是一个回归模型！下文开始将从不同方面讲解logistic回归的原理，随后分别使用梯度上升算法和随...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/feilong_csdn">来自：	<span class="blog_title"> feilong_csdn的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u014157632/article/details/60614601,BlogCommendFromBaidu_1"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u014157632/article/details/60614601" target="_blank" title="【Logistic回归】原理及Python代码示例">
+				<h4 class="text-truncate oneline">
+						【<em>Logistic回归</em>】原理及Python代码示例				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-06</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2470</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u014157632/article/details/60614601" target="_blank" title="【Logistic回归】原理及Python代码示例">
+							<span class="desc oneline">1、基本原理1.1 Logistic分布X是随机变量，X服从Logistic分布即X满足下式：分布函数的图像如下：X取值在正负无穷大之间，P(X)在0-1之间取值，呈S型单调上升曲线。1.2 二项Lo...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u014157632">来自：	<span class="blog_title"> SpaceAutomation</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/Katherine_hsr/article/details/79060218,BlogCommendFromBaidu_2"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Katherine_hsr/article/details/79060218" target="_blank" title="逻辑回归(Logistic Regression)原理及Python实现">
+				<h4 class="text-truncate oneline">
+						逻辑回归(Logistic Regression)原理及Python实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-14</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1.4万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Katherine_hsr/article/details/79060218" target="_blank" title="逻辑回归(Logistic Regression)原理及Python实现">
+							<span class="desc oneline">前面有讲过线性回归，但是很多非线性问题不能用简单的线性回归来分类。这时需要用到逻辑回归，逻辑回归是一种非线性的回归。...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Katherine_hsr">来自：	<span class="blog_title"> 诗蕊的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/zjsghww/article/details/55211530,BlogCommendFromBaidu_3"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/zjsghww/article/details/55211530" target="_blank" title="Logistic Regression 原理及推导 python实现">
+				<h4 class="text-truncate oneline">
+						Logistic Regression 原理及推导 python实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">02-15</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							9097</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/zjsghww/article/details/55211530" target="_blank" title="Logistic Regression 原理及推导 python实现">
+							<span class="desc oneline">一、问题引入首先，Logistic回归是一种广义的线性回归模型，主要用于解决二分类问题。比如，现在我们有N个样本点，每个样本点有两维特征x1和x2，在直角坐标系中画出这N个样本的散点图如下图所示，蓝色...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/zjsghww">来自：	<span class="blog_title"> 张张的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_35083093/article/details/79111165,BlogCommendFromBaidu_4"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_35083093/article/details/79111165" target="_blank" title="Logistic回归 Python实现">
+				<h4 class="text-truncate oneline">
+						<em>Logistic回归</em> Python实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-19</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							307</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_35083093/article/details/79111165" target="_blank" title="Logistic回归 Python实现">
+							<span class="desc oneline">本文实现了Logistic回归算法，代码中有梯度下降法和随机下降法供选择，并画图显示了最后的分隔结果。#!/usr/bin/python#-*-coding:utf-8-*-fromnumpyimpo...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_35083093">来自：	<span class="blog_title"> EteYogix</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/weixin_39541558/article/details/80622618,BlogCommendFromBaidu_5"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/weixin_39541558/article/details/80622618" target="_blank" title="三、回归——logistic回归二分类的python实现">
+				<h4 class="text-truncate oneline">
+						三、回归——<em>logistic回归</em>二分类的python实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-08</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							926</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/weixin_39541558/article/details/80622618" target="_blank" title="三、回归——logistic回归二分类的python实现">
+							<span class="desc oneline">一、训练算法：使用梯度上升找到最佳参数1.使用Logistic回归梯度上升优化算法    每次更新回归系数都要遍历整个数据集，该算法在处理100左右各样本时还可以，但是如果有数十亿样本或者成千上万的特...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/weixin_39541558">来自：	<span class="blog_title"> Nicole的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/LY_ysys629/article/details/72887927,BlogCommendFromBaidu_6"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/LY_ysys629/article/details/72887927" target="_blank" title="logistic回归算法原理及python实现">
+				<h4 class="text-truncate oneline">
+						<em>logistic回归</em>算法原理及python实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-07</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1485</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/LY_ysys629/article/details/72887927" target="_blank" title="logistic回归算法原理及python实现">
+							<span class="desc oneline">logistic回归、极大似然估计、随机梯度算法</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/LY_ysys629">来自：	<span class="blog_title"> 三石</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/zj360202/article/details/78688070,BlogCommendFromBaidu_7"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/zj360202/article/details/78688070" target="_blank" title="Python实现逻辑回归(Logistic Regression in Python)">
+				<h4 class="text-truncate oneline">
+						Python实现逻辑回归(Logistic Regression in Python)				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-01</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2.4万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/zj360202/article/details/78688070" target="_blank" title="Python实现逻辑回归(Logistic Regression in Python)">
+							<span class="desc oneline">本文基于yhat上LogisticRegressioninPython，作了中文翻译，并相应补充了一些内容。本文并不研究逻辑回归具体算法实现，而是使用了一些算法库，旨在帮助需要用Python来做逻辑回...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/zj360202">来自：	<span class="blog_title"> zj360202的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/c369624808/article/details/78474104,BlogCommendFromBaidu_8"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/c369624808/article/details/78474104" target="_blank" title="【十】机器学习之路——logistic回归python实现">
+				<h4 class="text-truncate oneline">
+						【十】<em>机器学习</em>之路——<em>logistic回归</em>python实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-08</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							791</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/c369624808/article/details/78474104" target="_blank" title="【十】机器学习之路——logistic回归python实现">
+							<span class="desc oneline">前面一个博客机器学习之路——logistic回归讲了logistic回归的理论知识，现在咱们来看一下logistic回归如何用python来实现，代码、数据参考《机器学习实战》。  首先看下我们要处理...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/c369624808">来自：	<span class="blog_title"> 蔡同学的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/jrunw/article/details/79205322,BlogCommendClickRateRank_9"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/jrunw/article/details/79205322" target="_blank" title="图解十大经典机器学习算法入门">
+				<h4 class="text-truncate oneline">
+						图解十大经典<em>机器学习</em>算法入门				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-30</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							5.9万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/jrunw/article/details/79205322" target="_blank" title="图解十大经典机器学习算法入门">
+							<span class="desc oneline">弱人工智能近几年取得了重大突破，悄然间，已经成为每个人生活中必不可少的一部分。以我们的智能手机为例，看看到底温藏着多少人工智能的神奇魔术。下图是一部典型的智能手机上安装的一些常见应用程序，可能很多人都...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/jrunw">来自：	<span class="blog_title"> jrunw的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+          <div class="recommend-item-box blog-expert-recommend-box">
+				<div class="d-flex">
+					<div class="blog-expert-recommend">
+						<div class="blog-expert">
+							<div class="blog-expert-flexbox"></div>
+						</div>
+					</div>
+				</div>
+      </div>
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/c406495762/article/details/78072313,BlogCommendClickRateRank_10"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/c406495762/article/details/78072313" target="_blank" title="Python3《机器学习实战》学习笔记（八）：支持向量机原理篇之手撕线性SVM">
+				<h4 class="text-truncate oneline">
+						<em>Python3</em>《<em>机器学习</em><em>实战</em>》<em>学习笔记</em>（八）：支持向量机原理篇之手撕线性SVM				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-23</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/c406495762/article/details/78072313" target="_blank" title="Python3《机器学习实战》学习笔记（八）：支持向量机原理篇之手撕线性SVM">
+							<span class="desc oneline">说来惭愧，断更快半个月了，本打算是一周一篇的。感觉SVM瞬间难了不少，推导耗费了很多时间，同时身边的事情也不少，忙了许久。本篇文章参考了诸多大牛的文章写成的，对于什么是SVM做出了生动的阐述，同时也进...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/c406495762">来自：	<span class="blog_title"> Jack-Cui</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/lcy7289786/article/details/68958324,BlogCommendClickRateRank_11"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/lcy7289786/article/details/68958324" target="_blank" title="《机器学习有意思！ 01》- 世界上最简单的机器学习入门">
+				<h4 class="text-truncate oneline">
+						《<em>机器学习</em>有意思！ 01》- 世界上最简单的<em>机器学习</em>入门				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-03</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							3.3万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/lcy7289786/article/details/68958324" target="_blank" title="《机器学习有意思！ 01》- 世界上最简单的机器学习入门">
+							<span class="desc oneline">本文首发于https://jizhi.im/blog/post/ml_is_fun_01你是否也曾听人们谈起机器学习但是只有一个朦胧的概念？你是否厌倦了在同事的高谈阔论中颓然欲睡？此诚求变之机。本教程...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/lcy7289786">来自：	<span class="blog_title"> 集智-人工智能，机器学习</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/hohaizx/article/details/80584307,BlogCommendClickRateRank_12"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/hohaizx/article/details/80584307" target="_blank" title="机器学习系列（一）——机器学习简介">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>系列（一）——<em>机器学习</em>简介				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-05</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1.4万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/hohaizx/article/details/80584307" target="_blank" title="机器学习系列（一）——机器学习简介">
+							<span class="desc oneline">前前后后接触机器学习也有一年时间，但一直没有系统整理总结过。从本篇博客开始，将记录下我的学习内容与参考资料，系列按照李宏毅的机器学习课程，吴恩达的机器学习课程和周志华的西瓜书为主线。发展历程\quad...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/hohaizx">来自：	<span class="blog_title"> zxhohai的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_28168421/article/details/81351321,BlogCommendClickRateRank_13"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_28168421/article/details/81351321" target="_blank" title="这可能是最简单易懂的机器学习入门（小白必读）">
+				<h4 class="text-truncate oneline">
+						这可能是最简单易懂的<em>机器学习</em>入门（小白必读）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-31</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1.1万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_28168421/article/details/81351321" target="_blank" title="这可能是最简单易懂的机器学习入门（小白必读）">
+							<span class="desc oneline">作者|LizzieTurner编译|专知翻译|Xiaowen本文用浅显易懂的语言精准概括了机器学习的相关知识，内容全面，总结到位，剖析了机器学习的what，......</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_28168421">来自：	<span class="blog_title"> 机器学习算法与Python学习</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/cqulun123/article/details/80552510,BlogCommendESEnWordWeight_14"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/cqulun123/article/details/80552510" target="_blank" title="机器学习实战笔记（六）：Logistic回归（Python3 实现）">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>笔记（六）：<em>Logistic回归</em>（<em>Python3</em> 实现）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-03</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							477</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/cqulun123/article/details/80552510" target="_blank" title="机器学习实战笔记（六）：Logistic回归（Python3 实现）">
+							<span class="desc oneline">1 Logistic回归介绍    假设现在有一些数据点，我们用一条直线对这些点进行拟合（该线称为最佳拟合直线），这个拟合过程就称作回归。利用Logistic回归进行分类的主要思想是：根据现有数据对分...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/cqulun123">来自：	<span class="blog_title"> cqulun123的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/sunjihoufeng/article/details/81006492,BlogCommendESEnWordWeight_15"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/sunjihoufeng/article/details/81006492" target="_blank" title="python与logistic回归">
+				<h4 class="text-truncate oneline">
+						python与<em>logistic回归</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-11</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							264</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/sunjihoufeng/article/details/81006492" target="_blank" title="python与logistic回归">
+							<span class="desc oneline">一、Logistic回归模型：二、Logistic回归建模步骤1. 根据分析目的设置指标变量（因变量和自变量），根据收集到的数据进行筛选2. 用ln(p/1-p)和自变量x1...xp列出线性回归方程...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/sunjihoufeng">来自：	<span class="blog_title"> sunjihoufeng的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/john_bh/article/details/78853057,BlogCommendESEnWordWeight_16"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/john_bh/article/details/78853057" target="_blank" title="《机器学习实战》学习笔记（四）之Logistic（下）Logistic回归实战之预测病马死亡率及使用Sklearn构建Logistic回归分类器">
+				<h4 class="text-truncate oneline">
+						《<em>机器学习</em><em>实战</em>》<em>学习笔记</em>（四）之Logistic（下）<em>Logistic回归</em><em>实战</em>之<em>预测</em>病马<em>死亡率</em>及使用Sklearn构建<em>Logistic回归</em>分类器				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-20</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							310</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/john_bh/article/details/78853057" target="_blank" title="《机器学习实战》学习笔记（四）之Logistic（下）Logistic回归实战之预测病马死亡率及使用Sklearn构建Logistic回归分类器">
+							<span class="desc oneline">转载请注明作者和出处：http://blog.csdn.net/john_bh/运行平台：WindowsPython版本：Python3.6IDE：Sublimetext3一从疝气病症状预测病马的死亡...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/john_bh">来自：	<span class="blog_title"> 不忘初心~</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/sun_shengyun/article/details/53811882,BlogCommendFromBaidu_17"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/sun_shengyun/article/details/53811882" target="_blank" title="线性收敛的随机优化算法之 SAG、SVRG（随机梯度下降）">
+				<h4 class="text-truncate oneline">
+						线性收敛的随机优化算法之 SAG、SVRG（随机梯度下降）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-22</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							7687</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/sun_shengyun/article/details/53811882" target="_blank" title="线性收敛的随机优化算法之 SAG、SVRG（随机梯度下降）">
+							<span class="desc oneline">原文出处：https://zhuanlan.zhihu.com/p/22402784?utm_source=tuicool&amp;utm_medium=referral这篇文章回顾了基于梯度的随机优化算法在...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/sun_shengyun">来自：	<span class="blog_title"> sun_shengyun的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/kicilove/article/details/76419215,BlogCommendFromBaidu_18"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/kicilove/article/details/76419215" target="_blank" title="根据成绩用Logistic Regression预测学生是否被高校录取--Python版">
+				<h4 class="text-truncate oneline">
+						根据成绩用Logistic Regression<em>预测</em>学生是否被高校录取--Python版				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-31</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1578</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/kicilove/article/details/76419215" target="_blank" title="根据成绩用Logistic Regression预测学生是否被高校录取--Python版">
+							<span class="desc oneline">每年高中生和大学生都会申请进入到各种各样的高校中去。每个学生都有一组唯一的考试分数，成绩和背景数据。录取委员会根据这个数据决定是否接受这些申请者。在这种情况下一个二元分类算法可用于接受或拒绝申请，逻辑...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/kicilove">来自：	<span class="blog_title"> kicilove的小屋</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/Eastmount/article/details/77920470,BlogCommendFromBaidu_19"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Eastmount/article/details/77920470" target="_blank" title="【python数据挖掘课程】十六.逻辑回归LogisticRegression分析鸢尾花数据">
+				<h4 class="text-truncate oneline">
+						【python数据挖掘课程】十六.逻辑回归LogisticRegression分析鸢尾花数据				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-10</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							9339</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Eastmount/article/details/77920470" target="_blank" title="【python数据挖掘课程】十六.逻辑回归LogisticRegression分析鸢尾花数据">
+							<span class="desc oneline">回归算法作为统计学中最重要的工具之一，它通过建立一个回归方程用来预测目标值，并求解这个回归方程的回归系数。本篇文章详细讲解了逻辑回归模型的原理知识，结合Sklearn机器学习库的LogisticReg...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Eastmount">来自：	<span class="blog_title"> 杨秀璋的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/shisibushiba/article/details/50812060,BlogCommendFromBaidu_20"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/shisibushiba/article/details/50812060" target="_blank" title="机器学习经典算法logistic回归">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>经典算法<em>logistic回归</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-06</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1004</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/shisibushiba/article/details/50812060" target="_blank" title="机器学习经典算法logistic回归">
+							<span class="desc oneline">一、算法简要    我们希望有这么一种函数：接受输入然后预测出类别，这样用于分类。这里，用到了数学中的sigmoid函数，sigmoid函数的具体表达式和函数图象如下：   可以较为清楚的看到，当输入...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/shisibushiba">来自：	<span class="blog_title"> 十四不是八的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_20186593/article/details/80286736,BlogCommendFromBaidu_21"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_20186593/article/details/80286736" target="_blank" title="Stochastic average gradient(SAG) 算法">
+				<h4 class="text-truncate oneline">
+						Stochastic average gradient(SAG) 算法				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-11</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							421</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_20186593/article/details/80286736" target="_blank" title="Stochastic average gradient(SAG) 算法">
+							<span class="desc oneline">Stochasticaveragegradient(SAG)介绍：在SGD中，由于收敛的速度太慢，所以后面就有人提出SAG基于梯度下降的算法。SAG中的S是随机（Stochastic），A是平均（av...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_20186593">来自：	<span class="blog_title"> qq_20186593的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_37928340/article/details/81095208,BlogCommendFromGuangxin_22"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_37928340/article/details/81095208" target="_blank" title="逻辑回归实例：从疝气病预测病马的死亡率">
+				<h4 class="text-truncate oneline">
+						逻辑回归实例：从疝气病<em>预测</em>病马的<em>死亡率</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-18</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							359</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_37928340/article/details/81095208" target="_blank" title="逻辑回归实例：从疝气病预测病马的死亡率">
+							<span class="desc oneline">  先了解大致模型建立的流程，接下来我会弄一些算法的原理及梯度上升的对比：数据有三部分：梯度算法公式： 附完整版代码： fromnumpyimport*importnumpyasnpdefloadDa...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_37928340">来自：	<span class="blog_title"> qq_37928340的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/rujin_shi/article/details/78997271,BlogCommendFromGuangxin_23"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/rujin_shi/article/details/78997271" target="_blank" title="《机器学习实战》5.Logistic回归源码实现">
+				<h4 class="text-truncate oneline">
+						《<em>机器学习</em><em>实战</em>》5.<em>Logistic回归</em>源码实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-07</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2685</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/rujin_shi/article/details/78997271" target="_blank" title="《机器学习实战》5.Logistic回归源码实现">
+							<span class="desc oneline">结合源码分析第五章中实现的Demo运行环境：Anaconda——JupyterNotebookPython版本为：3.6.2（原书代码实现为2.x所以在一些代码上略有改动）参考资料:Apachecn专...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/rujin_shi">来自：	<span class="blog_title"> rujin_shi的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u014258807/article/details/80616647,BlogCommendFromGuangxin_24"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u014258807/article/details/80616647" target="_blank" title="逻辑回归推导">
+				<h4 class="text-truncate oneline">
+						逻辑回归推导				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-09</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2245</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u014258807/article/details/80616647" target="_blank" title="逻辑回归推导">
+							<span class="desc oneline">   之前自学过机器学习的知识，后面看过GitHub上一些大佬分享的代码，也参加过一些比赛，虽然并没有取得什么成绩，但也算是长经验值了。现在，又重新翻看一遍机器学习书籍，希望通过博客的方式记录、加深自...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u014258807">来自：	<span class="blog_title"> 非科班的努力</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/hongbin_xu/article/details/77105000,BlogCommendFromGuangxin_25"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/hongbin_xu/article/details/77105000" target="_blank" title="机器学习入门学习笔记：（2.2）线性回归python程序实现">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>入门<em>学习笔记</em>：（2.2）线性回归python程序实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-12</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							986</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/hongbin_xu/article/details/77105000" target="_blank" title="机器学习入门学习笔记：（2.2）线性回归python程序实现">
+							<span class="desc oneline">上一篇博客中，推导了线性回归的公式，这次试着编程来实现它。（机器学习入门学习笔记：（2.1）线性回归理论推导）  我们求解线性回归的思路有两个：一个是直接套用上一篇博客最后推导出来的公式；另一个是使用...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/hongbin_xu">来自：	<span class="blog_title"> hongbin_xu的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/FanHuaSa/article/details/80843777,BlogCommendFromQuerySearch_26"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/FanHuaSa/article/details/80843777" target="_blank" title="使用Logistic回归预测病马的死亡率">
+				<h4 class="text-truncate oneline">
+						使用<em>Logistic回归</em><em>预测</em>病马的<em>死亡率</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-28</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							182</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/FanHuaSa/article/details/80843777" target="_blank" title="使用Logistic回归预测病马的死亡率">
+							<span class="desc oneline">1. 问题描述疝病是描述马胃肠痛的术语，然而，这种病不一定源自马的肠胃问题，其他问题也可能引发马疝病。由于马的身体指标测量参数十分多，同时对于预测结果仅需做出病马是否死亡这一二分的判断，Logisti...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/FanHuaSa">来自：	<span class="blog_title"> FanHuaSa的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix"  data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/qq_30091945/9822726,BlogCommendFromQuerySearch_27"}'>
+			<a href="https://download.csdn.net/download/qq_30091945/9822726" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							疝气症<em>预测</em>病马<em>死亡率</em>						</h4>
+						<span class="data float-right">04-23</span>
+					</div>
+					<div class="desc oneline">
+							这个压缩皮是利用Logistic回归预测疝气症预测病马死亡率的代码，以及相应的数据集					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/hujunyin/article/details/79489132,BlogCommendFromQuerySearch_28"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/hujunyin/article/details/79489132" target="_blank" title="机器学习实战--笔记7(Adaboost)">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>--笔记7(Adaboost)				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-08</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							167</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/hujunyin/article/details/79489132" target="_blank" title="机器学习实战--笔记7(Adaboost)">
+							<span class="desc oneline">1：简单概念描述&amp;amp;nbsp;&amp;amp;nbsp;&amp;amp;nbsp;&amp;amp;nbsp;&amp;amp;nbsp;&amp;amp;nbsp;Adaboost是一种弱学习算法到强学习算法，这里的弱和强学习算...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/hujunyin">来自：	<span class="blog_title"> hujunyin的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/weixin_40924580/article/details/82156897,BlogCommendFromQuerySearch_29"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/weixin_40924580/article/details/82156897" target="_blank" title="机器学习实战练习———logistic回归：疝气病预测病马死亡概率">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>练习———<em>logistic回归</em>：疝气病<em>预测</em>病马死亡概率				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-29</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							82</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/weixin_40924580/article/details/82156897" target="_blank" title="机器学习实战练习———logistic回归：疝气病预测病马死亡概率">
+							<span class="desc oneline">参考：https://blog.csdn.net/c406495762/article/details/77851973importnumpyasnpimportrandom'''sigmoid()函...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/weixin_40924580">来自：	<span class="blog_title"> 瑶子的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/heiheiya/article/details/83277101,BlogCommendFromQuerySearch_30"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/heiheiya/article/details/83277101" target="_blank" title="【机器学习】从疝气病症预测病马的死亡率">
+				<h4 class="text-truncate oneline">
+						【<em>机器学习</em>】从疝气病症<em>预测</em>病马的<em>死亡率</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-22</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							126</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/heiheiya/article/details/83277101" target="_blank" title="【机器学习】从疝气病症预测病马的死亡率">
+							<span class="desc oneline"> 理论请参考：机器学习-Logistic回归算法学习笔记defsigmoid(inX):return1.0/(1+exp(-inX))defstocGradAscent1(dataMatrix,cla...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/heiheiya">来自：	<span class="blog_title"> heiheiya的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/moxigandashu/article/details/72779856,BlogCommendFromBaidu_31"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/moxigandashu/article/details/72779856" target="_blank" title="机器学习之Logistic回归与Python实现">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>之<em>Logistic回归</em>与Python实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-01</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							5725</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/moxigandashu/article/details/72779856" target="_blank" title="机器学习之Logistic回归与Python实现">
+							<span class="desc oneline">logistic回归是一种广义的线性回归，通过构造回归函数，利用机器学习来实现分类或者预测。一Logistic回归概述1.1分类函数1.2Cost函数1.3梯度上升法求J(w)J(w)J(w)最大值二...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/moxigandashu">来自：	<span class="blog_title"> moxigandashu的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/chenge_j/article/details/71816402,BlogCommendFromBaidu_32"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/chenge_j/article/details/71816402" target="_blank" title="机器学习实战——python实现Logistic回归">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>——python实现<em>Logistic回归</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-13</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1226</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/chenge_j/article/details/71816402" target="_blank" title="机器学习实战——python实现Logistic回归">
+							<span class="desc oneline">简介Logistic回归的目的是寻找一个非线性函数Sigmoid的最佳拟合参数，一般使用梯度上升算法。对于有n个属性的train数据集(X1,X2,...Xn),我们寻找一组回归系数(W0,W1,W2...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/chenge_j">来自：	<span class="blog_title"> chenge_j的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/suiyingy/article/details/53123655,BlogCommendFromBaidu_33"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/suiyingy/article/details/53123655" target="_blank" title="Python Logistic 回归分类">
+				<h4 class="text-truncate oneline">
+						Python Logistic 回归分类				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-10</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1285</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/suiyingy/article/details/53123655" target="_blank" title="Python Logistic 回归分类">
+							<span class="desc oneline">Logistic回归可以认为是线性回归的延伸，其作用是对二分类样本进行训练，从而对达到预测新样本分类的目的。假设有一组已知分类的MxN维样本X，M为样本数，N为特征维度，其相应的已知分类标签为Mx1维...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/suiyingy">来自：	<span class="blog_title"> 叶子的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/baimafujinji/article/details/51151851,BlogCommendFromBaidu_34"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/baimafujinji/article/details/51151851" target="_blank" title="Python机器学习之Logistic回归">
+				<h4 class="text-truncate oneline">
+						Python<em>机器学习</em>之<em>Logistic回归</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-14</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1.7万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/baimafujinji/article/details/51151851" target="_blank" title="Python机器学习之Logistic回归">
+							<span class="desc oneline">大数据时代，数据犹如一座巨大的金矿，等待我们去发掘。而机器学习和数据挖掘的相关技术，无疑就是你挖矿探宝的必备利器！工欲善其事，必先利其器。很多初涉该领域的人，最先困惑的一个问题就是，我该选择哪种“工具...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/baimafujinji">来自：	<span class="blog_title"> 白马负金羁</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/woaidapaopao/article/details/51545014,BlogCommendFromBaidu_35"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/woaidapaopao/article/details/51545014" target="_blank" title="logistic回归和Python实现">
+				<h4 class="text-truncate oneline">
+						<em>logistic回归</em>和Python实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-31</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							3112</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/woaidapaopao/article/details/51545014" target="_blank" title="logistic回归和Python实现">
+							<span class="desc oneline">一、LogisticRegression的基本内容通过学习了台湾的林教授和Stanford的课程后发现，他们两个人的基本思路虽然一致，但是具体做法有所差异，下面简单介绍一下两种实现方式。1、台湾的林教...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/woaidapaopao">来自：	<span class="blog_title"> woaidapaopao的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident recommend-other-item-box"  data-track-click='{"mod":"popu_614","con":",https://edu.csdn.net/course/detail/10283,BlogCommendClickRateRank_36"}'>
+		<a href="https://edu.csdn.net/course/detail/10283" target="_blank">
+			<h4 class="text-truncate oneline">
+					AI开发者大会--<em>机器学习</em>工具专题			</h4>
+			<div class="info-box d-flex align-content-center">
+					<span class="date">11-28</span>
+			</div>
+			<p class="content oneline">
+        <span class="desc oneline">-</span>
+        			</p>
+		</a>
+
+	</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/GitChat/article/details/78526664,BlogCommendClickRateRank_37"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/GitChat/article/details/78526664" target="_blank" title="3分钟了解入门「机器学习」该学习什么？（下）">
+				<h4 class="text-truncate oneline">
+						3分钟了解入门「<em>机器学习</em>」该学习什么？（下）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-14</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							4194</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/GitChat/article/details/78526664" target="_blank" title="3分钟了解入门「机器学习」该学习什么？（下）">
+							<span class="desc oneline">本文来自作者 刘明 在 GitChat 上分享「机器学习/深度学习书单推荐及学习方法」，「阅读原文」查看交流实录「文末高能」编辑|坂本写在前面本人是个对数学和人工智能极其感兴趣的人。平时，我也在线上线...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/GitChat">来自：	<span class="blog_title"> GitChat技术杂谈</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_34993631/article/details/79320847,BlogCommendClickRateRank_38"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_34993631/article/details/79320847" target="_blank" title="台大林轩田机器学习基石学习笔记（一键直达）">
+				<h4 class="text-truncate oneline">
+						台大林轩田<em>机器学习</em>基石<em>学习笔记</em>（一键直达）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">02-13</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1720</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_34993631/article/details/79320847" target="_blank" title="台大林轩田机器学习基石学习笔记（一键直达）">
+							<span class="desc oneline">机器学习基石，从内核展示了机器学习原理是每个机器学习工程师必看的经典教程。还有就是林老师很帅！什么是机器学习？PLA算法机器学习的VC维度机器学习中的噪音机器学习中的错误衡量机器学习之线性回归机器学习...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_34993631">来自：	<span class="blog_title"> qq_34993631的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/weixin_41988628/article/details/80393147,BlogCommendClickRateRank_39"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/weixin_41988628/article/details/80393147" target="_blank" title="机器学习">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-21</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							641</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/weixin_41988628/article/details/80393147" target="_blank" title="机器学习">
+							<span class="desc oneline">目录机器学习及人工智能机器学习分类有监督学习无监督学习线性回归算法线性回归代价函数数学模型最小二乘法算法介绍数学原理高斯分布算法局限性梯度下降算法方向导数梯度数学原理单元算法实现多元算法实现矩阵迹算法...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/weixin_41988628">来自：	<span class="blog_title"> 爱吃串串的瘦子的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_33583069/article/details/52550320,BlogCommendClickRateRank_40"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_33583069/article/details/52550320" target="_blank" title="机器学习，深度学习等概念区别【转】">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>，深度学习等概念区别【转】				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-15</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2262</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_33583069/article/details/52550320" target="_blank" title="机器学习，深度学习等概念区别【转】">
+							<span class="desc oneline">1、人工智能-&gt;机器学习-&gt;深度学习  注：-&gt;包含关系2、机器学习领域：  模式识别＝机器学习  数据挖掘＝机器学习＋数据库  统计学习＝机器学习  计算机视觉＝图像处理＋机器学习  语音识别＝语音...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_33583069">来自：	<span class="blog_title"> DacingLink 生命的舞者，SkipList 灵魂的跳跃</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/MisterJiaJia/article/details/81169057,BlogCommendFromBaidu_41"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/MisterJiaJia/article/details/81169057" target="_blank" title="【Kaggle从入门到放弃】（02）：逻辑回归模型">
+				<h4 class="text-truncate oneline">
+						【Kaggle从入门到放弃】（02）：逻辑回归模型				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-23</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							255</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/MisterJiaJia/article/details/81169057" target="_blank" title="【Kaggle从入门到放弃】（02）：逻辑回归模型">
+							<span class="desc oneline">第一章Logisticregression（逻辑回归）吴恩达说：“逻辑回归算法是一种非常强大，甚至可能世界上使用最广泛的一种分类算法”。Logisticregression（逻辑回归），尽管它的名字是...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/MisterJiaJia">来自：	<span class="blog_title"> MisterJiaJia的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/weixin_42127577/article/details/80662883,BlogCommendFromBaidu_42"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/weixin_42127577/article/details/80662883" target="_blank" title="机器学习实战第五章LOGISTIC回归中出现weight.getA()">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>第五章<em>LOGISTIC回归</em>中出现weight.getA()				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-12</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							271</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/weixin_42127577/article/details/80662883" target="_blank" title="机器学习实战第五章LOGISTIC回归中出现weight.getA()">
+							<span class="desc oneline">描述：在pycharm控制台中输入logRegres.plotBestFit(weights.getA())，为什么需要加getA()呢？？？？不加会报错又是为什么呢？？？？对于x=[1.1,1.2,...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/weixin_42127577">来自：	<span class="blog_title"> weixin_42127577的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u010454729/article/details/48274955,BlogCommendFromBaidu_43"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u010454729/article/details/48274955" target="_blank" title="《机器学习实战》笔记之五——Logistic回归">
+				<h4 class="text-truncate oneline">
+						《<em>机器学习</em><em>实战</em>》笔记之五——<em>Logistic回归</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-07</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							3333</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u010454729/article/details/48274955" target="_blank" title="《机器学习实战》笔记之五——Logistic回归">
+							<span class="desc oneline">第五章Logistic回归回归：对一些数据点，算法训练出直线参数，得到最佳拟合直线，能够对这些点很好的拟合。训练分类器主要是寻找最佳拟合参数，故为最优化算法。5.1基于Logistic回归和sigmo...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u010454729">来自：	<span class="blog_title"> 无限大地NLP_空木的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u010665216/article/details/78309232,BlogCommendFromBaidu_44"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u010665216/article/details/78309232" target="_blank" title="Logistic Regression及python实现">
+				<h4 class="text-truncate oneline">
+						Logistic Regression及python实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-22</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							3569</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u010665216/article/details/78309232" target="_blank" title="Logistic Regression及python实现">
+							<span class="desc oneline">本文所有代码都是基于python3.6的，数据及源码下载：传送门引言本次分享，我们将介绍一个经典的二分类算法——逻辑回归。逻辑回归虽然不在十大数据挖掘算法之列，但是这个算法是机器学习从统计学领域借鉴的...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u010665216">来自：	<span class="blog_title"> OraYang的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/weixin_41090915/article/details/78876475,BlogCommendFromBaidu_45"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/weixin_41090915/article/details/78876475" target="_blank" title="机器学习-逻辑回归(python3代码实现)">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>-逻辑回归(<em>python3</em>代码实现)				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-22</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1122</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/weixin_41090915/article/details/78876475" target="_blank" title="机器学习-逻辑回归(python3代码实现)">
+							<span class="desc oneline">逻辑回归（Logisticregression）哈尔滨工程大学—537算法原理一、sigmoid函数线性回归是将一组输入映射为一个输出值：hθ(x)=θ0+θ1x1+θ1x2hθ(x)=θ0+θ1x1...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/weixin_41090915">来自：	<span class="blog_title"> 537云起云落</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/hiudawn/article/details/80218768,BlogCommendFromQuerySearch_46"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/hiudawn/article/details/80218768" target="_blank" title="python3机器学习实战adaboost预测马患病概率，ROC曲线绘制">
+				<h4 class="text-truncate oneline">
+						<em>python3</em><em>机器学习</em><em>实战</em>adaboost<em>预测</em>马患病概率，ROC曲线绘制				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-06</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							215</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/hiudawn/article/details/80218768" target="_blank" title="python3机器学习实战adaboost预测马患病概率，ROC曲线绘制">
+							<span class="desc oneline">介绍当做重要决定，大家都会吸取多个专家的决定。机器学习也有类似的方法，即元算法或者集成方法，其是组合其他算法，结合而成的一直复合方法，当然也可以是同一种算法在不同设置下的集成。bagging:自举汇聚...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/hiudawn">来自：	<span class="blog_title"> hiudawn</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/shenliwuji/article/details/54718718,BlogCommendFromQuerySearch_47"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/shenliwuji/article/details/54718718" target="_blank" title="机器学习-Logistic回归之使用随机梯度上升算法预测病马死亡率">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>-<em>Logistic回归</em>之使用随机梯度上升算法<em>预测</em>病马<em>死亡率</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-24</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							336</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/shenliwuji/article/details/54718718" target="_blank" title="机器学习-Logistic回归之使用随机梯度上升算法预测病马死亡率">
+							<span class="desc oneline">运行环境：ubuntu16.10+MATLAB2016a数据集：该数据集来自2010年1月11日的UCI机器学习数据库，该数据最早由加拿大安大略省圭尔夫大学计算机系MaryMcLeish和MattCe...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/shenliwuji">来自：	<span class="blog_title"> smartkai的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix"  data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/qq_40006058/10204629,BlogCommendFromQuerySearch_48"}'>
+			<a href="https://download.csdn.net/download/qq_40006058/10204629" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							Logistic regression.rar						</h4>
+						<span class="data float-right">01-14</span>
+					</div>
+					<div class="desc oneline">
+							针对《机器学习实战》，logistics回归python代码，知识点，疝气病症预测病马死亡率测试集训练集					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix"  data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/u012494321/10814124,BlogCommendFromQuerySearch_49"}'>
+			<a href="https://download.csdn.net/download/u012494321/10814124" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							<em>Logistic回归</em>算法						</h4>
+						<span class="data float-right">11-28</span>
+					</div>
+					<div class="desc oneline">
+							资源包含Logistic回归算法，以及一个应用实例：预测病马死亡率。可直接执行。					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/wuchengzeng/article/details/50037611,BlogCommendHotData_0"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/wuchengzeng/article/details/50037611" target="_blank" title="jquery/js实现一个网页同时调用多个倒计时(最新的)">
+				<h4 class="text-truncate oneline">
+						jquery/js实现一个网页同时调用多个倒计时(最新的)				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-25</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							62952</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/wuchengzeng/article/details/50037611" target="_blank" title="jquery/js实现一个网页同时调用多个倒计时(最新的)">
+							<span class="desc oneline">jquery/js实现一个网页同时调用多个倒计时(最新的)
+
+最近需要网页添加多个倒计时. 查阅网络,基本上都是千遍一律的不好用. 自己按需写了个.希望对大家有用. 有用请赞一个哦!
+
+
+
+//js
+...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/wuchengzeng">来自：	<span class="blog_title"> websites</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/roguesir/article/details/77104246,BlogCommendHotData_1"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/roguesir/article/details/77104246" target="_blank" title="人脸检测工具face_recognition的安装与应用">
+				<h4 class="text-truncate oneline">
+						人脸检测工具face_recognition的安装与应用				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-11</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							20086</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/roguesir/article/details/77104246" target="_blank" title="人脸检测工具face_recognition的安装与应用">
+							<span class="desc oneline">人脸检测工具face_recognition的安装与应用</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/roguesir">来自：	<span class="blog_title"> roguesir的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/gefangshuai/article/details/50328451,BlogCommendHotData_2"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/gefangshuai/article/details/50328451" target="_blank" title="关于SpringBoot bean无法注入的问题（与文件包位置有关）">
+				<h4 class="text-truncate oneline">
+						关于SpringBoot bean无法注入的问题（与文件包位置有关）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-16</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							70068</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/gefangshuai/article/details/50328451" target="_blank" title="关于SpringBoot bean无法注入的问题（与文件包位置有关）">
+							<span class="desc oneline">问题场景描述整个项目通过Maven构建，大致结构如下：
+核心Spring框架一个module spring-boot-base
+service和dao一个module server-core
+提供系统...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/gefangshuai">来自：	<span class="blog_title"> 开发随笔</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/Tiaaaaa/article/details/58116346,BlogCommendHotData_3"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Tiaaaaa/article/details/58116346" target="_blank" title="R语言逻辑回归、ROC曲线和十折交叉验证">
+				<h4 class="text-truncate oneline">
+						R语言逻辑回归、ROC曲线和十折交叉验证				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">02-27</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							20060</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Tiaaaaa/article/details/58116346" target="_blank" title="R语言逻辑回归、ROC曲线和十折交叉验证">
+							<span class="desc oneline">自己整理编写的逻辑回归模板，作为学习笔记记录分享。数据集用的是14个自变量Xi，一个因变量Y的australian数据集。
+
+
+1. 测试集和训练集3、7分组
+australian ...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Tiaaaaa">来自：	<span class="blog_title"> Tiaaaaa的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq574857122/article/details/16361033,BlogCommendHotData_4"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq574857122/article/details/16361033" target="_blank" title="强连通分量及缩点tarjan算法解析">
+				<h4 class="text-truncate oneline">
+						强连通分量及缩点tarjan算法解析				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-16</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							184795</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq574857122/article/details/16361033" target="_blank" title="强连通分量及缩点tarjan算法解析">
+							<span class="desc oneline">强连通分量：
+简言之 就是找环（每条边只走一次，两两可达）
+孤立的一个点也是一个连通分量 
+ 
+使用tarjan算法 在嵌套的多个环中优先得到最大环( 最小环就是每个孤立点）
+ 
+定义：
+int Ti...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq574857122">来自：	<span class="blog_title"> 九野的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+        <div class="recommend-item-box type_hot_word">
+            <div class="content clearfix">
+        <div class="word float-left">
+                          <span>
+            <a href="https://edu.csdn.net/courses/o5329_s5330_k " target="_blank">
+            机器学习          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/course/play/8211/168777 " target="_blank">
+            tensorflow预测分类          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/combos/o5329_s5330_l0_t " target="_blank">
+            机器学习学习          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/courses/o5329_s5330_k " target="_blank">
+            机器学习培训          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/courses/o5329_s5330_k " target="_blank">
+            机器学习课程          </a></span>
+                        </div>
+      </div>
+                  <div class="content clearfix">
+        <div class="float-left">
+                  <span>
+            <a href="https://www.csdn.net/gather_2a/MtTaUg1sODItYmxvZwO0O0OO0O0O.html" target="_blank">
+            c#机器学习实战</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_24/NtzaUg0sMzk3LWJsb2cO0O0O.html" target="_blank">
+            bootstrap4学习笔记</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_2d/MtTaMgysMzI3LWJsb2cO0O0O.html" target="_blank">
+            c++求死亡率</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_26/NtzaQg2sMDA5LWJsb2cO0O0O.html" target="_blank">
+            bootstrap 学习笔记</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_28/MtTaUg3sNjA3LWJsb2cO0O0O.html" target="_blank">
+            c# 七参数计算</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_4a/NtTacgysMi1lZHUO0O0O.html" target="_blank">
+            机器学习实战python实现</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_4a/MtjaggxsOS1lZHUO0O0O.html" target="_blank">
+            机器学习预测年龄python</a>
+          </span>
+                </div>
+      </div>
+          </div>
+
+
+            <div class="recommend-loading-box">
+                <img src='https://csdnimg.cn/release/phoenix/images/feedLoading.gif'>
+            </div>
+            <div class="recommend-end-box">
+                <p class="text-center">没有更多推荐了，<a href="https://blog.csdn.net/" class="c-blue c-blue-hover c-blue-focus">返回首页</a></p>
+            </div>
+        </div>
+    </main>
+
+    <aside>
+		    <div id="asideProfile" class="aside-box">
+    <!-- <h3 class="aside-title">个人资料</h3> -->
+    <div class="profile-intro d-flex">
+        <div class="avatar-box d-flex justify-content-center flex-column">
+            <a href="https://blog.csdn.net/c406495762">
+                <img src="https://avatar.csdn.net/F/1/C/3_c406495762.jpg" class="avatar_pic">
+            </a>
+              <div style="position: absolute;width: 48px;height: 63px;top: -17px;overflow: hidden;box-sizing: content-box;">
+                <div class="rotate-memberhead" style="position: absolute;top: 0;width: 48px;height: 81px;transition: transform .5s ease-out;/* transform: rotate(-180deg); */z-index: 1;">
+                  <img class="memberhead" style="display:none;top: 62px;transform: rotate(-180deg);" src="https://csdnimg.cn/release/phoenix/static_blog/images/pig.png" alt="">
+                                    <svg id="csdnc-memberhead" style="top: -1px;" viewBox="0 0 1303 1024"><path d="M1129.770822 419.281455A93.090909 93.090909 0 1 1 1210.201367 465.454545h-2.141091l-56.971636 478.952728c-5.399273 45.242182-46.731636 79.592727-95.790545 79.592727H249.875549c-48.965818 0-90.112-34.164364-95.697454-79.406545L95.34464 465.454545H93.110458a93.090909 93.090909 0 1 1 80.337455-46.08l229.189818 142.056728 187.485091-398.429091A93.184 93.184 0 0 1 651.655913 0a93.090909 93.090909 0 0 1 61.160727 163.281455l187.485091 398.149818 229.469091-142.149818z" fill="#FDD840"></path><path d="M1117.110458 372.363636a93.090909 93.090909 0 1 1 93.090909 93.090909h-2.141091l-56.971636 478.952728c-5.399273 45.242182-46.731636 79.592727-95.790545 79.592727H652.586822C651.935185 845.451636 651.655913 504.087273 651.655913 0a93.090909 93.090909 0 0 1 61.160727 163.281455l187.485091 398.149818 229.469091-142.149818A93.090909 93.090909 0 0 1 1117.110458 372.363636z" fill="#FFBE00"></path></svg>
+                                  </div>
+                <script type="text/javascript">
+                  $(function(){
+                    if($('#csdnc-memberhead').length){
+                      $(document).on('click','.memberhead, #csdnc-memberhead',function(){
+                        if($(this).hasClass('memberhead')){
+                          $('.rotate-memberhead').css({'transform': 'rotate(0deg)'})
+                          $('.memberhead').fadeOut()
+                        }else{
+                          $('.rotate-memberhead').css({'transform': 'rotate(-180deg)'})
+                          $('.memberhead').fadeIn()
+                        }
+                      })
+                    }else{
+                      $('.rotate-memberhead').css({'transform': 'rotate(-180deg)'})
+                      $('.memberhead').fadeIn()
+                    }
+                  })
+                </script>
+              </div>
+        </div>
+        <div class="user-info d-flex justify-content-center flex-column">
+            <p class="name csdn-tracking-statistics tracking-click" data-mod="popu_379">
+                <a href="https://blog.csdn.net/c406495762" target="_blank" class="" id="uid">Jack-Cui</a>
+            </p>
+                          <p class="flag expert">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#csdnc-blogexpert"></use>
+                </svg>
+                博客专家
+              </p>
+                    </div>
+                <div class="opt-box d-flex justify-content-center flex-column">
+            <span  class="csdn-tracking-statistics tracking-click" data-mod="popu_379">
+                <a class="btn btn-sm btn-red-hollow attention" id="btnAttent">关注</a>
+            </span>
+        </div>
+            </div>
+    <div class="data-info d-flex item-tiling">
+                <dl class="text-center" title="107">
+                        <dt><a href="https://blog.csdn.net/c406495762?t=1">原创</a></dt>
+            <dd><a href="https://blog.csdn.net/c406495762?t=1"><span class="count">107</span></a></dd>
+                    </dl>
+        <dl class="text-center" id="fanBox" title="6001">
+            <dt>粉丝</dt>
+            <dd><span class="count" id="fan">6001</span></dd>
+        </dl>
+        <dl class="text-center" title="1688">
+            <dt>喜欢</dt>
+            <dd><span class="count">1688</span></dd>
+        </dl>
+        <dl class="text-center" title="1979">
+            <dt>评论</dt>
+            <dd><span class="count">1979</span></dd>
+        </dl>
+    </div>
+    <div class="grade-box clearfix">
+        <dl>
+            <dt>等级：</dt>
+            <dd>
+                <a href="https://blog.csdn.net/home/help.html#level" title="6级,点击查看等级说明" target="_blank">
+                    <svg class="icon icon-level" aria-hidden="true">
+                        <use xlink:href="#csdnc-bloglevel-6"></use>
+                    </svg>
+                </a>
+            </dd>
+        </dl>
+        <dl>
+            <dt>访问：</dt>
+            <dd title="1266296">
+                126万+            </dd>
+        </dl>
+        <dl>
+            <dt>积分：</dt>
+            <dd title="8761">
+                8761            </dd>
+        </dl>
+        <dl title="3481">
+            <dt>排名：</dt>
+            <dd>3481</dd>
+        </dl>
+    </div>
+        <div class="badge-box d-flex">
+        <span>勋章：</span>
+                <div class="icon-badge" title="专栏达人">
+            <div class="mouse-box">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#csdnc-m-columns"></use>
+                </svg>
+                <div class="icon-arrow"></div>
+            </div>
+            <div class="grade-detail-box">
+                <div class="pos-box">
+                    <div class="left-box d-flex justify-content-center align-items-center flex-column">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#csdnc-m-columns"></use>
+                        </svg>
+                        <p>专栏达人</p>
+                    </div>
+                    <div class="right-box d-flex justify-content-center align-items-center">
+                        授予成功创建个人博客专栏的用户。专栏中添加五篇以上博文即可点亮！撰写博客专栏浓缩技术精华，专栏达人就是你！
+                    </div>
+                </div>
+            </div>
+        </div>
+                        <div class="icon-badge" title="持之以恒">
+            <div class="mouse-box">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#csdnc-m-lasting"></use>
+                </svg>
+                <div class="icon-arrow"></div>
+            </div>
+            <div class="grade-detail-box">
+                <div class="pos-box">
+                    <div class="left-box d-flex justify-content-center align-items-center flex-column">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#csdnc-m-lasting"></use>
+                        </svg>
+                        <p>持之以恒</p>
+                    </div>
+                    <div class="right-box d-flex justify-content-center align-items-center">
+                        授予每个自然月内发布4篇或4篇以上原创或翻译IT博文的用户。不积跬步无以至千里，不积小流无以成江海，程序人生的精彩需要坚持不懈地积累！
+                    </div>
+                </div>
+            </div>
+        </div>
+                                                <script>
+            (function ($) {
+                setTimeout(function(){
+                    $('div.icon-badge.show-moment').removeClass('show-moment');
+                }, 5000);
+            })(window.jQuery)
+        </script>
+    </div>
+    </div>
+		    		    <!--自定义模块-->
+<div id="asideCustom60787210" class="aside-box custom-box">
+    <h3 class="aside-title">关于</h3>
+    <div class="aside-content clearfix">
+        <strong>微信公众号</strong>
+<img src="https://ww2.sinaimg.cn/large/0072Lfvtly1fxuhd2t2jqj309k09kglk.jpg" width="250" height="250">
+<strong>QQ交流群</strong>
+<div>Coder：328127489（满）</div>
+<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=f7f3508b9c23f6bc7d117ea2f9dc088d166b1053c4bc786fe4badec36b0df8ea"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="Coder" title="Coder"></a>
+<div>Coder2：868084847</div>
+<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=c720c839143ce211b656f9a810e4a6ed04d1332a430da993df1734e67c0db73d"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="Coder-2" title="Coder-2"></a>
+</ul>
+<ul xss=removed>
+<strong>其他</strong>
+<div>个人网站(<font color="red">文章首发</font>) : </div>
+<div><a href="https://cuijiahua.com/" rel="me follow" target="_black">https://cuijiahua.com</a>
+</div>
+<div>Github : </div>
+<div><a href="https://github.com/Jack-Cherish" target="_black">https://github.com/Jack-Cheris</a>
+</div>
+<div>知乎： </div>
+<div><a href="https://www.zhihu.com/people/Jack--Cui/" target="_black">https://www.zhihu.com/people/Jack--Cui/</a>
+</div>
+</ul>
+    </div>
+</div>
+		    <div id="asideNewArticle" class="aside-box">
+    <h3 class="aside-title">最新文章</h3>
+    <div class="aside-content">
+        <ul class="inf_list clearfix csdn-tracking-statistics tracking-click" data-mod="popu_382">
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/82967529" target="_blank">Python3《机器学习实战》学习笔记（十二）：线性回归提高篇之乐高玩具套件二手价预测</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/79984221" target="_blank">2018年春招实习面试经验总结</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/79247243" target="_blank">剑指Offer系列刷题笔记汇总</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/78979946" target="_blank">程序员内功：八大排序算法</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/78760239" target="_blank">Python3《机器学习实战》学习笔记（十一）：线性回归基础篇之预测鲍鱼年龄</a>
+            </li>
+                    </ul>
+    </div>
+</div>
+		    <div id="asideColumn" class="aside-box">
+    <h3 class="aside-title">博主专栏</h3>
+    <div class="aside-content">
+        <ul class="column-box csdn-tracking-statistics tracking-click" data-mod="popu_520" >
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/15321">
+                            <img src="https://img-blog.csdn.net/20170421162245548?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/15321">Python3网络爬虫入门</a></p>
+                        <div class="data">文章数：<span class="count">15 篇</span> 访问量：<span>706243</span></div>
+                    </div>
+                </li>
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/15390">
+                            <img src="https://img-blog.csdn.net/20170510181713373?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/15390">Caffe入门教程</a></p>
+                        <div class="data">文章数：<span class="count">8 篇</span> 访问量：<span>63288</span></div>
+                    </div>
+                </li>
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/15522">
+                            <img src="https://img-blog.csdn.net/20170510095831800?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/15522">Jeston TX1入门教程</a></p>
+                        <div class="data">文章数：<span class="count">6 篇</span> 访问量：<span>63169</span></div>
+                    </div>
+                </li>
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/15523">
+                            <img src="https://img-blog.csdn.net/20170510181945953?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/15523">LeetCode</a></p>
+                        <div class="data">文章数：<span class="count">23 篇</span> 访问量：<span>25954</span></div>
+                    </div>
+                </li>
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/16415">
+                            <img src="https://img-blog.csdn.net/20170717161641862?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/16415">Python3机器学习</a></p>
+                        <div class="data">文章数：<span class="count">12 篇</span> 访问量：<span>212030</span></div>
+                    </div>
+                </li>
+                    </ul>
+    </div>
+    </div>
+		    <div id="asideCategory" class="aside-box flexible-box">
+    <h3 class="aside-title">个人分类</h3>
+    <div class="aside-content">
+        <ul>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/7029976">
+                    <span class="title oneline">机器学习</span>
+                    <span class="count float-right">12篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6144934">
+                    <span class="title oneline">Python</span>
+                    <span class="count float-right">27篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6816210">
+                    <span class="title oneline">Caffe</span>
+                    <span class="count float-right">9篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6134244">
+                    <span class="title oneline">嵌入式</span>
+                    <span class="count float-right">12篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6133011">
+                    <span class="title oneline">C/C++</span>
+                    <span class="count float-right">18篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6718576">
+                    <span class="title oneline">LeetCode</span>
+                    <span class="count float-right">23篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6541830">
+                    <span class="title oneline">STM32</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6391075">
+                    <span class="title oneline">Java</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6796780">
+                    <span class="title oneline">OpenCV</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6964968">
+                    <span class="title oneline">程序人生</span>
+                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/7383243">
+                    <span class="title oneline">算法</span>
+                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                    </ul>
+    </div>
+        <p class="text-center">
+        <a class="btn btn-link-blue flexible-btn" data-fbox="aside-archive">展开</a>
+    </p>
+    </div>
+		    <div id="asideArchive" class="aside-box flexible-box">
+    <h3 class="aside-title">归档</h3>
+    <div class="aside-content">
+        <ul class="archive-list">
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2018/10">
+                    2018年10月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2018/04">
+                    2018年4月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2018/02">
+                    2018年2月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2018/01">
+                    2018年1月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/12">
+                    2017年12月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/10">
+                    2017年10月                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/09">
+                    2017年9月                    <span class="count float-right">5篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/08">
+                    2017年8月                    <span class="count float-right">4篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/07">
+                    2017年7月                    <span class="count float-right">7篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/06">
+                    2017年6月                    <span class="count float-right">4篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/05">
+                    2017年5月                    <span class="count float-right">10篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/04">
+                    2017年4月                    <span class="count float-right">16篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/03">
+                    2017年3月                    <span class="count float-right">14篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/02">
+                    2017年2月                    <span class="count float-right">5篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/12">
+                    2016年12月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/11">
+                    2016年11月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/08">
+                    2016年8月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/07">
+                    2016年7月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/04">
+                    2016年4月                    <span class="count float-right">12篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/03">
+                    2016年3月                    <span class="count float-right">19篇</span>
+                </a>
+            </li>
+                    </ul>
+    </div>
+        <p class="text-center">
+        <a class="btn btn-link-blue flexible-btn" data-fbox="aside-archive">展开</a>
+    </p>
+    </div>
+		    <div id="asideHotArticle" class="aside-box">
+	<h3 class="aside-title">热门文章</h3>
+	<div class="aside-content">
+		<ul class="hotArticle-list csdn-tracking-statistics tracking-click" data-mod="popu_521">
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/58716886">Python3网络爬虫(一)：利用urllib进行简单的网页抓取</a>
+					<p class="read">阅读数 <span>150910</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/60137956">Python3网络爬虫(四)：使用User Agent和代理IP隐藏身份</a>
+					<p class="read">阅读数 <span>73717</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/75172850">Python3《机器学习实战》学习笔记（一）：k-近邻算法(史诗级干货长文)</a>
+					<p class="read">阅读数 <span>69350</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/69817490">Python3网络爬虫(六)：Python3使用Cookie-模拟登陆获取妹子联系方式</a>
+					<p class="read">阅读数 <span>68621</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/71334633">Python3网络爬虫(八)：爱奇艺等主流视频网站的VIP视频破解(在线观看+视频下载)</a>
+					<p class="read">阅读数 <span>65659</span></p>
+				</li>
+					</ul>
+	</div>
+</div>
+		    <div id="asideNewComments" class="aside-box">
+    <h3 class="aside-title">最新评论</h3>
+    <div class="aside-content">
+        <ul class="newcomment-list">
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/77723333#comments">Python3《机器学习实战》学习...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/weixin_41792829" class="user-name" target="_blank">weixin_41792829</a>：[reply]m0_37723350[/reply]
+weights=ones((n,1))  w...                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/77723333#comments">Python3《机器学习实战》学习...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/weixin_41792829" class="user-name" target="_blank">weixin_41792829</a>：[reply]weixin_43179017[/reply]
+b站和网易云课堂都有                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/77723333#comments">Python3《机器学习实战》学习...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/weixin_41792829" class="user-name" target="_blank">weixin_41792829</a>：为什么计算y=(-weights[0]-weights[1]*x)/weights[2]的时候要除...                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/78123502#comments">Python3网络爬虫快速入门实战...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/qq_41531835" class="user-name" target="_blank">qq_41531835</a>：[reply]Elucidator[/reply]
+需要用encoding将他改成utf-8的格式                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/71158264#comments">Python3网络爬虫(七)：使用...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/qq_37016255" class="user-name" target="_blank">qq_37016255</a>：[code=python]
+ #找到《一念永恒》正文卷,使能标志位
+            if ...                </p>
+            </li>
+                    </ul>
+    </div>
+</div>
+		<div id="asideFooter">
+				<div class="aside-box">
+			<div class="persion_article">
+			</div>
+		</div>
+	</div>
+</aside>
+<script src="https://csdnimg.cn/pubfooter/js/publib_footer-1.0.3.js" data-isfootertrack="false" type="text/javascript"></script>
+<script>
+	$("a.flexible-btn").click(function(){
+		$(this).parents('div.aside-box').removeClass('flexible-box');
+		$(this).remove();
+	})
+</script>
+</div>
+<div class="mask-dark"></div>
+<div class="tool-box">
+	<ul class="meau-list">
+		<li class="btn-like-box long-width">
+			<button class=" long-height hover-box btn-like " title="点赞">
+				<svg class="icon active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-thumbsup-ok"></use>
+				</svg>
+				<svg class="icon no-active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-thumbsup"></use>
+				</svg>
+				<span class="hover-show text-box text">
+					<span class="no-active">点赞</span>
+					<span class="active">取消点赞</span>
+				</span>
+				<p>24</p>
+			</button>
+		</li>
+		<li class="">
+						<a class="btn-comments long-height hover-box" title="写评论" href="#commentBox">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-comments"></use>
+				</svg>
+				<span class="hover-show text">评论</span>
+				<p class="">
+						19				</p>
+			</a>
+		</li>
+		<li class="toc-container-box" id="liTocBox">
+			<button class="btn-toc low-height hover-box" title="目录">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-contents"></use>
+				</svg>
+				<span class="hover-show text">目录</span>
+			</button>
+			<div class="toc-container">
+				<div class="pos-box">
+					<div class="icon-arrow"></div>
+					<div class="scroll-box">
+						<div class="toc-box"></div>
+					</div>
+				</div>
+				<div class="opt-box">
+					<button class="btn-opt prev nomore" title="向上">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#csdnc-chevronup"></use>
+						</svg>
+					</button>
+					<button class="btn-opt next">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#csdnc-chevrondown"></use>
+						</svg>
+					</button>
+				</div>
+			</div>
+		</li>
+		<li>
+			<button class="btn-bookmark low-height hover-box" title="收藏">
+				<svg class="icon active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-bookmark-ok"></use>
+				</svg>
+				<svg class="icon no-active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-bookmark"></use>
+				</svg>
+					<span class="hover-show text">收藏</span>
+				<!-- <span class="hover-show text-box text">
+					<span class="no-active">收藏</span>
+					<span class="active">取消收藏</span>
+				</span> -->
+			</button>
+		</li>
+		<li class="bdsharebuttonbox">
+			<div class="weixin-qr btn-comments low-height hover-box" >
+        <a href="#" class="bds_weixin clear-share-style" data-cmd="weixin" title="手机看"></a>
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-usephone"></use>
+				</svg>
+				<span class="hover-show text text3">
+					手机看
+				</span>
+			</div>
+		</li>
+							<li class="widescreen-hide">
+				<a class="btn-comments low-height hover-box" href="https://blog.csdn.net/c406495762/article/details/77801899" title="Python3网络爬虫(十四)：跟股神巴菲特学习炒股之财务报表入库(MySQL)">
+					<svg class="icon hover-hide" aria-hidden="true">
+						<use xlink:href="#csdnc-chevronleft"></use>
+					</svg>
+					<span class="hover-show text text3">上一篇</span>
+				</a>
+			</li>
+								<li class="widescreen-hide">
+			<a class="btn-comments hover-box low-height" href="https://blog.csdn.net/c406495762/article/details/77983984" title="Sublime Text3 3143 注册码，亲测可用！">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-chevronright"></use>
+				</svg>
+				<span class="hover-show text text3">下一篇</span>
+			</a>
+		</li>
+						<!-- 宽屏更多按钮 -->
+		<li class="widescreen-more">
+			<a class="btn-comments chat-ask-button low-height hover-box" title="快问" href="#chatqa">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-more"></use>
+				</svg>
+				<span class="hover-show text">更多</span>
+				
+			</a>
+			<ul class="widescreen-more-box">
+													<li class="widescreen-more">
+						<a class="btn-comments low-height hover-box" href="https://blog.csdn.net/c406495762/article/details/77801899" title="Python3网络爬虫(十四)：跟股神巴菲特学习炒股之财务报表入库(MySQL)">
+							<svg class="icon hover-hide" aria-hidden="true">
+								<use xlink:href="#csdnc-chevronleft"></use>
+							</svg>
+							<span class="hover-show text text3">上一篇</span>
+						</a>
+					</li>
+																<li class="widescreen-more">
+					<a class="btn-comments hover-box low-height" href="https://blog.csdn.net/c406495762/article/details/77983984" title="Sublime Text3 3143 注册码，亲测可用！">
+						<svg class="icon hover-hide" aria-hidden="true">
+							<use xlink:href="#csdnc-chevronright"></use>
+						</svg>
+						<span class="hover-show text text3">下一篇</span>
+					</a>
+				</li>
+							</ul>
+		</li>
+	</ul>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'https://csdnimg.cn/static/api/js/share.js?v=89860594'];</script>
+<script>
+    var recommendCount = 55;
+    recommendCount = recommendCount > 1 ? (recommendCount + (recommendCount>6 ? 2 : 1)) : recommendCount;
+    var articleTit = articleTitles;
+    var ChannelId = 28;
+    var articleId = "77851973";
+    var commentscount = 19;
+    var islock = false;
+    var curentUrl = "https://blog.csdn.net/c406495762/article/details/77851973";
+    var myUrl = "https://my.csdn.net/";
+    //1禁止评论，2正常
+    var commentAuth = 2;
+    //百度搜索
+    var baiduKey = "Python3《机器学习实战》学习笔记（七）：Logistic回归实战篇之预测病马死亡率 - Jack-Cui";
+    var needInsertBaidu = true;
+    // 代码段样式
+    var codeStyle = 'atom-one-dark';
+		var highlight = ["python3","\u673a\u5668\u5b66\u4e60","\u5b9e\u6218","\u5b66\u4e60\u7b14\u8bb0","logistic\u56de\u5f52","\u5b9e\u6218\u7bc7","\u9884\u6d4b","\u6b7b\u4ea1\u7387"];//高亮数组
+		// 相关推荐博主数据
+    var RecommendBlogExpertList = [{"user_name":"c406495762","nick_name":"Jack-Cui","avatar":"https:\/\/avatar.csdn.net\/F\/1\/C\/3_c406495762.jpg","is_expert":true,"article_count":107,"rank":"3000+"},{"user_name":"ztf312","nick_name":"CS\u9752\u96c0","avatar":"https:\/\/avatar.csdn.net\/4\/E\/E\/3_ztf312.jpg","is_expert":true,"article_count":519,"rank":"1000+"},{"user_name":"hujunyin","nick_name":"Damahuhu","avatar":"https:\/\/avatar.csdn.net\/3\/7\/3\/3_hujunyin.jpg","is_expert":false,"article_count":36,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"weixin_40924580","nick_name":"\u7476\u5b50ove","avatar":"https:\/\/avatar.csdn.net\/9\/4\/1\/3_weixin_40924580.jpg","is_expert":false,"article_count":115,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"heiheiya","nick_name":"heiheiya","avatar":"https:\/\/avatar.csdn.net\/F\/1\/A\/3_heiheiya.jpg","is_expert":false,"article_count":241,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"hiudawn","nick_name":"hiudawn","avatar":"https:\/\/avatar.csdn.net\/6\/3\/C\/3_hiudawn.jpg","is_expert":false,"article_count":92,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"shenliwuji","nick_name":"Kai_0121","avatar":"https:\/\/avatar.csdn.net\/F\/9\/5\/3_shenliwuji.jpg","is_expert":false,"article_count":5,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"elite666","nick_name":"elite666","avatar":"https:\/\/avatar.csdn.net\/8\/C\/0\/3_elite666.jpg","is_expert":false,"article_count":69,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"u011475210","nick_name":"WordZzzz","avatar":"https:\/\/avatar.csdn.net\/A\/8\/E\/3_u011475210.jpg","is_expert":false,"article_count":173,"rank":"5000+"},{"user_name":"u013829973","nick_name":"weepon","avatar":"https:\/\/avatar.csdn.net\/7\/F\/8\/3_u013829973.jpg","is_expert":false,"article_count":22,"rank":"\u5343\u91cc\u4e4b\u5916"}];
+	var articleType = 1;
+	var CopyrightContent = '本文为博主原创文章，未经博主允许不得转载。个人网站：http://cuijiahua.com。';
+</script>
+<script src="https://csdnimg.cn/public/sandalstrap/1.4/js/sandalstrap.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.js"></script>
+<script src='https://csdnimg.cn/public/common/gotop/js/goTop-v1.0.min.js?v201811201455'></script>
+<script>
+    GoTop({
+        right: 8,
+        hasReport: true,
+        reportFun: function() {
+            showReport(false,articleTit);
+        }
+    })
+</script>
+
+<script src="//g.csdnimg.cn/baidu-search/1.0.0/baidu-search.js"  type="text/javascript"></script>
+
+</body>
+
+<!-- 高亮未与 markdown兼容  -->
+	<link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.3.7/ckeditor/plugins/codesnippet/lib/highlight/styles/atom-one-dark.css">
+	<script type="text/javascript" src="https://csdnimg.cn/release/phoenix/production/pc_wap_common-98040b5dc6.js" /></script>
+	
+	<!-- <script type="text/javascript" src="https://csdnimg.cn/release/phoenix/production/markdownCopy-718168246b.js" /></script> -->
+
+
+<script src="https://g.csdnimg.cn/login-box/1.0.4/??login-box.js,login-auto.js?t=20190103145159"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/js/common-2dfea49d18.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/js/detail-bb53a9b64c.min.js"></script>
+	<script src="https://csdnimg.cn/release/phoenix/themes/skin-yellow/skin-yellow-fc7383b956.min.js"></script>
+
+
+<!-- <script type="text/javascript" src="//g.csdnimg.cn/check-adb/1.0.2/check-adb.js"></script> -->
+
+<script type="text/javascript" src="https://csdnimg.cn/release/blog_mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            "HTML-CSS": {
+                    linebreaks: { automatic: true, width: "94%container" },
+                    imageFont: null
+            },
+            tex2jax: {
+                preview: "none"
+            },
+            mml2jax: {
+                preview: 'none'
+            }
+    });
+</script>
+<script type="text/javascript">
+    </script>
+<script src="https://gh.bdstatic.com/static/gh/js/sdk/bword.min.js"></script>
+</html>

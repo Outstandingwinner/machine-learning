@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="never" />
+    <title>【机器学习实战】第11章 使用 Apriori 算法进行关联分析 - nm-xy - 博客园</title>
+<meta property="og:description" content="机器学习实战，使用 Apriori 算法进行关联分析" />
+    <link type="text/css" rel="stylesheet" href="/bundles/blog-common.css?v=-duj5vpGTntb85GJoM3iRI972XwWcI-j8zmqDzyfu2w1"/>
+<link id="MainCss" type="text/css" rel="stylesheet" href="/skins/BOOK/bundle-BOOK.css?v=qzznqq7AzRkoka6GRibxinoTgveiXem5TPZDQ_eQWN41"/>
+<link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="/skins/BOOK/bundle-BOOK-mobile.css?v=K_swtT-n6KbuDmGFxORfYweEMhou_xMWrzlWdBUqm_U1"/>
+    <link title="RSS" type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/apachecnxy/rss"/>
+    <link title="RSD" type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/apachecnxy/rsd.xml"/>
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/apachecnxy/wlwmanifest.xml"/>
+    <script src="//common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script>var currentBlogId=375826;var currentBlogApp='apachecnxy',cb_enable_mathjax=false;var isLogined=false;</script>
+    <script src="/bundles/blog-common.js?v=75GlRjvNr9aYgWttsJIxQDp4deiGqNQyDe6Io4CHSa81" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+
+<script type="text/javascript">
+	try {
+		if (screen.availWidth > 1200) {
+			document.getElementById("MainCss").href = '/Skins/BOOK/style2.css';
+		}
+	} catch (e) { }
+</script>
+
+<div id="header">
+<div id="HeaderTitle">
+<div id="Title">
+<a id="Header1_HeaderTitle" class="headermaintitle" href="https://www.cnblogs.com/apachecnxy/">nm-xy</a>
+</div>
+<div id="subTitle"></div>
+</div>
+</div>
+
+<div id="main">
+	
+        <div id="post_detail">
+	<div class="post">
+		<h2>
+			<a id="cb_post_title_url" href="https://www.cnblogs.com/apachecnxy/p/7640950.html">【机器学习实战】第11章 使用 Apriori 算法进行关联分析</a>
+		</h2>
+		<div id="cnblogs_post_body" class="blogpost-body"><h1>第 11 章 使用 Apriori 算法进行关联分析</h1>
+<p><a href="https://github.com/apachecn/MachineLearning/blob/master/images/11.Apriori/apachecn_apriori_homepage.jpg" target="_blank"><img src="https://github.com/apachecn/MachineLearning/raw/master/images/11.Apriori/apachecn_apriori_homepage.jpg" alt=""></a></p>
+<h2><a id="user-content-关联分析" class="anchor" href="https://github.com/apachecn/MachineLearning/blob/master/docs/11.%E4%BD%BF%E7%94%A8Apriori%E7%AE%97%E6%B3%95%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90.md#%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90" target="_blank"></a>关联分析</h2>
+<p>关联分析是一种在大规模数据集中寻找有趣关系的任务。 这些关系可以有两种形式:</p>
+<ul>
+<li>频繁项集（frequent item sets）: 经常出现在一块的物品的集合。</li>
+<li>关联规则（associational rules）: 暗示两种物品之间可能存在很强的关系。</li>
+</ul>
+<h2><a id="user-content-相关术语" class="anchor" href="https://github.com/apachecn/MachineLearning/blob/master/docs/11.%E4%BD%BF%E7%94%A8Apriori%E7%AE%97%E6%B3%95%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90.md#%E7%9B%B8%E5%85%B3%E6%9C%AF%E8%AF%AD" target="_blank"></a>相关术语</h2>
+<ul>
+<li>
+<p>关联分析（关联规则学习): 从大规模数据集中寻找物品间的隐含关系被称作&nbsp;<code>关联分析(associati analysis)</code>&nbsp;或者&nbsp;<code>关联规则学习（association rule learning）</code>&nbsp;。 下面是用一个&nbsp;<code>杂货店</code>&nbsp;例子来说明这两个概念，如下图所示:<br><a href="https://github.com/apachecn/MachineLearning/blob/master/images/11.Apriori/apachecn_apriori_association_demo_1.jpg" target="_blank"><img src="https://github.com/apachecn/MachineLearning/raw/master/images/11.Apriori/apachecn_apriori_association_demo_1.jpg" alt="关联分析示例1"></a></p>
+
+</li>
+<li>
+<p>频繁项集: {葡萄酒, 尿布, 豆奶} 就是一个频繁项集的例子。</p>
+
+</li>
+<li>
+<p>关联规则: 尿布 -&gt; 葡萄酒 就是一个关联规则。这意味着如果顾客买了尿布，那么他很可能会买葡萄酒。</p>
+
+</li>
+
+</ul>
+<p>那么&nbsp;<code>频繁</code>&nbsp;的定义是什么呢？怎么样才算频繁呢？ 度量它们的方法有很多种，这里我们来简单的介绍下支持度和可信度。</p>
+<ul>
+<li>支持度: 数据集中包含该项集的记录所占的比例。例如上图中，{豆奶} 的支持度为 4/5。{豆奶, 尿布} 的支持度为 3/5。</li>
+<li>可信度: 针对一条诸如 {尿布} -&gt; {葡萄酒} 这样具体的关联规则来定义的。这条规则的&nbsp;<code>可信度</code>&nbsp;被定义为&nbsp;<code>支持度({尿布, 葡萄酒})/支持度({尿布})</code>，从图中可以看出 支持度({尿布, 葡萄酒}) = 3/5，支持度({尿布}) = 4/5，所以 {尿布} -&gt; {葡萄酒} 的可信度 = 3/5 / 4/5 = 3/4 = 0.75。</li>
+
+</ul>
+<p><code>支持度</code>&nbsp;和&nbsp;<code>可信度</code>&nbsp;是用来量化&nbsp;<code>关联分析</code>&nbsp;是否成功的一个方法。 假设想找到支持度大于 0.8 的所有项集，应该如何去做呢？ 一个办法是生成一个物品所有可能组合的清单，然后对每一种组合统计它出现的频繁程度，但是当物品成千上万时，上述做法就非常非常慢了。 我们需要详细分析下这种情况并讨论下 Apriori 原理，该原理会减少关联规则学习时所需的计算量。</p>
+<h2><a id="user-content-apriori-原理" class="anchor" href="https://github.com/apachecn/MachineLearning/blob/master/docs/11.%E4%BD%BF%E7%94%A8Apriori%E7%AE%97%E6%B3%95%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90.md#apriori-%E5%8E%9F%E7%90%86" target="_blank"></a>Apriori 原理</h2>
+<p>假设我们一共有 4 个商品: 商品0, 商品1, 商品2, 商品3。 所有可能的情况如下:<br><a href="https://github.com/apachecn/MachineLearning/blob/master/images/11.Apriori/apachecn_apriori_goods_all_1.jpg" target="_blank"><img src="https://github.com/apachecn/MachineLearning/raw/master/images/11.Apriori/apachecn_apriori_goods_all_1.jpg" alt="4种商品的所有组合"></a><br>如果我们计算所有组合的支持度，也需要计算 15 次。即 2^N - 1 = 2^4 - 1 = 15。<br>随着物品的增加，计算的次数呈指数的形式增长 ...<br>为了降低计算次数和时间，研究人员发现了一种所谓的 Apriori 原理，即某个项集是频繁的，那么它的所有子集也是频繁的。 例如，如果 {0, 1} 是频繁的，那么 {0}, {1} 也是频繁的。 该原理直观上没有什么帮助，但是如果反过来看就有用了，也就是说如果一个项集是&nbsp;<code>非频繁项集</code>，那么它的所有超集也是非频繁项集，如下图所示:</p>
+<p><a href="https://github.com/apachecn/MachineLearning/blob/master/images/11.Apriori/%E9%9D%9E%E9%A2%91%E7%B9%81%E9%A1%B9%E9%9B%86.png" target="_blank"><img src="https://github.com/apachecn/MachineLearning/raw/master/images/11.Apriori/%E9%9D%9E%E9%A2%91%E7%B9%81%E9%A1%B9%E9%9B%86.png" alt="非频繁项集"></a></p>
+<p>在图中我们可以看到，已知灰色部分 {2,3} 是&nbsp;<code>非频繁项集</code>，那么利用上面的知识，我们就可以知道 {0,2,3} {1,2,3} {0,1,2,3} 都是&nbsp;<code>非频繁的</code>。 也就是说，计算出 {2,3} 的支持度，知道它是&nbsp;<code>非频繁</code>&nbsp;的之后，就不需要再计算 {0,2,3} {1,2,3} {0,1,2,3} 的支持度，因为我们知道这些集合不会满足我们的要求。 使用该原理就可以避免项集数目的指数增长，从而在合理的时间内计算出频繁项集。</p>
+<p>Apriori 算法优缺点</p>
+<pre><code>* 优点：易编码实现
+* 缺点：在大数据集上可能较慢
+* 适用数据类型：数值型 或者 标称型数据。
+</code></pre>
+<p>Apriori 算法流程步骤：</p>
+<pre><code>* 收集数据：使用任意方法。
+* 准备数据：任何数据类型都可以，因为我们只保存集合。
+* 分析数据：使用任意方法。
+* 训练数据：使用Apiori算法来找到频繁项集。
+* 测试算法：不需要测试过程。
+* 使用算法：用语发现频繁项集以及物品之间的关联规则。
+</code></pre>
+<h2><a id="user-content-apriori-算法的使用" class="anchor" href="https://github.com/apachecn/MachineLearning/blob/master/docs/11.%E4%BD%BF%E7%94%A8Apriori%E7%AE%97%E6%B3%95%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90.md#apriori-%E7%AE%97%E6%B3%95%E7%9A%84%E4%BD%BF%E7%94%A8" target="_blank"></a>Apriori 算法的使用</h2>
+<p>前面提到，关联分析的目标包括两项: 发现&nbsp;<code>频繁项集</code>&nbsp;和发现&nbsp;<code>关联规则</code>。 首先需要找到&nbsp;<code>频繁项集</code>，然后才能发现&nbsp;<code>关联规则</code>。<br><code>Apriori</code>&nbsp;算法是发现&nbsp;<code>频繁项集</code>&nbsp;的一种方法。 Apriori 算法的两个输入参数分别是最小支持度和数据集。 该算法首先会生成所有单个物品的项集列表。 接着扫描交易记录来查看哪些项集满足最小支持度要求，那些不满足最小支持度要求的集合会被去掉。 燃尽后对生下来的集合进行组合以声场包含两个元素的项集。 接下来再重新扫描交易记录，去掉不满足最小支持度的项集。 该过程重复进行直到所有项集被去掉。</p>
+<h3><a id="user-content-生成候选项集" class="anchor" href="https://github.com/apachecn/MachineLearning/blob/master/docs/11.%E4%BD%BF%E7%94%A8Apriori%E7%AE%97%E6%B3%95%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90.md#%E7%94%9F%E6%88%90%E5%80%99%E9%80%89%E9%A1%B9%E9%9B%86" target="_blank"></a>生成候选项集</h3>
+<p>下面会创建一个用于构建初始集合的函数，也会创建一个通过扫描数据集以寻找交易记录子集的函数， 数据扫描的伪代码如下:</p>
+<ul>
+<li>对数据集中的每条交易记录 tran</li>
+<li>对每个候选项集 can
+<ul>
+<li>检查一下 can 是否是 tran 的子集: 如果是则增加 can 的计数值</li>
+
+</ul>
+
+</li>
+<li>对每个候选项集
+<ul>
+<li>如果其支持度不低于最小值，则保留该项集</li>
+<li>返回所有频繁项集列表 以下是一些辅助函数。</li>
+
+</ul>
+
+</li>
+
+</ul>
+<h4><a id="user-content-加载数据集" class="anchor" href="https://github.com/apachecn/MachineLearning/blob/master/docs/11.%E4%BD%BF%E7%94%A8Apriori%E7%AE%97%E6%B3%95%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90.md#%E5%8A%A0%E8%BD%BD%E6%95%B0%E6%8D%AE%E9%9B%86" target="_blank"></a>加载数据集</h4>
+<div class="highlight highlight-source-python">
+<pre><span class="pl-c"><span class="pl-c"># 加载数据集
+<span class="pl-k">def <span class="pl-en">loadDataSet():
+    <span class="pl-k">return [[<span class="pl-c1">1, <span class="pl-c1">3, <span class="pl-c1">4], [<span class="pl-c1">2, <span class="pl-c1">3, <span class="pl-c1">5], [<span class="pl-c1">1, <span class="pl-c1">2, <span class="pl-c1">3, <span class="pl-c1">5], [<span class="pl-c1">2, <span class="pl-c1">5]]</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></pre>
+</div>
+<h4><a id="user-content-创建集合-c1即对-dataset-进行去重排序放入-list-中然后转换所有的元素为-frozenset" class="anchor" href="https://github.com/apachecn/MachineLearning/blob/master/docs/11.%E4%BD%BF%E7%94%A8Apriori%E7%AE%97%E6%B3%95%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90.md#%E5%88%9B%E5%BB%BA%E9%9B%86%E5%90%88-c1%E5%8D%B3%E5%AF%B9-dataset-%E8%BF%9B%E8%A1%8C%E5%8E%BB%E9%87%8D%E6%8E%92%E5%BA%8F%E6%94%BE%E5%85%A5-list-%E4%B8%AD%E7%84%B6%E5%90%8E%E8%BD%AC%E6%8D%A2%E6%89%80%E6%9C%89%E7%9A%84%E5%85%83%E7%B4%A0%E4%B8%BA-frozenset" target="_blank"></a>创建集合 C1。即对 dataSet 进行去重，排序，放入 list 中，然后转换所有的元素为 frozenset</h4>
+<div class="highlight highlight-source-python">
+<pre><span class="pl-c"><span class="pl-c"># 创建集合 C1。即对 dataSet 进行去重，排序，放入 list 中，然后转换所有的元素为 frozenset
+<span class="pl-k">def <span class="pl-en">createC1(<span class="pl-smi">dataSet):
+    <span class="pl-s"><span class="pl-pds">"""createC1（创建集合 C1）
+<span class="pl-s">
+<span class="pl-s">    Args:
+<span class="pl-s">        dataSet 原始数据集
+<span class="pl-s">    Returns:
+<span class="pl-s">        frozenset 返回一个 frozenset 格式的 list
+<span class="pl-s">    <span class="pl-pds">"""
+
+    C1 <span class="pl-k">= []
+    <span class="pl-k">for transaction <span class="pl-k">in dataSet:
+        <span class="pl-k">for item <span class="pl-k">in transaction:
+            <span class="pl-k">if <span class="pl-k">not [item] <span class="pl-k">in C1:
+                <span class="pl-c"><span class="pl-c"># 遍历所有的元素，如果不在 C1 出现过，那么就 append
+                C1.append([item])
+    <span class="pl-c"><span class="pl-c"># 对数组进行 `从小到大` 的排序
+    <span class="pl-c1">print <span class="pl-s"><span class="pl-pds">'sort 前=<span class="pl-pds">', C1
+    C1.sort()
+    <span class="pl-c"><span class="pl-c"># frozenset 表示冻结的 set 集合，元素无改变；可以把它当字典的 key 来使用
+    <span class="pl-c1">print <span class="pl-s"><span class="pl-pds">'sort 后=<span class="pl-pds">', C1
+    <span class="pl-c1">print <span class="pl-s"><span class="pl-pds">'frozenset=<span class="pl-pds">', <span class="pl-c1">map(<span class="pl-c1">frozenset, C1)
+    <span class="pl-k">return <span class="pl-c1">map(<span class="pl-c1">frozenset, C1)</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></pre>
+</div>
+<h4><a id="user-content-计算候选数据集-ck-在数据集-d-中的支持度并返回支持度大于最小支持度minsupport的数据" class="anchor" href="https://github.com/apachecn/MachineLearning/blob/master/docs/11.%E4%BD%BF%E7%94%A8Apriori%E7%AE%97%E6%B3%95%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90.md#%E8%AE%A1%E7%AE%97%E5%80%99%E9%80%89%E6%95%B0%E6%8D%AE%E9%9B%86-ck-%E5%9C%A8%E6%95%B0%E6%8D%AE%E9%9B%86-d-%E4%B8%AD%E7%9A%84%E6%94%AF%E6%8C%81%E5%BA%A6%E5%B9%B6%E8%BF%94%E5%9B%9E%E6%94%AF%E6%8C%81%E5%BA%A6%E5%A4%A7%E4%BA%8E%E6%9C%80%E5%B0%8F%E6%94%AF%E6%8C%81%E5%BA%A6minsupport%E7%9A%84%E6%95%B0%E6%8D%AE" target="_blank"></a>计算候选数据集 CK 在数据集 D 中的支持度，并返回支持度大于最小支持度（minSupport）的数据</h4>
+<div class="highlight highlight-source-python">
+<pre><span class="pl-c"><span class="pl-c"># 计算候选数据集 CK 在数据集 D 中的支持度，并返回支持度大于最小支持度（minSupport）的数据
+<span class="pl-k">def <span class="pl-en">scanD(<span class="pl-smi">D, <span class="pl-smi">Ck, <span class="pl-smi">minSupport):
+    <span class="pl-s"><span class="pl-pds">"""scanD（计算候选数据集 CK 在数据集 D 中的支持度，并返回支持度大于最小支持度 minSupport 的数据）
+<span class="pl-s">
+<span class="pl-s">    Args:
+<span class="pl-s">        D 数据集
+<span class="pl-s">        Ck 候选项集列表
+<span class="pl-s">        minSupport 最小支持度
+<span class="pl-s">    Returns:
+<span class="pl-s">        retList 支持度大于 minSupport 的集合
+<span class="pl-s">        supportData 候选项集支持度数据
+<span class="pl-s">    <span class="pl-pds">"""
+
+    <span class="pl-c"><span class="pl-c"># ssCnt 临时存放选数据集 Ck 的频率. 例如: a-&gt;10, b-&gt;5, c-&gt;8
+    ssCnt <span class="pl-k">= {}
+    <span class="pl-k">for tid <span class="pl-k">in D:
+        <span class="pl-k">for can <span class="pl-k">in Ck:
+            <span class="pl-c"><span class="pl-c"># s.issubset(t)  测试是否 s 中的每一个元素都在 t 中
+            <span class="pl-k">if can.issubset(tid):
+                <span class="pl-k">if <span class="pl-k">not ssCnt.has_key(can):
+                    ssCnt[can] <span class="pl-k">= <span class="pl-c1">1
+                <span class="pl-k">else:
+                    ssCnt[can] <span class="pl-k">+= <span class="pl-c1">1
+    numItems <span class="pl-k">= <span class="pl-c1">float(<span class="pl-c1">len(D)) <span class="pl-c"><span class="pl-c"># 数据集 D 的数量
+    retList <span class="pl-k">= []
+    supportData <span class="pl-k">= {}
+    <span class="pl-k">for key <span class="pl-k">in ssCnt:
+        <span class="pl-c"><span class="pl-c"># 支持度 = 候选项（key）出现的次数 / 所有数据集的数量
+        support <span class="pl-k">= ssCnt[key]<span class="pl-k">/numItems
+        <span class="pl-k">if support <span class="pl-k">&gt;= minSupport:
+            <span class="pl-c"><span class="pl-c"># 在 retList 的首位插入元素，只存储支持度满足频繁项集的值
+            retList.insert(<span class="pl-c1">0, key)
+        <span class="pl-c"><span class="pl-c"># 存储所有的候选项（key）和对应的支持度（support）
+        supportData[key] <span class="pl-k">= support
+    <span class="pl-k">return retList, supportData</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></pre>
+</div>
+<p>完整代码地址:&nbsp;<a href="https://github.com/apachecn/MachineLearning/blob/master/src/python/11.Apriori/apriori.py" target="_blank">https://github.com/apachecn/MachineLearning/blob/master/src/python/11.Apriori/apriori.py</a></p>
+<h3><a id="user-content-组织完整的-apriori-算法" class="anchor" href="https://github.com/apachecn/MachineLearning/blob/master/docs/11.%E4%BD%BF%E7%94%A8Apriori%E7%AE%97%E6%B3%95%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90.md#%E7%BB%84%E7%BB%87%E5%AE%8C%E6%95%B4%E7%9A%84-apriori-%E7%AE%97%E6%B3%95" target="_blank"></a>组织完整的 Apriori 算法</h3>
+<h4><a id="user-content-输入频繁项集列表-lk-与返回的元素个数-k然后输出所有可能的候选项集-ck" class="anchor" href="https://github.com/apachecn/MachineLearning/blob/master/docs/11.%E4%BD%BF%E7%94%A8Apriori%E7%AE%97%E6%B3%95%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90.md#%E8%BE%93%E5%85%A5%E9%A2%91%E7%B9%81%E9%A1%B9%E9%9B%86%E5%88%97%E8%A1%A8-lk-%E4%B8%8E%E8%BF%94%E5%9B%9E%E7%9A%84%E5%85%83%E7%B4%A0%E4%B8%AA%E6%95%B0-k%E7%84%B6%E5%90%8E%E8%BE%93%E5%87%BA%E6%89%80%E6%9C%89%E5%8F%AF%E8%83%BD%E7%9A%84%E5%80%99%E9%80%89%E9%A1%B9%E9%9B%86-ck" target="_blank"></a>输入频繁项集列表 Lk 与返回的元素个数 k，然后输出所有可能的候选项集 Ck</h4>
+<div class="highlight highlight-source-python">
+<pre><span class="pl-c"><span class="pl-c"># 输入频繁项集列表 Lk 与返回的元素个数 k，然后输出所有可能的候选项集 Ck
+<span class="pl-k">def <span class="pl-en">aprioriGen(<span class="pl-smi">Lk, <span class="pl-smi">k):
+    <span class="pl-s"><span class="pl-pds">"""aprioriGen（输入频繁项集列表 Lk 与返回的元素个数 k，然后输出候选项集 Ck。
+<span class="pl-s">       例如: 以 {0},{1},{2} 为输入且 k = 2 则输出 {0,1}, {0,2}, {1,2}. 以 {0,1},{0,2},{1,2} 为输入且 k = 3 则输出 {0,1,2}
+<span class="pl-s">       仅需要计算一次，不需要将所有的结果计算出来，然后进行去重操作
+<span class="pl-s">       这是一个更高效的算法）
+<span class="pl-s">
+<span class="pl-s">    Args:
+<span class="pl-s">        Lk 频繁项集列表
+<span class="pl-s">        k 返回的项集元素个数（若元素的前 k-2 相同，就进行合并）
+<span class="pl-s">    Returns:
+<span class="pl-s">        retList 元素两两合并的数据集
+<span class="pl-s">    <span class="pl-pds">"""
+    
+    retList <span class="pl-k">= []
+    lenLk <span class="pl-k">= <span class="pl-c1">len(Lk)
+    <span class="pl-k">for i <span class="pl-k">in <span class="pl-c1">range(lenLk):
+        <span class="pl-k">for j <span class="pl-k">in <span class="pl-c1">range(i<span class="pl-k">+<span class="pl-c1">1, lenLk):
+            L1 <span class="pl-k">= <span class="pl-c1">list(Lk[i])[: k<span class="pl-k">-<span class="pl-c1">2]
+            L2 <span class="pl-k">= <span class="pl-c1">list(Lk[j])[: k<span class="pl-k">-<span class="pl-c1">2]
+            <span class="pl-c"><span class="pl-c"># print '-----i=', i, k-2, Lk, Lk[i], list(Lk[i])[: k-2]
+            <span class="pl-c"><span class="pl-c"># print '-----j=', j, k-2, Lk, Lk[j], list(Lk[j])[: k-2]
+            L1.sort()
+            L2.sort()
+            <span class="pl-c"><span class="pl-c"># 第一次 L1,L2 为空，元素直接进行合并，返回元素两两合并的数据集
+            <span class="pl-c"><span class="pl-c"># if first k-2 elements are equal
+            <span class="pl-k">if L1 <span class="pl-k">== L2:
+                <span class="pl-c"><span class="pl-c"># set union
+                <span class="pl-c"><span class="pl-c"># print 'union=', Lk[i] | Lk[j], Lk[i], Lk[j]
+                retList.append(Lk[i] <span class="pl-k">| Lk[j])
+    <span class="pl-k">return retList</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></pre>
+</div>
+<h4><a id="user-content-找出数据集-dataset-中支持度--最小支持度的候选项集以及它们的支持度即我们的频繁项集" class="anchor" href="https://github.com/apachecn/MachineLearning/blob/master/docs/11.%E4%BD%BF%E7%94%A8Apriori%E7%AE%97%E6%B3%95%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90.md#%E6%89%BE%E5%87%BA%E6%95%B0%E6%8D%AE%E9%9B%86-dataset-%E4%B8%AD%E6%94%AF%E6%8C%81%E5%BA%A6--%E6%9C%80%E5%B0%8F%E6%94%AF%E6%8C%81%E5%BA%A6%E7%9A%84%E5%80%99%E9%80%89%E9%A1%B9%E9%9B%86%E4%BB%A5%E5%8F%8A%E5%AE%83%E4%BB%AC%E7%9A%84%E6%94%AF%E6%8C%81%E5%BA%A6%E5%8D%B3%E6%88%91%E4%BB%AC%E7%9A%84%E9%A2%91%E7%B9%81%E9%A1%B9%E9%9B%86" target="_blank"></a>找出数据集 dataSet 中支持度 &gt;= 最小支持度的候选项集以及它们的支持度。即我们的频繁项集。</h4>
+<div class="highlight highlight-source-python">
+<pre><span class="pl-c"><span class="pl-c"># 找出数据集 dataSet 中支持度 &gt;= 最小支持度的候选项集以及它们的支持度。即我们的频繁项集。
+<span class="pl-k">def <span class="pl-en">apriori(<span class="pl-smi">dataSet, <span class="pl-smi">minSupport<span class="pl-k">=<span class="pl-c1">0.5):
+    <span class="pl-s"><span class="pl-pds">"""apriori（首先构建集合 C1，然后扫描数据集来判断这些只有一个元素的项集是否满足最小支持度的要求。那么满足最小支持度要求的项集构成集合 L1。然后 L1 中的元素相互组合成 C2，C2 再进一步过滤变成 L2，然后以此类推，知道 CN 的长度为 0 时结束，即可找出所有频繁项集的支持度。）
+<span class="pl-s">
+<span class="pl-s">    Args:
+<span class="pl-s">        dataSet 原始数据集
+<span class="pl-s">        minSupport 支持度的阈值
+<span class="pl-s">    Returns:
+<span class="pl-s">        L 频繁项集的全集
+<span class="pl-s">        supportData 所有元素和支持度的全集
+<span class="pl-s">    <span class="pl-pds">"""
+    <span class="pl-c"><span class="pl-c"># C1 即对 dataSet 进行去重，排序，放入 list 中，然后转换所有的元素为 frozenset
+    C1 <span class="pl-k">= createC1(dataSet)
+    <span class="pl-c"><span class="pl-c"># 对每一行进行 set 转换，然后存放到集合中
+    D <span class="pl-k">= <span class="pl-c1">map(<span class="pl-c1">set, dataSet)
+    <span class="pl-c1">print <span class="pl-s"><span class="pl-pds">'D=<span class="pl-pds">', D
+    <span class="pl-c"><span class="pl-c"># 计算候选数据集 C1 在数据集 D 中的支持度，并返回支持度大于 minSupport 的数据
+    L1, supportData <span class="pl-k">= scanD(D, C1, minSupport)
+    <span class="pl-c"><span class="pl-c"># print "L1=", L1, "\n", "outcome: ", supportData
+
+    <span class="pl-c"><span class="pl-c"># L 加了一层 list, L 一共 2 层 list
+    L <span class="pl-k">= [L1]
+    k <span class="pl-k">= <span class="pl-c1">2
+    <span class="pl-c"><span class="pl-c"># 判断 L 的第 k-2 项的数据长度是否 &gt; 0。第一次执行时 L 为 [[frozenset([1]), frozenset([3]), frozenset([2]), frozenset([5])]]。L[k-2]=L[0]=[frozenset([1]), frozenset([3]), frozenset([2]), frozenset([5])]，最后面 k += 1
+    <span class="pl-k">while (<span class="pl-c1">len(L[k<span class="pl-k">-<span class="pl-c1">2]) <span class="pl-k">&gt; <span class="pl-c1">0):
+        <span class="pl-c1">print <span class="pl-s"><span class="pl-pds">'k=<span class="pl-pds">', k, L, L[k<span class="pl-k">-<span class="pl-c1">2]
+        Ck <span class="pl-k">= aprioriGen(L[k<span class="pl-k">-<span class="pl-c1">2], k) <span class="pl-c"><span class="pl-c"># 例如: 以 {0},{1},{2} 为输入且 k = 2 则输出 {0,1}, {0,2}, {1,2}. 以 {0,1},{0,2},{1,2} 为输入且 k = 3 则输出 {0,1,2}
+        <span class="pl-c1">print <span class="pl-s"><span class="pl-pds">'Ck<span class="pl-pds">', Ck
+
+        Lk, supK <span class="pl-k">= scanD(D, Ck, minSupport) <span class="pl-c"><span class="pl-c"># 计算候选数据集 CK 在数据集 D 中的支持度，并返回支持度大于 minSupport 的数据
+        <span class="pl-c"><span class="pl-c"># 保存所有候选项集的支持度，如果字典没有，就追加元素，如果有，就更新元素
+        supportData.update(supK)
+        <span class="pl-k">if <span class="pl-c1">len(Lk) <span class="pl-k">== <span class="pl-c1">0:
+            <span class="pl-k">break
+        <span class="pl-c"><span class="pl-c"># Lk 表示满足频繁子项的集合，L 元素在增加，例如: 
+        <span class="pl-c"><span class="pl-c"># l=[[set(1), set(2), set(3)]]
+        <span class="pl-c"><span class="pl-c"># l=[[set(1), set(2), set(3)], [set(1, 2), set(2, 3)]]
+        L.append(Lk)
+        k <span class="pl-k">+= <span class="pl-c1">1
+        <span class="pl-c"><span class="pl-c"># print 'k=', k, len(L[k-2])
+    <span class="pl-k">return L, supportData</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></pre>
+</div>
+<p>到这一步，我们就找出我们所需要的&nbsp;<code>频繁项集</code>&nbsp;和他们的&nbsp;<code>支持度</code>&nbsp;了，接下来再找出关联规则即可！</p>
+<p>完整代码地址:&nbsp;<a href="https://github.com/apachecn/MachineLearning/blob/master/src/python/11.Apriori/apriori.py" target="_blank">https://github.com/apachecn/MachineLearning/blob/master/src/python/11.Apriori/apriori.py</a></p>
+<h2><a id="user-content-从频繁项集中挖掘关联规则" class="anchor" href="https://github.com/apachecn/MachineLearning/blob/master/docs/11.%E4%BD%BF%E7%94%A8Apriori%E7%AE%97%E6%B3%95%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90.md#%E4%BB%8E%E9%A2%91%E7%B9%81%E9%A1%B9%E9%9B%86%E4%B8%AD%E6%8C%96%E6%8E%98%E5%85%B3%E8%81%94%E8%A7%84%E5%88%99" target="_blank"></a>从频繁项集中挖掘关联规则</h2>
+<p>前面我们介绍了用于发现&nbsp;<code>频繁项集</code>&nbsp;的 Apriori 算法，现在要解决的问题是如何找出&nbsp;<code>关联规则</code>。</p>
+<p>要找到&nbsp;<code>关联规则</code>，我们首先从一个&nbsp;<code>频繁项集</code>&nbsp;开始。 我们知道集合中的元素是不重复的，但我们想知道基于这些元素能否获得其它内容。 某个元素或某个元素集合可能会推导出另一个元素。 从先前&nbsp;<code>杂货店</code>&nbsp;的例子可以得到，如果有一个频繁项集 {豆奶,莴苣}，那么就可能有一条关联规则 “豆奶 -&gt; 莴苣”。 这意味着如果有人买了豆奶，那么在统计上他会购买莴苣的概率比较大。 但是，这一条件反过来并不总是成立。 也就是说 “豆奶 -&gt; 莴苣” 统计上显著，那么 “莴苣 -&gt; 豆奶” 也不一定成立。</p>
+<p>前面我们给出了&nbsp;<code>频繁项集</code>&nbsp;的量化定义，即它满足最小支持度要求。<br>对于&nbsp;<code>关联规则</code>，我们也有类似的量化方法，这种量化指标称之为&nbsp;<code>可信度</code>。<br>一条规则 A -&gt; B 的可信度定义为 support(A | B) / support(A)。（注意: 在 python 中 | 表示集合的并操作，而数学书集合并的符号是 U）。<br><code>A | B</code>&nbsp;是指所有出现在集合 A 或者集合 B 中的元素。<br>由于我们先前已经计算出所有&nbsp;<code>频繁项集</code>&nbsp;的支持度了，现在我们要做的只不过是提取这些数据做一次除法运算即可。</p>
+<h3><a id="user-content-一个频繁项集可以产生多少条关联规则呢" class="anchor" href="https://github.com/apachecn/MachineLearning/blob/master/docs/11.%E4%BD%BF%E7%94%A8Apriori%E7%AE%97%E6%B3%95%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90.md#%E4%B8%80%E4%B8%AA%E9%A2%91%E7%B9%81%E9%A1%B9%E9%9B%86%E5%8F%AF%E4%BB%A5%E4%BA%A7%E7%94%9F%E5%A4%9A%E5%B0%91%E6%9D%A1%E5%85%B3%E8%81%94%E8%A7%84%E5%88%99%E5%91%A2" target="_blank"></a>一个频繁项集可以产生多少条关联规则呢？</h3>
+<p>如下图所示，给出的是项集 {0,1,2,3} 产生的所有关联规则:<br><a href="https://github.com/apachecn/MachineLearning/blob/master/images/11.Apriori/apachecn_association_rule_demo_1.jpg" target="_blank"><img src="https://github.com/apachecn/MachineLearning/raw/master/images/11.Apriori/apachecn_association_rule_demo_1.jpg" alt="关联规则网格示意图"></a><br>与我们前面的&nbsp;<code>频繁项集</code>&nbsp;生成一样，我们可以为每个频繁项集产生许多关联规则。<br>如果能减少规则的数目来确保问题的可解析，那么计算起来就会好很多。<br>通过观察，我们可以知道，如果某条规则并不满足&nbsp;<code>最小可信度</code>&nbsp;要求，那么该规则的所有子集也不会满足&nbsp;<code>最小可信度</code>&nbsp;的要求。<br>如上图所示，假设&nbsp;<code>123 -&gt; 3</code>&nbsp;并不满足最小可信度要求，那么就知道任何左部为 {0,1,2} 子集的规则也不会满足&nbsp;<code>最小可信度</code>&nbsp;的要求。 即&nbsp;<code>12 -&gt; 03</code>&nbsp;,&nbsp;<code>02 -&gt; 13</code>&nbsp;,&nbsp;<code>01 -&gt; 23</code>&nbsp;,&nbsp;<code>2 -&gt; 013</code>,&nbsp;<code>1 -&gt; 023</code>,&nbsp;<code>0 -&gt; 123</code>&nbsp;都不满足&nbsp;<code>最小可信度</code>&nbsp;要求。</p>
+<p>可以利用关联规则的上述性质属性来减少需要测试的规则数目，跟先前 Apriori 算法的套路一样。<br>以下是一些辅助函数:</p>
+<h4><a id="user-content-计算可信度" class="anchor" href="https://github.com/apachecn/MachineLearning/blob/master/docs/11.%E4%BD%BF%E7%94%A8Apriori%E7%AE%97%E6%B3%95%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90.md#%E8%AE%A1%E7%AE%97%E5%8F%AF%E4%BF%A1%E5%BA%A6" target="_blank"></a>计算可信度</h4>
+<div class="highlight highlight-source-python">
+<pre><span class="pl-c"><span class="pl-c"># 计算可信度（confidence）
+<span class="pl-k">def <span class="pl-en">calcConf(<span class="pl-smi">freqSet, <span class="pl-smi">H
+, <span class="pl-smi">supportData, <span class="pl-smi">brl, <span class="pl-smi">minConf<span class="pl-k">=<span class="pl-c1">0.7):
+    <span class="pl-s"><span class="pl-pds">"""calcConf（对两个元素的频繁项，计算可信度，例如： {1,2}/{1} 或者 {1,2}/{2} 看是否满足条件）
+<span class="pl-s">
+<span class="pl-s">    Args:
+<span class="pl-s">        freqSet 频繁项集中的元素，例如: frozenset([1, 3])    
+<span class="pl-s">        H 频繁项集中的元素的集合，例如: [frozenset([1]), frozenset([3])]
+<span class="pl-s">        supportData 所有元素的支持度的字典
+<span class="pl-s">        brl 关联规则列表的空数组
+<span class="pl-s">        minConf 最小可信度
+<span class="pl-s">    Returns:
+<span class="pl-s">        prunedH 记录 可信度大于阈值的集合
+<span class="pl-s">    <span class="pl-pds">"""
+    <span class="pl-c"><span class="pl-c"># 记录可信度大于最小可信度（minConf）的集合
+    prunedH <span class="pl-k">= []
+    <span class="pl-k">for conseq <span class="pl-k">in H: <span class="pl-c"><span class="pl-c"># 假设 freqSet = frozenset([1, 3]), H = [frozenset([1]), frozenset([3])]，那么现在需要求出 frozenset([1]) -&gt; frozenset([3]) 的可信度和 frozenset([3]) -&gt; frozenset([1]) 的可信度
+
+        <span class="pl-c"><span class="pl-c"># print 'confData=', freqSet, H, conseq, freqSet-conseq
+        conf <span class="pl-k">= supportData[freqSet]<span class="pl-k">/supportData[freqSet<span class="pl-k">-conseq] <span class="pl-c"><span class="pl-c"># 支持度定义: a -&gt; b = support(a | b) / support(a). 假设  freqSet = frozenset([1, 3]), conseq = [frozenset([1])]，那么 frozenset([1]) 至 frozenset([3]) 的可信度为 = support(a | b) / support(a) = supportData[freqSet]/supportData[freqSet-conseq] = supportData[frozenset([1, 3])] / supportData[frozenset([1])]
+        <span class="pl-k">if conf <span class="pl-k">&gt;= minConf:
+            <span class="pl-c"><span class="pl-c"># 只要买了 freqSet-conseq 集合，一定会买 conseq 集合（freqSet-conseq 集合和 conseq 集合是全集）
+            <span class="pl-c1">print freqSet<span class="pl-k">-conseq, <span class="pl-s"><span class="pl-pds">'--&gt;<span class="pl-pds">', conseq, <span class="pl-s"><span class="pl-pds">'conf:<span class="pl-pds">', conf
+            brl.append((freqSet<span class="pl-k">-conseq, conseq, conf))
+            prunedH.append(conseq)
+    <span class="pl-k">return prunedH</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></pre>
+</div>
+<h4><a id="user-content-递归计算频繁项集的规则" class="anchor" href="https://github.com/apachecn/MachineLearning/blob/master/docs/11.%E4%BD%BF%E7%94%A8Apriori%E7%AE%97%E6%B3%95%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90.md#%E9%80%92%E5%BD%92%E8%AE%A1%E7%AE%97%E9%A2%91%E7%B9%81%E9%A1%B9%E9%9B%86%E7%9A%84%E8%A7%84%E5%88%99" target="_blank"></a>递归计算频繁项集的规则</h4>
+<div class="highlight highlight-source-python">
+<pre><span class="pl-c"><span class="pl-c"># 递归计算频繁项集的规则
+<span class="pl-k">def <span class="pl-en">rulesFromConseq(<span class="pl-smi">freqSet, <span class="pl-smi">H, <span class="pl-smi">supportData, <span class="pl-smi">brl, <span class="pl-smi">minConf<span class="pl-k">=<span class="pl-c1">0.7):
+    <span class="pl-s"><span class="pl-pds">"""rulesFromConseq
+<span class="pl-s">
+<span class="pl-s">    Args:
+<span class="pl-s">        freqSet 频繁项集中的元素，例如: frozenset([2, 3, 5])    
+<span class="pl-s">        H 频繁项集中的元素的集合，例如: [frozenset([2]), frozenset([3]), frozenset([5])]
+<span class="pl-s">        supportData 所有元素的支持度的字典
+<span class="pl-s">        brl 关联规则列表的数组
+<span class="pl-s">        minConf 最小可信度
+<span class="pl-s">    <span class="pl-pds">"""
+    <span class="pl-c"><span class="pl-c"># H[0] 是 freqSet 的元素组合的第一个元素，并且 H 中所有元素的长度都一样，长度由 aprioriGen(H, m+1) 这里的 m + 1 来控制
+    <span class="pl-c"><span class="pl-c"># 该函数递归时，H[0] 的长度从 1 开始增长 1 2 3 ...
+    <span class="pl-c"><span class="pl-c"># 假设 freqSet = frozenset([2, 3, 5]), H = [frozenset([2]), frozenset([3]), frozenset([5])]
+    <span class="pl-c"><span class="pl-c"># 那么 m = len(H[0]) 的递归的值依次为 1 2
+    <span class="pl-c"><span class="pl-c"># 在 m = 2 时, 跳出该递归。假设再递归一次，那么 H[0] = frozenset([2, 3, 5])，freqSet = frozenset([2, 3, 5]) ，没必要再计算 freqSet 与 H[0] 的关联规则了。
+    m <span class="pl-k">= <span class="pl-c1">len(H[<span class="pl-c1">0])
+    <span class="pl-k">if (<span class="pl-c1">len(freqSet) <span class="pl-k">&gt; (m <span class="pl-k">+ <span class="pl-c1">1)):
+        <span class="pl-c1">print <span class="pl-s"><span class="pl-pds">'freqSet******************<span class="pl-pds">', <span class="pl-c1">len(freqSet), m <span class="pl-k">+ <span class="pl-c1">1, freqSet, H, H[<span class="pl-c1">0]
+        <span class="pl-c"><span class="pl-c"># 生成 m+1 个长度的所有可能的 H 中的组合，假设 H = [frozenset([2]), frozenset([3]), frozenset([5])]
+        <span class="pl-c"><span class="pl-c"># 第一次递归调用时生成 [frozenset([2, 3]), frozenset([2, 5]), frozenset([3, 5])]
+        <span class="pl-c"><span class="pl-c"># 第二次 。。。没有第二次，递归条件判断时已经退出了
+        Hmp1 <span class="pl-k">= aprioriGen(H, m<span class="pl-k">+<span class="pl-c1">1)
+        <span class="pl-c"><span class="pl-c"># 返回可信度大于最小可信度的集合
+        Hmp1 <span class="pl-k">= calcConf(freqSet, Hmp1, supportData, brl, minConf)
+        <span class="pl-c1">print <span class="pl-s"><span class="pl-pds">'Hmp1=<span class="pl-pds">', Hmp1
+        <span class="pl-c1">print <span class="pl-s"><span class="pl-pds">'len(Hmp1)=<span class="pl-pds">', <span class="pl-c1">len(Hmp1), <span class="pl-s"><span class="pl-pds">'len(freqSet)=<span class="pl-pds">', <span class="pl-c1">len(freqSet)
+        <span class="pl-c"><span class="pl-c"># 计算可信度后，还有数据大于最小可信度的话，那么继续递归调用，否则跳出递归
+        <span class="pl-k">if (<span class="pl-c1">len(Hmp1) <span class="pl-k">&gt; <span class="pl-c1">1):
+            <span class="pl-c1">print <span class="pl-s"><span class="pl-pds">'----------------------<span class="pl-pds">', Hmp1
+            <span class="pl-c"><span class="pl-c"># print len(freqSet),  len(Hmp1[0]) + 1
+            rulesFromConseq(freqSet, Hmp1, supportData, brl, minConf)</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></pre>
+</div>
+<h4><a id="user-content-生成关联规则" class="anchor" href="https://github.com/apachecn/MachineLearning/blob/master/docs/11.%E4%BD%BF%E7%94%A8Apriori%E7%AE%97%E6%B3%95%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90.md#%E7%94%9F%E6%88%90%E5%85%B3%E8%81%94%E8%A7%84%E5%88%99" target="_blank"></a>生成关联规则</h4>
+<div class="highlight highlight-source-python">
+<pre><span class="pl-c"><span class="pl-c"># 生成关联规则
+<span class="pl-k">def <span class="pl-en">generateRules(<span class="pl-smi">L, <span class="pl-smi">supportData, <span class="pl-smi">minConf<span class="pl-k">=<span class="pl-c1">0.7):
+    <span class="pl-s"><span class="pl-pds">"""generateRules
+<span class="pl-s">
+<span class="pl-s">    Args:
+<span class="pl-s">        L 频繁项集列表
+<span class="pl-s">        supportData 频繁项集支持度的字典
+<span class="pl-s">        minConf 最小置信度
+<span class="pl-s">    Returns:
+<span class="pl-s">        bigRuleList 可信度规则列表（关于 (A-&gt;B+置信度) 3个字段的组合）
+<span class="pl-s">    <span class="pl-pds">"""
+    bigRuleList <span class="pl-k">= []
+    <span class="pl-c"><span class="pl-c"># 假设 L = [[frozenset([1]), frozenset([3]), frozenset([2]), frozenset([5])], [frozenset([1, 3]), frozenset([2, 5]), frozenset([2, 3]), frozenset([3, 5])], [frozenset([2, 3, 5])]]
+    <span class="pl-k">for i <span class="pl-k">in <span class="pl-c1">range(<span class="pl-c1">1, <span class="pl-c1">len(L)):
+        <span class="pl-c"><span class="pl-c"># 获取频繁项集中每个组合的所有元素
+        <span class="pl-k">for freqSet <span class="pl-k">in L[i]:
+            <span class="pl-c"><span class="pl-c"># 假设：freqSet= frozenset([1, 3]), H1=[frozenset([1]), frozenset([3])]
+            <span class="pl-c"><span class="pl-c"># 组合总的元素并遍历子元素，并转化为 frozenset 集合，再存放到 list 列表中
+            H1 <span class="pl-k">= [<span class="pl-c1">frozenset([item]) <span class="pl-k">for item <span class="pl-k">in freqSet]
+            <span class="pl-c"><span class="pl-c"># 2 个的组合，走 else, 2 个以上的组合，走 if
+            <span class="pl-k">if (i <span class="pl-k">&gt; <span class="pl-c1">1):
+                rulesFromConseq(freqSet, H1, supportData, bigRuleList, minConf)
+            <span class="pl-k">else:
+                calcConf(freqSet, H1, supportData, bigRuleList, minConf)
+    <span class="pl-k">return bigRuleList</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></pre>
+</div>
+<p>到这里为止，通过调用 generateRules 函数即可得出我们所需的&nbsp;<code>关联规则</code>。</p>
+<ul>
+<li>分级法： 频繁项集-&gt;关联规则
+<ul>
+<li>1.首先从一个频繁项集开始，接着创建一个规则列表，其中规则右部分只包含一个元素，然后对这个规则进行测试。</li>
+<li>2.接下来合并所有剩余规则来创建一个新的规则列表，其中规则右部包含两个元素。</li>
+<li>如下图：</li>
+<li><a href="https://github.com/apachecn/MachineLearning/blob/master/images/11.Apriori/%E6%89%80%E6%9C%89%E5%8F%AF%E8%83%BD%E7%9A%84%E9%A1%B9%E9%9B%86%E7%BB%84%E5%90%88.png" target="_blank"><img src="https://github.com/apachecn/MachineLearning/raw/master/images/11.Apriori/%E6%89%80%E6%9C%89%E5%8F%AF%E8%83%BD%E7%9A%84%E9%A1%B9%E9%9B%86%E7%BB%84%E5%90%88.png" alt="所有可能的项集组合"></a></li>
+</ul>
+</li>
+<li>最后： 每次增加频繁项集的大小，Apriori 算法都会重新扫描整个数据集，是否有优化空间呢？ 下一章：FP-growth算法等着你的到来</li>
+</ul>
+<hr>
+<ul>
+<li>作者：<a href="http://www.apache.wiki/display/~jiangzhonglian" target="_blank">片刻</a></li>
+<li><a href="https://github.com/apachecn/MachineLearning" target="_blank">GitHub地址</a>:&nbsp;<a href="https://github.com/apachecn/MachineLearning" target="_blank">https://github.com/apachecn/MachineLearning</a></li>
+<li>版权声明：欢迎转载学习 =&gt; 请标注信息来源于&nbsp;<a href="http://www.apachecn.org/" target="_blank">ApacheCN</a></li>
+</ul></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory"></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info">
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"></div>
+</div>
+
+
+		<p class="postfoot">
+			posted on <span id="post-date">2017-10-09 14:28</span> <a href='https://www.cnblogs.com/apachecnxy/'>nm-xy</a> 阅读(<span id="post_view_count">...</span>) 评论(<span id="post_comment_count">...</span>)  <a href ="https://i.cnblogs.com/EditPosts.aspx?postid=7640950" rel="nofollow">编辑</a> <a href="#" onclick="AddToWz(7640950);return false;">收藏</a>
+		</p>
+	</div>
+	<script type="text/javascript">var allowComments=true,cb_blogId=375826,cb_entryId=7640950,cb_blogApp=currentBlogApp,cb_blogUserGuid='08de5716-51ca-e511-9fc1-ac853d9f53cc',cb_entryCreatedDate='2017/10/9 14:28:00';loadViewCount(cb_entryId);var cb_postType=1;var isMarkdown=false;</script>
+	
+	</div><a name="!comments"></a><div id="blog-comments-placeholder"></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id='comment_form' class='commentform'>
+<a name='commentform'></a>
+<div id='divCommentShow'></div>
+<div id='comment_nav'><span id='span_refresh_tips'></span><a href='javascript:void(0);' onclick='return RefreshCommentList();' id='lnk_RefreshComments' runat='server' clientidmode='Static'>刷新评论</a><a href='#' onclick='return RefreshPage();'>刷新页面</a><a href='#top'>返回顶部</a></div>
+<div id='comment_form_container'></div>
+<div class='ad_text_commentbox' id='ad_text_under_commentbox'></div>
+<div id='ad_t2'></div>
+<div id='opt_under_post'></div>
+<script async='async' src='https://www.googletagservices.com/tag/js/gpt.js'></script>
+<script>
+  var googletag = googletag || {};
+  googletag.cmd = googletag.cmd || [];
+</script>
+<script>
+  googletag.cmd.push(function() {
+        googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1546353474406-0').addService(googletag.pubads());
+        googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1539008685004-0').addService(googletag.pubads());
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+  });
+</script>
+<div id='cnblogs_c1' class='c_ad_block'>
+    <div id='div-gpt-ad-1546353474406-0' style='height:250px; width:300px;'></div>
+</div>
+<div id='under_post_news'></div>
+<div id='cnblogs_c2' class='c_ad_block'>
+    <div id='div-gpt-ad-1539008685004-0' style='height:60px; width:468px;'></div>
+</div>
+<div id='under_post_kb'></div>
+<div id='HistoryToday' class='c_ad_block'></div>
+<script type='text/javascript'>
+ if(enablePostBottom()) {
+    codeHighlight();
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverT2();
+    deliverC1();
+    deliverC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);  
+}
+</script>
+</div>
+
+    
+	
+<p id="footer">
+	Powered by: 
+	<br />
+	
+	<a id="Footer1_Hyperlink3" NAME="Hyperlink1" href="https://www.cnblogs.com/" style="font-family:Verdana;font-size:12px;">博客园</a>
+	<br />
+	Copyright &copy; nm-xy
+</p>
+</div>
+<div id="rightmenu">
+	
+		<div id="blog-calendar" style="display:none"></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+		
+<h3>导航</h3>
+<ul>
+			<li><a id="blog_nav_sitehome" href="https://www.cnblogs.com/">博客园</a></li>
+			<li><a id="blog_nav_myhome" href="https://www.cnblogs.com/apachecnxy/">首页</a></li>
+			<li><a id="blog_nav_newpost" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a></li>
+			<li><a id="blog_nav_contact" accesskey="9" rel="nofollow" href="https://msg.cnblogs.com/send/nm-xy">联系</a></li>
+			<li><a id="blog_nav_rss" href="https://www.cnblogs.com/apachecnxy/rss">订阅</a><a id="blog_nav_rss_image" href="https://www.cnblogs.com/apachecnxy/rss"><img src="//www.cnblogs.com/images/xml.gif" alt="订阅" /></a>
+			<li><a id="blog_nav_admin" rel="nofollow" href="https://i.cnblogs.com/">管理</a></li>
+</ul>
+		<div id="blog_stats">
+<h3>统计</h3>
+	<ul>
+		<li>随笔 - 26
+		<li>文章 - 0
+		<li>评论 - 4
+		<li>引用 - 0
+	</li>
+</ul></div>
+		
+<h3>公告</h3>
+	<div id="blog-news"></div><script type="text/javascript">loadBlogNews();</script>
+
+		<div id="blog-sidecolumn"></div><script type="text/javascript">loadBlogSideColumn();</script>
+	
+</div>
+			
+			
+			
+			
+			 
+
+	
+
+
+</body>
+</html>

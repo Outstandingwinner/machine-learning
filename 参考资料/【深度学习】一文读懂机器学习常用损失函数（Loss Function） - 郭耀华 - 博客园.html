@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="origin" />
+    <title>【深度学习】一文读懂机器学习常用损失函数（Loss Function） - 郭耀华 - 博客园</title>
+<meta property="og:description" content="最近太忙已经好久没有写博客了，今天整理分享一篇关于损失函数的文章吧，以前对损失函数的理解不够深入，没有真正理解每个损失函数的特点以及应用范围，如果文中有任何错误，请各位朋友指教，谢谢~ 损失函数（lo" />
+    <link type="text/css" rel="stylesheet" href="/bundles/blog-common.css?v=-duj5vpGTntb85GJoM3iRI972XwWcI-j8zmqDzyfu2w1"/>
+<link id="MainCss" type="text/css" rel="stylesheet" href="/skins/CodingLife/bundle-CodingLife.css?v=g4Oce5UBaUn_FUwadcT09ICEg5NkULQGtUpNhTtrI8U1"/>
+<link type="text/css" rel="stylesheet" href="/blog/customcss/370717.css?v=9WsnfMapts55iexL%2fGUly0GZCXw%3d"/>
+<link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="/skins/CodingLife/bundle-CodingLife-mobile.css?v=nSeK_P8BAqpQ4UDLpcwd6yl-jVYCXnR833BwkQ30uqQ1"/>
+    <link title="RSS" type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/guoyaohua/rss"/>
+    <link title="RSD" type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/guoyaohua/rsd.xml"/>
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/guoyaohua/wlwmanifest.xml"/>
+    <script src="//common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script>var currentBlogId=370717;var currentBlogApp='guoyaohua',cb_enable_mathjax=true;var isLogined=false;</script>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']], processClass: 'math', processEscapes: true },
+        TeX: { 
+            equationNumbers: { autoNumber: ['AMS'], useLabelIds: true }, 
+            extensions: ['extpfeil.js'],
+            Macros: {bm: "\\boldsymbol"}
+        },
+        'HTML-CSS': { linebreaks: { automatic: true } },
+        SVG: { linebreaks: { automatic: true } }
+        });
+    </script><script src="//mathjax.cnblogs.com/2_7_2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="/bundles/blog-common.js?v=75GlRjvNr9aYgWttsJIxQDp4deiGqNQyDe6Io4CHSa81" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<!--PageBeginHtml Block Begin-->
+<!--GitHub-->
+<a href="https://github.com/guoyaohua" target="_blank">
+　　<img style="position: fixed; top: 0; right: 0; border: 0; z-index: 1;" src="https://images.cnblogs.com/cnblogs_com/jackson0714/779808/o_github.png" >
+</a>
+<!--火箭-->
+<style>
+#back-top {
+     position: fixed;
+     bottom: 10px;
+     right: 5px;
+     z-index: 99;
+}
+#back-top span {
+     width: 50px;
+     height: 64px;
+     display: block;
+     background:url(http://images.cnblogs.com/cnblogs_com/seanshao/855033/o_rocket.png) no-repeat center center;
+}
+#back-top a{outline:none}
+</style>
+<script type="text/javascript">
+$(function() {
+	// hide #back-top first
+	$("#back-top").hide();
+	// fade in #back-top
+	$(window).scroll(function() {
+		if ($(this).scrollTop() > 500) {
+			$('#back-top').fadeIn();
+		} else {
+			$('#back-top').fadeOut();
+		}
+	});
+	// scroll body to 0px on click
+	$('#back-top a').click(function() {
+		$('body,html').animate({
+			scrollTop: 0
+		}, 800);
+		return false;
+	});
+});
+</script>
+<p id="back-top" style="display:none"><a href="#top"><span></span></a></p>
+<!--PageBeginHtml Block End-->
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a id="lnkBlogLogo" href="https://www.cnblogs.com/guoyaohua/"><img id="blogLogo" src="/Skins/custom/images/logo.gif" alt="返回主页" /></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="https://www.cnblogs.com/guoyaohua/">郭耀华's Blog</a></h1>
+<h2>欲穷千里目，更上一层楼<br/>
+项目主页：<a href = "https://github.com/guoyaohua/">https://github.com/guoyaohua/</a></h2>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">博客园</a></li>
+<li><a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/guoyaohua/">首页</a></li>
+<li><a id="blog_nav_newpost" class="menu" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a></li>
+<li><a id="blog_nav_contact" class="menu" rel="nofollow" href="https://msg.cnblogs.com/send/%E9%83%AD%E8%80%80%E5%8D%8E">联系</a></li>
+<li><a id="blog_nav_rss" class="menu" href="https://www.cnblogs.com/guoyaohua/rss">订阅</a>
+<!--<a id="blog_nav_rss_image" class="aHeaderXML" href="https://www.cnblogs.com/guoyaohua/rss"><img src="//www.cnblogs.com/images/xml.gif" alt="订阅" /></a>--></li>
+<li><a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/">管理</a></li>
+</ul>
+		<div class="blogStats">
+			
+			<div id="blog_stats">
+<span id="stats_post_count">随笔 - 154&nbsp; </span>
+<span id="stats_article_count">文章 - 0&nbsp; </span>
+<span id="stats-comment_count">评论 - 44</span>
+</div>
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+        <div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class = "post">
+		<h1 class = "postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="https://www.cnblogs.com/guoyaohua/p/9217206.html">【深度学习】一文读懂机器学习常用损失函数（Loss Function）</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body" class="blogpost-body"><blockquote>
+<p>最近太忙已经好久没有写博客了，今天整理分享一篇关于损失函数的文章吧，以前对损失函数的理解不够深入，没有真正理解每个损失函数的特点以及应用范围，如果文中有任何错误，请各位朋友指教，谢谢~</p>
+</blockquote>
+<p>　　损失函数（loss function）是用来<strong>估量模型的预测值f(x)与真实值Y的不一致程度</strong>，它是一个非负实值函数,通常使用L(Y, f(x))来表示，损失函数越小，模型的鲁棒性就越好。损失函数是<strong>经验风险函数</strong>的核心部分，也是<strong>结构风险函数</strong>重要组成部分。模型的结构风险函数包括了经验风险项和正则项，通常可以表示成如下式子：</p>
+<p class=" has-jax" style="text-align: center;"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623120336580-830249688.png" alt="" /></p>
+<p class=" has-jax">　　其中，前面的均值函数表示的是经验风险函数，L代表的是损失函数，后面的<span id="MathJax-Element-2-Frame" class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi mathvariant=&quot;normal&quot;&gt;&amp;#x03A6;&lt;/mi&gt;&lt;/math&gt;"><span id="MathJax-Span-49" class="math"><span id="MathJax-Span-50" class="mrow"><span id="MathJax-Span-51" class="mi">&Phi;</span></span></span><span class="MJX_Assistive_MathML">是正则化项（regularizer）或者叫惩罚项（penalty term），它可以是L1，也可以是L2，或者其他的正则函数。整个式子表示的意思是<span style="color: #1986c7;"><strong class=" has-jax">找到使目标函数最小时的<span id="MathJax-Element-3-Frame" class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;&amp;#x03B8;&lt;/mi&gt;&lt;/math&gt;"><span id="MathJax-Span-52" class="math"><span id="MathJax-Span-53" class="mrow"><span id="MathJax-Span-54" class="mi">&theta;</span></span></span><span class="MJX_Assistive_MathML">值</span></span></strong></span>。下面主要列出几种常见的损失函数。</span></span></p>
+<p class=" has-jax"><span class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi mathvariant=&quot;normal&quot;&gt;&amp;#x03A6;&lt;/mi&gt;&lt;/math&gt;"><span class="MJX_Assistive_MathML">　　<span style="background-color: #ffff00;">理解：损失函数旨在表示出logit和label的差异程度，不同的损失函数有不同的表示意义，也就是在最小化损失函数过程中，logit逼近label的方式不同，得到的结果可能也不同。</span></span></span></p>
+<p class=" has-jax"><span class="MathJax" style="background-color: #ffff00;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi mathvariant=&quot;normal&quot;&gt;&amp;#x03A6;&lt;/mi&gt;&lt;/math&gt;"><span class="MJX_Assistive_MathML">一般情况下，softmax和sigmoid使用交叉熵损失（logloss），hingeloss是SVM推导出的，hingeloss的输入使用原始logit即可。</span></span></p>
+<h2 id="一、log对数损失函数（逻辑回归）">一、LogLoss对数损失函数（逻辑回归，<span style="color: #ff0000;">交叉熵损失</span>）</h2>
+<p>　　有些人可能觉得逻辑回归的损失函数就是平方损失，其实并不是。<strong>平方损失函数可以通过线性回归在假设样本是高斯分布的条件下推导得到</strong>，而逻辑回归得到的并不是平方损失。在逻辑回归的推导中，它假设样本服从<span style="color: #1986c7;"><strong>伯努利分布（0-1分布）</strong></span>，然后求得满足该分布的似然函数，接着取对数求极值等等。而逻辑回归并没有求似然函数的极值，而是把极大化当做是一种思想，进而推导出它的经验风险函数为：<span style="color: #1986c7;"><strong>最小化负的似然函数（即max F(y, f(x)) &mdash;&gt; min -F(y, f(x)))</strong></span>。从损失函数的视角来看，它就成了log损失函数了。</p>
+<p class=" has-jax"><strong>log损失函数的标准形式</strong>：</p>
+<p class=" has-jax" style="text-align: center;"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623131608760-1581173013.png" alt="" /></p>
+<p>　　刚刚说到，取对数是为了方便计算极大似然估计，因为在MLE（最大似然估计）中，直接求导比较困难，所以通常都是先取对数再求导找极值点。损失函数L(Y, P(Y|X))表达的是样本X在分类Y的情况下，使概率P(Y|X)达到最大值（换言之，<span style="color: #1986c7;"><strong>就是利用已知的样本分布，找到最有可能（即最大概率）导致这种分布的参数值；或者说什么样的参数才能使我们观测到目前这组数据的概率最大</strong></span>）。因为log函数是单调递增的，所以logP(Y|X)也会达到最大值，因此在前面加上负号之后，最大化P(Y|X)就等价于最小化L了。</p>
+<p>　　逻辑回归的P(Y=y|x)表达式如下（为了将类别标签y统一为1和0，下面将表达式分开表示）：</p>
+<p style="text-align: center;"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623132940057-2092485671.png" alt="" /></p>
+<p>　　将它带入到上式，通过推导可以得到logistic的损失函数表达式，如下：</p>
+<p style="text-align: center;"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623133130474-1239399796.png" alt="" /></p>
+<p>　　逻辑回归最后得到的目标式子如下：</p>
+<div class="MathJax_Display" style="text-align: center;"><span class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mi&gt;J&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;&amp;#x03B8;&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;mfrac&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mi&gt;m&lt;/mi&gt;&lt;/mfrac&gt;&lt;munderover&gt;&lt;mo&gt;&amp;#x2211;&lt;/mo&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/mrow&gt;&lt;mi&gt;m&lt;/mi&gt;&lt;/munderover&gt;&lt;mrow&gt;&lt;mo&gt;[&lt;/mo&gt;&lt;mrow&gt;&lt;msup&gt;&lt;mi&gt;y&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/msup&gt;&lt;mi&gt;log&lt;/mi&gt;&lt;mo&gt;&amp;#x2061;&lt;/mo&gt;&lt;msub&gt;&lt;mi&gt;h&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;&amp;#x03B8;&lt;/mi&gt;&lt;/mrow&gt;&lt;/msub&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;msup&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mo&gt;+&lt;/mo&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;msup&gt;&lt;mi&gt;y&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mi&gt;log&lt;/mi&gt;&lt;mo&gt;&amp;#x2061;&lt;/mo&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;msub&gt;&lt;mi&gt;h&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;&amp;#x03B8;&lt;/mi&gt;&lt;/mrow&gt;&lt;/msub&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;msup&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;mo&gt;]&lt;/mo&gt;&lt;/mrow&gt;&lt;/math&gt;"><span class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mi&gt;J&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;&amp;#x03B8;&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;mfrac&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mi&gt;m&lt;/mi&gt;&lt;/mfrac&gt;&lt;munderover&gt;&lt;mo&gt;&amp;#x2211;&lt;/mo&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/mrow&gt;&lt;mi&gt;m&lt;/mi&gt;&lt;/munderover&gt;&lt;mrow&gt;&lt;mo&gt;[&lt;/mo&gt;&lt;mrow&gt;&lt;msup&gt;&lt;mi&gt;y&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/msup&gt;&lt;mi&gt;log&lt;/mi&gt;&lt;mo&gt;&amp;#x2061;&lt;/mo&gt;&lt;msub&gt;&lt;mi&gt;h&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;&amp;#x03B8;&lt;/mi&gt;&lt;/mrow&gt;&lt;/msub&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;msup&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mo&gt;+&lt;/mo&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;msup&gt;&lt;mi&gt;y&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mi&gt;log&lt;/mi&gt;&lt;mo&gt;&amp;#x2061;&lt;/mo&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;msub&gt;&lt;mi&gt;h&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;&amp;#x03B8;&lt;/mi&gt;&lt;/mrow&gt;&lt;/msub&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;msup&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;mo&gt;]&lt;/mo&gt;&lt;/mrow&gt;&lt;/math&gt;"><span class="math"><span class="mrow"><span class="mi"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623133215671-1349575400.png" alt="" /></span></span></span></span></span></div>
+<p>　　上面是针对二分类而言的。这里需要解释一下：<span style="color: green;"><strong>之所以有人认为逻辑回归是平方损失，是因为在使用梯度下降来求最优解的时候，它的迭代式子与平方损失求导后的式子非常相似，从而给人一种直观上的错觉</strong></span>。</p>
+<p>这里有个PDF可以参考一下：<a href="https://www.cs.berkeley.edu/~russell/classes/cs194/f11/lectures/CS194%20Fall%202011%20Lecture%2006.pdf" rel="noopener" target="_blank">Lecture 6: logistic regression.pdf</a>.</p>
+<p>　　<strong><span style="background-color: #ffff00;">注意：softmax使用的即为交叉熵损失函数，binary_cossentropy为二分类交叉熵损失，categorical_crossentropy为多分类交叉熵损失，当使用多分类交叉熵损失函数时，标签应该为多分类模式，即使用one-hot编码的向量。</span></strong></p>
+<h2 id="二、平方损失函数（最小二乘法-Ordinary-Least-Squares-）">二、平方损失函数（最小二乘法, Ordinary Least Squares ）</h2>
+<p>　　最小二乘法是线性回归的一种，最小二乘法（OLS）将问题转化成了一个凸优化问题。在线性回归中，它假设样本和噪声都服从高斯分布（为什么假设成高斯分布呢？其实这里隐藏了一个小知识点，就是<strong>中心极限定理</strong>，可以参考<a href="https://en.wikipedia.org/wiki/Central_limit_theorem" rel="noopener" target="_blank">【central limit theorem】</a>），最后通过极大似然估计（MLE）可以推导出最小二乘式子。最小二乘的基本原则是：<span style="color: #ff0000;"><strong>最优拟合直线应该是使各点到回归直线的距离和最小的直线，即平方和最小</strong>。</span>换言之，OLS是基于距离的，而这个距离就是我们用的最多的<span style="color: #ff0000; background-color: #ffff00;"><strong>欧几里得距离</strong></span>。为什么它会选择使用欧式距离作为误差度量呢（即Mean squared error， MSE），主要有以下几个原因：</p>
+<ul>
+<li>简单，计算方便；</li>
+<li><span style="color: #ff0000;">欧氏距离是一种很好的相似性度量标准；</span></li>
+<li>在不同的表示域变换后特征性质不变。</li>
+</ul>
+<p class=" has-jax"><strong>平方损失（Square loss）的标准形式如下：</strong></p>
+<div class="MathJax_Display" style="text-align: center;"><span class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mi&gt;L&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;Y&lt;/mi&gt;&lt;mo&gt;,&lt;/mo&gt;&lt;mi&gt;f&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;X&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;Y&lt;/mi&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;mi&gt;f&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;X&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msup&gt;&lt;/math&gt;"><span class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mi&gt;L&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;Y&lt;/mi&gt;&lt;mo&gt;,&lt;/mo&gt;&lt;mi&gt;f&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;X&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;Y&lt;/mi&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;mi&gt;f&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;X&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msup&gt;&lt;/math&gt;"><span class="math"><span class="mrow"><span class="mi"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623134354357-118851936.png" alt="" /></span></span></span></span></span></div>
+<p style="text-align: left;">当样本个数为n时，此时的损失函数变为：</p>
+<p style="text-align: center;"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623134429444-995232248.png" alt="" /></p>
+<p><code>Y-f(X)</code>表示的是残差，整个式子表示的是<span style="color: #1986c7;"><strong>残差的平方和</strong></span>，而我们的目的就是最小化这个目标函数值（注：该式子未加入正则项），也就是<strong>最小化残差的平方和（residual sum of squares，RSS）</strong>。</p>
+<p class=" has-jax has-jax">而在实际应用中，通常会使用均方差（MSE）作为一项衡量指标，公式如下：</p>
+<div class="MathJax_Display" style="text-align: center;"><span class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mi&gt;M&lt;/mi&gt;&lt;mi&gt;S&lt;/mi&gt;&lt;mi&gt;E&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mfrac&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;/mfrac&gt;&lt;munderover&gt;&lt;mo&gt;&amp;#x2211;&lt;/mo&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/mrow&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;/mrow&gt;&lt;/munderover&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mover&gt;&lt;msub&gt;&lt;mi&gt;Y&lt;/mi&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;/msub&gt;&lt;mo stretchy=&quot;false&quot;&gt;&amp;#x007E;&lt;/mo&gt;&lt;/mover&gt;&lt;/mrow&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;msub&gt;&lt;mi&gt;Y&lt;/mi&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;/msub&gt;&lt;msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msup&gt;&lt;/math&gt;"><span class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mi&gt;M&lt;/mi&gt;&lt;mi&gt;S&lt;/mi&gt;&lt;mi&gt;E&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mfrac&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;/mfrac&gt;&lt;munderover&gt;&lt;mo&gt;&amp;#x2211;&lt;/mo&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/mrow&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;/mrow&gt;&lt;/munderover&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mover&gt;&lt;msub&gt;&lt;mi&gt;Y&lt;/mi&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;/msub&gt;&lt;mo stretchy=&quot;false&quot;&gt;&amp;#x007E;&lt;/mo&gt;&lt;/mover&gt;&lt;/mrow&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;msub&gt;&lt;mi&gt;Y&lt;/mi&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;/msub&gt;&lt;msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msup&gt;&lt;/math&gt;"><span class="math"><span class="mrow"><span class="mi"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623134533400-1496909325.png" alt="" /></span></span></span></span></span></div>
+<p>上面提到了线性回归，这里额外补充一句，我们通常说的线性有两种情况，一种是因变量y是自变量x的线性函数，一种是因变量y是参数<span class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;&amp;#x03B1;&lt;/mi&gt;&lt;/math&gt;"><span class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;&amp;#x03B1;&lt;/mi&gt;&lt;/math&gt;"><span id="MathJax-Span-216" class="math"><span id="MathJax-Span-217" class="mrow"><span id="MathJax-Span-218" class="mi"></span></span></span><span class="MJX_Assistive_MathML">&alpha;的线性函数。在机器学习中，通常指的都是后一种情况。</span></span></span></p>
+<h2 id="三、指数损失函数（Adaboost）">三、指数损失函数（Adaboost）</h2>
+<p class=" has-jax">学过Adaboost算法的人都知道，它是前向分步加法算法的特例，是一个加和模型，损失函数就是指数函数。在Adaboost中，经过m此迭代之后，可以得到<span id="MathJax-Element-9-Frame" class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;msub&gt;&lt;mi&gt;f&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;m&lt;/mi&gt;&lt;/mrow&gt;&lt;/msub&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/math&gt;"><span id="MathJax-Span-219" class="math"><span id="MathJax-Span-220" class="mrow"><span id="MathJax-Span-221" class="msubsup"><span id="MathJax-Span-222" class="mi">f<span id="MathJax-Span-223" class="texatom"><span id="MathJax-Span-224" class="mrow"><span id="MathJax-Span-225" class="mi"><sub>m</sub><span id="MathJax-Span-226" class="mo">(<span id="MathJax-Span-227" class="mi">x<span id="MathJax-Span-228" class="mo"></span></span></span></span></span></span></span></span></span></span><span class="MJX_Assistive_MathML">):</span></span></p>
+<p style="text-align: center;"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623134711775-2037666386.png" alt="" /></p>
+<p class=" has-jax">Adaboost每次迭代时的目的是为了找到最小化下列式子时的参数<span id="MathJax-Element-10-Frame" class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;&amp;#x03B1;&lt;/mi&gt;&lt;/math&gt;"><span id="MathJax-Span-229" class="math"><span id="MathJax-Span-230" class="mrow"><span id="MathJax-Span-231" class="mi"></span></span></span><span class="MJX_Assistive_MathML">&alpha;&nbsp;和G：</span></span></p>
+<p style="text-align: center;"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623134743521-1155320847.png" alt="" /></p>
+<p><strong>而指数损失函数（exp-loss）的标准形式如下</strong></p>
+<p style="text-align: center;"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623134831896-110032820.png" alt="" /></p>
+<p>可以看出，Adaboost的目标式子就是指数损失，在给定n个样本的情况下，Adaboost的损失函数为：</p>
+<p style="text-align: center;"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623134916410-2126629124.png" alt="" /></p>
+<p>关于Adaboost的推导，可以参考Wikipedia：<a href="https://en.wikipedia.org/wiki/AdaBoost" rel="noopener" target="_blank">AdaBoost</a>或者《统计学习方法》P145.</p>
+<h2 id="四、Hinge损失函数（SVM）">四、Hinge损失函数（SVM）</h2>
+<p class=" has-jax" style="text-align: left;">在机器学习算法中，hinge损失函数和SVM是息息相关的。在<strong>线性支持向量机</strong>中，最优化问题可以等价于下列式子：</p>
+<p class=" has-jax" style="text-align: center;"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623141728667-1767421559.png" alt="" /></p>
+<p class=" has-jax" style="text-align: left;">下面来对式子做个变形，令：</p>
+<p class=" has-jax" style="text-align: center;"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623142056432-1502037085.png" alt="" /></p>
+<p class=" has-jax" style="text-align: left;">于是，原式就变成了：</p>
+<p class=" has-jax" style="text-align: center;"><a class="fancybox" href="http://latex.codecogs.com/gif.latex?%24%24%5Cmin_%7Bw%2Cb%7D%20%5C%20%5Csum_%7Bi%7D%5E%7BN%7D%20%5Cxi_i%20+%20%5Clambda%7C%7Cw%7C%7C%5E2%20%24%24" rel="group"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623142117904-1220113962.png" alt="" /></a></p>
+<p class=" has-jax">如若取<span id="MathJax-Element-11-Frame" class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;&amp;#x03BB;&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mfrac&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mrow&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;mi&gt;C&lt;/mi&gt;&lt;/mrow&gt;&lt;/mfrac&gt;&lt;/math&gt;"><span id="MathJax-Span-232" class="math"><span id="MathJax-Span-233" class="mrow"><span id="MathJax-Span-234" class="mi">&lambda;<span id="MathJax-Span-235" class="mo">=<span id="MathJax-Span-236" class="mfrac"><span id="MathJax-Span-237" class="mn">1/(<span id="MathJax-Span-238" class="mrow"><span id="MathJax-Span-239" class="mn">2<span id="MathJax-Span-240" class="mi">C)</span></span></span></span></span></span></span></span></span><span class="MJX_Assistive_MathML">，式子就可以表示成：<br /></span></span></p>
+<p class=" has-jax" style="text-align: center;"><span class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;&amp;#x03BB;&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mfrac&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mrow&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;mi&gt;C&lt;/mi&gt;&lt;/mrow&gt;&lt;/mfrac&gt;&lt;/math&gt;"><span class="MJX_Assistive_MathML"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623142157441-1125407759.png" alt="" /></span></span></p>
+<p class=" has-jax"><span class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;&amp;#x03BB;&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mfrac&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mrow&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;mi&gt;C&lt;/mi&gt;&lt;/mrow&gt;&lt;/mfrac&gt;&lt;/math&gt;"><span class="MJX_Assistive_MathML">可以看出，该式子与下式非常相似：</span></span></p>
+<p class=" has-jax" style="text-align: center;"><span class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;&amp;#x03BB;&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mfrac&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mrow&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;mi&gt;C&lt;/mi&gt;&lt;/mrow&gt;&lt;/mfrac&gt;&lt;/math&gt;"><span class="MJX_Assistive_MathML"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623142350407-235591645.png" alt="" /></span></span></p>
+<p class=" has-jax">前半部分中的&nbsp;<span id="MathJax-Element-12-Frame" class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;l&lt;/mi&gt;&lt;/math&gt;"><span id="MathJax-Span-241" class="math"><span id="MathJax-Span-242" class="mrow"><span id="MathJax-Span-243" class="mi">l&nbsp;</span></span></span><span class="MJX_Assistive_MathML">就是hinge损失函数，而后面相当于L2正则项。</span></span></p>
+<p class=" has-jax"><strong>Hinge 损失函数的标准形式</strong></p>
+<div class="MathJax_Display" style="text-align: center;"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623142420807-325496303.png" alt="" /></div>
+<p><span class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;&amp;#x03B1;&lt;/mi&gt;&lt;/math&gt;"><span class="MathJax" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;&amp;#x03B1;&lt;/mi&gt;&lt;/math&gt;"><span class="MJX_Assistive_MathML">可以看出，当|y|&gt;=1时，L(y)=0。</span></span></span></p>
+<p>更多内容，参考<a href="https://en.wikipedia.org/wiki/Hinge_loss" rel="noopener" target="_blank">Hinge-loss</a>。</p>
+<p>补充一下：在libsvm中一共有4中核函数可以选择，对应的是<code>-t</code>参数分别是：</p>
+<ul>
+<li>0-线性核；</li>
+<li>1-多项式核；</li>
+<li>2-RBF核；</li>
+<li>3-sigmoid核。</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</ul>
+<h2 id="五、其它损失函数">五、其它损失函数</h2>
+<p>除了以上这几种损失函数，常用的还有：</p>
+<p><strong>0-1损失函数</strong></p>
+<p style="text-align: center;"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623142507596-329289242.png" alt="" /></p>
+<p><strong>绝对值损失函数</strong></p>
+<p style="text-align: center;"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623142527347-1339325160.png" alt="" /></p>
+<p>下面来看看几种损失函数的可视化图像，对着图看看横坐标，看看纵坐标，再看看每条线都表示什么损失函数，多看几次好好消化消化。</p>
+<p style="text-align: center;"><img src="https://images2018.cnblogs.com/blog/1192699/201806/1192699-20180623142656630-1607226378.png" alt="" /></p>
+<h2 style="text-align: left;">六、Keras / TensorFlow 中常用 Cost Function 总结</h2>
+<ul>
+<li>
+<p>mean_squared_error或mse</p>
+
+
+</li>
+<li>
+<p>mean_absolute_error或mae</p>
+
+
+</li>
+<li>
+<p>mean_absolute_percentage_error或mape</p>
+
+
+</li>
+<li>
+<p>mean_squared_logarithmic_error或msle</p>
+
+
+</li>
+<li>
+<p>squared_hinge</p>
+
+
+</li>
+<li>
+<p>hinge</p>
+
+
+</li>
+<li>
+<p>categorical_hinge</p>
+
+
+</li>
+<li>
+<p>binary_crossentropy（亦称作对数损失，logloss）</p>
+
+
+</li>
+<li>
+<p>logcosh</p>
+
+
+</li>
+<li>
+<p>categorical_crossentropy：亦称作多类的对数损失，注意使用该目标函数时，需要将标签转化为形如<span style="color: #ff6600;"><code>(nb_samples, nb_classes)</code></span>的二值序列</p>
+
+
+</li>
+<li>
+<p>sparse_categorical_crossentrop：如上，但接受稀疏标签。注意，使用该函数时仍然需要你的标签与输出值的维度相同，你可能需要在标签数据上增加一个维度：<span style="color: #ff6600;"><code>np.expand_dims(y,-1)</code></span></p>
+
+
+</li>
+<li>
+<p>kullback_leibler_divergence:从预测值概率分布Q到真值概率分布P的信息增益,用以度量两个分布的差异.</p>
+
+
+</li>
+<li>
+<p>poisson：即<span style="color: #ff6600;"><code>(predictions - targets * log(predictions))</code></span>的均值</p>
+
+
+</li>
+<li>
+<p>cosine_proximity：即预测值与真实标签的余弦距离平均值的相反数</p>
+
+
+</li>
+
+
+</ul>
+<p>　　需要记住的是：<span style="color: #1986c7;"><strong>参数越多，模型越复杂，而越复杂的模型越容易过拟合</strong></span>。过拟合就是说模型在训练数据上的效果远远好于在测试集上的性能。此时可以考虑正则化，通过设置正则项前面的hyper parameter，来权衡损失函数和正则项，减小参数规模，达到模型简化的目的，从而使模型具有更好的泛化能力。</p></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory"></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info">
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"></div>
+</div>
+
+
+		</div>
+		<div class = "postDesc">posted @ <span id="post-date">2018-06-23 14:46</span> <a href='https://www.cnblogs.com/guoyaohua/'>郭耀华</a> 阅读(<span id="post_view_count">...</span>) 评论(<span id="post_comment_count">...</span>)  <a href ="https://i.cnblogs.com/EditPosts.aspx?postid=9217206" rel="nofollow">编辑</a> <a href="#" onclick="AddToWz(9217206);return false;">收藏</a></div>
+	</div>
+	<script type="text/javascript">var allowComments=true,cb_blogId=370717,cb_entryId=9217206,cb_blogApp=currentBlogApp,cb_blogUserGuid='cf18a853-d7b1-479e-0270-08d49c352df3',cb_entryCreatedDate='2018/6/23 14:46:00';loadViewCount(cb_entryId);var cb_postType=1;var isMarkdown=false;</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id='comment_form' class='commentform'>
+<a name='commentform'></a>
+<div id='divCommentShow'></div>
+<div id='comment_nav'><span id='span_refresh_tips'></span><a href='javascript:void(0);' onclick='return RefreshCommentList();' id='lnk_RefreshComments' runat='server' clientidmode='Static'>刷新评论</a><a href='#' onclick='return RefreshPage();'>刷新页面</a><a href='#top'>返回顶部</a></div>
+<div id='comment_form_container'></div>
+<div class='ad_text_commentbox' id='ad_text_under_commentbox'></div>
+<div id='ad_t2'></div>
+<div id='opt_under_post'></div>
+<script async='async' src='https://www.googletagservices.com/tag/js/gpt.js'></script>
+<script>
+  var googletag = googletag || {};
+  googletag.cmd = googletag.cmd || [];
+</script>
+<script>
+  googletag.cmd.push(function() {
+        googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1546353474406-0').addService(googletag.pubads());
+        googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1539008685004-0').addService(googletag.pubads());
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+  });
+</script>
+<div id='cnblogs_c1' class='c_ad_block'>
+    <div id='div-gpt-ad-1546353474406-0' style='height:250px; width:300px;'></div>
+</div>
+<div id='under_post_news'></div>
+<div id='cnblogs_c2' class='c_ad_block'>
+    <div id='div-gpt-ad-1539008685004-0' style='height:60px; width:468px;'></div>
+</div>
+<div id='under_post_kb'></div>
+<div id='HistoryToday' class='c_ad_block'></div>
+<script type='text/javascript'>
+ if(enablePostBottom()) {
+    codeHighlight();
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverT2();
+    deliverC1();
+    deliverC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);  
+}
+</script>
+</div>
+
+    
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle">公告</h3>
+	<div id="blog-news"></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="blog-calendar" style="display:none"></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright &copy;2019 郭耀华
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+<!--PageEndHtml Block Begin-->
+<script type="text/javascript" language="javascript"> 
+//为右下角推荐推荐区域添加关注按钮
+window.onload = function () {
+    $('#div_digg').prepend('<div style="padding-bottom: 5px"><span class="icon_favorite" style="padding-top: 2px"></span><a onclick="cnblogs.UserManager.FollowBlogger(\'cf18a853-d7b1-479e-0270-08d49c352df3\');" href="javascript:void(0);" style="font-weight: bold; padding-left:5px;">关注我</a> </div>');
+}
+</script>
+<script type="text/javascript" language="javascript">
+　　//Setting ico for cnblogs
+　　var linkObject = document.createElement('link');
+　　linkObject.rel = "shortcut icon";
+　　linkObject.href = "https://files.cnblogs.com/files/guoyaohua/favicon.ico";
+　　document.getElementsByTagName("head")[0].appendChild(linkObject);
+</script>
+
+
+<script type="text/javascript">
+var enableGoogleAd = false;
+</script>
+<!--PageEndHtml Block End-->
+</body>
+</html>

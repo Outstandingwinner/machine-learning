@@ -1,0 +1,3658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="canonical" href="https://blog.csdn.net/c406495762/article/details/78212124"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="referrer" content="always">
+    <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+    <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848">
+        <meta name="csdn-baidu-search"  content='{"autorun":true,"install":true,"keyword":"Python3《机器学习实战》学习笔记（十）：提升分类器性能利器-AdaBoost - Jack-Cui"}'>
+    
+    <link href="https://csdnimg.cn/public/favicon.ico" rel="SHORTCUT ICON">
+    <title>Python3《机器学习实战》学习笔记（十）：提升分类器性能利器-AdaBoost - Jack-Cui - CSDN博客</title>
+
+        
+                    <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/detail-d59e2413cb.min.css">
+            
+            <script type="application/ld+json">{"@context":"https:\/\/ziyuan.baidu.com\/contexts\/cambrian.jsonld","@id":"https:\/\/blog.csdn.net\/c406495762\/article\/details\/78212124","appid":"1563894916825412","title":"Python3\u300a\u673a\u5668\u5b66\u4e60\u5b9e\u6218\u300b\u5b66\u4e60\u7b14\u8bb0\uff08\u5341\uff09\uff1a\u63d0\u5347\u5206\u7c7b\u5668\u6027\u80fd\u5229\u5668-AdaBoost - Jack-Cui","images":["https:\/\/img-blog.csdn.net\/20171012094643545?watermark\/2\/text\/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==\/font\/5a6L5L2T\/fontsize\/400\/fill\/I0JBQkFCMA==\/dissolve\/70\/gravity\/SouthEast","https:\/\/img-blog.csdn.net\/20171012094748784?watermark\/2\/text\/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==\/font\/5a6L5L2T\/fontsize\/400\/fill\/I0JBQkFCMA==\/dissolve\/70\/gravity\/SouthEast","https:\/\/img-blog.csdn.net\/20171012095028905?watermark\/2\/text\/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==\/font\/5a6L5L2T\/fontsize\/400\/fill\/I0JBQkFCMA==\/dissolve\/70\/gravity\/SouthEast"],"pubDate":"2019-02-09T19:41:33"}</script>
+        
+          <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/themes/skin-blackboard/skin-blackboard-1340d63bd5.min.css">
+        <script type="text/javascript">
+        var username = "c406495762";
+        var blog_address = "https://blog.csdn.net/c406495762";
+        var static_host = "https://csdnimg.cn/release/phoenix/";
+        var currentUserName = "qq_37507975";
+        var isShowAds = false;
+        var isOwner = false;
+        var loginUrl = "http://passport.csdn.net/account/login?from=https://blog.csdn.net/c406495762/article/details/78212124"
+        var blogUrl = "https://blog.csdn.net/";
+        //页面皮肤样式
+        var curSkin = "skin-blackboard";
+        // 第四范式所需数据
+        var articleTitles = "Python3《机器学习实战》学习笔记（十）：提升分类器性能利器-AdaBoost - Jack-Cui";
+        var articleID = "78212124";
+        
+        var nickName = "Jack-Cui";
+        var isCorporate = false;
+        var subDomainBlogUrl = "https://blog.csdn.net/"
+    </script>
+    <script type="text/javascript">
+        // Traffic Stats of the entire Web site By baidu
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?6bcd52f51e9b3dce32bec4a3997715ac";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+        // Traffic Stats of the entire Web site By baidu end
+    </script>
+    <script src="https://csdnimg.cn/public/common/libs/jquery/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="https://csdnimg.cn/rabbit/exposure-click/main-1.0.6.js"></script>
+    <script src="//g.csdnimg.cn/fixed-sidebar/1.1.3/fixed-sidebar.js" type="text/javascript"></script>
+    <!-- 新版上报 -->
+    <script src="//g.csdnimg.cn/track/1.2.4/track.js" type="text/javascript"></script>
+    <!-- 新版上报end -->
+            <link rel="stylesheet" href="https://csdnimg.cn/public/sandalstrap/1.4/css/sandalstrap.min.css">
+    <style>
+        .MathJax, .MathJax_Message, .MathJax_Preview{
+            display: none
+        }
+    </style>
+</head>
+<!-- nodata 第三栏接口无数据时样式不变 -->
+<body class="nodata " > 
+    <link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+    <script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+<script type="text/javascript">
+	// 容错处理
+	var NEWS_FEED = function(){}
+</script>
+<script type="text/javascript" src="//static.mediav.com/js/mvf_news_feed.js"></script>
+<script type="text/javascript" src="//g.csdnimg.cn/copyright/1.0.3/copyright.js"></script>
+<div style="display:none;">
+	<img src="" onerror='setTimeout(function(){if(!/(csdn.net|iteye.com|baiducontent.com|googleusercontent.com|360webcache.com|sogoucdn.com|bingj.com|baidu.com)$/.test(window.location.hostname)){window.location.href="\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x63\x73\x64\x6e\x2e\x6e\x65\x74"}},3000);'>
+</div>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/chart-3456820cac.css" />
+<script src="https://dup.baidustatic.com/js/ds.js"></script>
+<div class="container clearfix" id="mainBox">
+			<div class="recommend-right">
+  <ul class="recommend-fixed-box">
+    
+  </ul>
+</div>	
+    <main>
+        <div class="blog-content-box">
+	<div class="article-header-box">
+		<div class="article-header">
+			<div class="article-title-box">
+				<span class="article-type type-1 float-left">原</span>				<h1 class="title-article">Python3《机器学习实战》学习笔记（十）：提升分类器性能利器-AdaBoost</h1>
+			</div>
+			<div class="article-info-box">
+				<div class="article-bar-top">
+											<span class="c-gray">置顶</span>
+																				<span class="time">2017年10月12日 10:45:26</span>
+					<a class="follow-nickName" href="https://me.csdn.net/c406495762" target="_blank">Jack-Cui</a>
+						<span class="read-count">阅读数：8674</span>
+						
+																												<div class="tags-box space">
+								<span class="label">所属专栏：</span>
+																<a class="tag-link" href="https://blog.csdn.net/column/details/16415.html" target="_blank">Python3机器学习</a>
+																</a>
+							</div>
+																	</div>
+				<div class="operating">
+									</div>
+			</div>
+		</div>
+	</div>
+	<article class="baidu_pl">
+		<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog"  data-mod=popu_307  data-dsm = "post" >
+								<div class="article-copyright">
+                  					<svg class="icon" title="CSDN认证原创" aria-hidden="true" style="width:53px; height: 18px; vertical-align: -4px;">
+							<use xlink:href="#CSDN_Cert"></use>
+					</svg>
+                  					
+					版权声明：本文为博主原创文章，未经博主允许不得转载。个人网站：http://cuijiahua.com。					https://blog.csdn.net/c406495762/article/details/78212124				</div>
+								            <div id="content_views" class="markdown_views prism-atom-one-dark">
+							<!-- flowchart 箭头图标 勿删 -->
+							<svg xmlns="http://www.w3.org/2000/svg" style="display: none;"><path stroke-linecap="round" d="M5,0 0,2.5 5,5z" id="raphael-marker-block" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path></svg>
+							<p>**转载请注明作者和出处：**<a href="http://blog.csdn.net/c406495762" rel="nofollow">http://blog.csdn.net/c406495762</a><br>
+**机器学习知乎专栏：**<a href="https://zhuanlan.zhihu.com/ml-jack" rel="nofollow">https://zhuanlan.zhihu.com/ml-jack</a><br>
+**CSDN博客专栏：**<a href="http://blog.csdn.net/column/details/16415.html" rel="nofollow">http://blog.csdn.net/column/details/16415.html</a><br>
+**Github代码获取：**<a href="https://github.com/Jack-Cherish/Machine-Learning/" rel="nofollow">https://github.com/Jack-Cherish/Machine-Learning/</a><br>
+<strong>Python版本：</strong> Python3.x<br>
+<strong>运行平台：</strong> Windows<br>
+<strong>IDE：</strong> Sublime text3</p>
+<hr>
+<h2><a id="toc_10"></a><div class="toc"><h3>文章目录</h3><ul><ul><li><a href="#toc_10" rel="nofollow">@[toc]</a></li></ul><li><a href="#__13" rel="nofollow">一 前言</a></li><li><a href="#__21" rel="nofollow">二 集成方法</a></li><ul><li><a href="#1_Bagging_27" rel="nofollow">1 Bagging</a></li><li><a href="#2_Boosting_39" rel="nofollow">2 Boosting</a></li><li><a href="#3_BaggingBoosting_50" rel="nofollow">3 Bagging、Boosting二者之间的区别</a></li><li><a href="#4__72" rel="nofollow">4 总结</a></li></ul><li><a href="#_AdaBoost_88" rel="nofollow">三 AdaBoost</a></li><li><a href="#__162" rel="nofollow">四 基于单层决策树构建弱分类器</a></li><ul><li><a href="#1__166" rel="nofollow">1 数据集可视化</a></li><li><a href="#2__235" rel="nofollow">2 构建单层决策树</a></li></ul><li><a href="#_AdaBoost_350" rel="nofollow">五 使用AdaBoost提升分类器性能</a></li><li><a href="#_AdaBoost_652" rel="nofollow">六 在一个难数据集上应用AdaBoost</a></li><ul><li><a href="#1__664" rel="nofollow">1 自己动手丰衣足食</a></li><li><a href="#2_SklearnAdaBoost_820" rel="nofollow">2 使用Sklearn的AdaBoost</a></li></ul><li><a href="#__897" rel="nofollow">七 分类器性能评价</a></li><ul><li><a href="#1__905" rel="nofollow">1 分类器性能度量指标</a></li></ul><li><a href="#__1240" rel="nofollow">八 总结</a></li></ul></div></h2>
+<h1><a id="__13"></a>一 前言</h1>
+<p>前面的文章已经介绍了五种不同的分类器，它们各有优缺点。我们可以很自然地将不同的分类器组合起来，而这种组合结果则被成为集成方法(ensemble method)或者元算法(meta-algorithm)。使用集成方法时会有多种形式：可以是不同算法的集成，也可以是同一种算法在不同设置下的集成，还可以是数据集不同部分分配给不同分类器之后的集成。</p>
+<p>本文出现的所有代码和数据集，均可在我的github上下载，欢迎Follow、Star：<a href="https://github.com/Jack-Cherish/Machine-Learning" rel="nofollow">https://github.com/Jack-Cherish/Machine-Learning</a></p>
+<hr>
+<h1><a id="__21"></a>二 集成方法</h1>
+<p>集成方法（ensemble method）通过组合多个学习器来完成学习任务，颇有点“三个臭皮匠顶个诸葛亮”的意味。基分类器一般采用的是弱可学习（weakly learnable）分类器，通过集成方法，组合成一个强可学习（strongly learnable）分类器。所谓弱可学习，是指学习的正确率仅略优于随机猜测的多项式学习算法；强可学习指正确率较高的多项式学习算法。集成学习的泛化能力一般比单一的基分类器要好，这是因为大部分基分类器都分类错误的概率远低于单一基分类器的。</p>
+<p>集成方法主要包括Bagging和Boosting两种方法，Bagging和Boosting都是将已有的分类或回归算法通过一定方式组合起来，形成一个性能更加强大的分类器，更准确的说这是一种分类算法的组装方法，即将弱分类器组装成强分类器的方法。</p>
+<h2><a id="1_Bagging_27"></a>1 Bagging</h2>
+<p>自举汇聚法（bootstrap aggregating），也称为bagging方法。Bagging对训练数据采用自举采样（boostrap sampling），即有放回地采样数据，主要思想：</p>
+<ul>
+<li>从原始样本集中抽取训练集。每轮从原始样本集中使用Bootstraping的方法抽取n个训练样本（在训练集中，有些样本可能被多次抽取到，而有些样本可能一次都没有被抽中）。共进行k轮抽取，得到k个训练集。（k个训练集之间是相互独立的）</li>
+<li>每次使用一个训练集得到一个模型，k个训练集共得到k个模型。（注：这里并没有具体的分类算法或回归方法，我们可以根据具体问题采用不同的分类或回归方法，如决策树、感知器等）</li>
+<li>对分类问题：将上步得到的k个模型采用投票的方式得到分类结果；对回归问题，计算上述模型的均值作为最后的结果。（所有模型的重要性相同）</li>
+</ul>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012094643545?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><h2><a id="2_Boosting_39"></a>2 Boosting</h2>
+<p>Boosting是一种与Bagging很类似的技术。Boosting的思路则是采用重赋权（re-weighting）法迭代地训练基分类器，主要思想：</p>
+<ul>
+<li>每一轮的训练数据样本赋予一个权重，并且每一轮样本的权值分布依赖上一轮的分类结果。</li>
+<li>基分类器之间采用序列式的线性加权方式进行组合。</li>
+</ul>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012094748784?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><h2><a id="3_BaggingBoosting_50"></a>3 Bagging、Boosting二者之间的区别</h2>
+<p><strong>样本选择上：</strong></p>
+<ul>
+<li>Bagging：训练集是在原始集中有放回选取的，从原始集中选出的各轮训练集之间是独立的。</li>
+<li>Boosting：每一轮的训练集不变，只是训练集中每个样例在分类器中的权重发生变化。而权值是根据上一轮的分类结果进行调整。</li>
+</ul>
+<p><strong>样例权重：</strong></p>
+<ul>
+<li>Bagging：使用均匀取样，每个样例的权重相等。</li>
+<li>Boosting：根据错误率不断调整样例的权值，错误率越大则权重越大。</li>
+</ul>
+<p><strong>预测函数：</strong></p>
+<ul>
+<li>Bagging：所有预测函数的权重相等。</li>
+<li>Boosting：每个弱分类器都有相应的权重，对于分类误差小的分类器会有更大的权重。</li>
+</ul>
+<p><strong>并行计算：</strong></p>
+<ul>
+<li>Bagging：各个预测函数可以并行生成。</li>
+<li>Boosting：各个预测函数只能顺序生成，因为后一个模型参数需要前一轮模型的结果。</li>
+</ul>
+<h2><a id="4__72"></a>4 总结</h2>
+<p>这两种方法都是把若干个分类器整合为一个分类器的方法，只是整合的方式不一样，最终得到不一样的效果，将不同的分类算法套入到此类算法框架中一定程度上会提高了原单一分类器的分类效果，但是也增大了计算量。</p>
+<p>下面是将决策树与这些算法框架进行结合所得到的新的算法：</p>
+<ul>
+<li>Bagging + 决策树 = 随机森林</li>
+<li>AdaBoost + 决策树 = 提升树</li>
+<li>Gradient Boosting + 决策树 = GBDT</li>
+</ul>
+<p><strong>集成方法众多，本文主要关注Boosting方法中的一种最流行的版本，即AdaBoost。</strong></p>
+<hr>
+<h1><a id="_AdaBoost_88"></a>三 AdaBoost</h1>
+<p>AdaBoost算法是基于Boosting思想的机器学习算法，AdaBoost是adaptive boosting（自适应boosting）的缩写，其运行过程如下：</p>
+<p>1、计算样本权重</p>
+<p>训练数据中的每个样本，赋予其权重，即样本权重，用向量D表示，这些权重都初始化成相等值。假设有n个样本的训练集：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012095028905?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>设定每个样本的权重都是相等的，即1/n。</p>
+<p>2、计算错误率</p>
+<p>利用第一个弱学习算法h1对其进行学习，学习完成后进行错误率ε的统计：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012095102501?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>3、计算弱学习算法权重</p>
+<p>弱学习算法也有一个权重，用向量α表示，利用错误率计算权重α：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012095129554?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>4、更新样本权重</p>
+<p>在第一次学习完成后，需要重新调整样本的权重，以使得在第一分类中被错分的样本的权重，在接下来的学习中可以重点对其进行学习：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012095155806?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>其中，h_t(x_i) = y_i表示对第i个样本训练正确，不等于则表示分类错误。Z_t是一个归一化因子：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012095219106?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>这个公式我们可以继续化简，将两个公式进行合并，化简如下：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012095240947?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>5、AdaBoost算法</p>
+<p>重复进行学习，这样经过t轮的学习后，就会得到t个弱学习算法、权重、弱分类器的输出以及最终的AdaBoost算法的输出，分别如下：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012101705428?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>其中，sign(x)是符号函数。具体过程如下所示：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012101731688?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p><strong>AdaBoost算法总结如下：</strong></p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012101801651?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><hr>
+<h1><a id="__162"></a>四 基于单层决策树构建弱分类器</h1>
+<p>建立AdaBoost算法之前，我们必须先建立弱分类器，并保存样本的权重。弱分类器使用单层决策树（decision stump），也称决策树桩，它是一种简单的决策树，通过给定的阈值，进行分类。</p>
+<h2><a id="1__166"></a>1 数据集可视化</h2>
+<p>为了训练单层决策树，我们需要创建一个训练集，编写代码如下：</p>
+<pre><code class="prism language-Python"># -*-coding:utf-8 -*-
+import numpy as np
+import matplotlib.pyplot as plt
+"""
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-10-10
+"""
+def loadSimpData():
+    """
+    创建单层决策树的数据集
+    Parameters:
+        无
+    Returns:
+        dataMat - 数据矩阵
+        classLabels - 数据标签
+    """
+    datMat = np.matrix([[ 1. ,  2.1],
+        [ 1.5,  1.6],
+        [ 1.3,  1. ],
+        [ 1. ,  1. ],
+        [ 2. ,  1. ]])
+    classLabels = [1.0, 1.0, -1.0, -1.0, 1.0]
+    return datMat,classLabels
+def showDataSet(dataMat, labelMat):
+    """
+    数据可视化
+    Parameters:
+        dataMat - 数据矩阵
+        labelMat - 数据标签
+    Returns:
+        无
+    """
+    data_plus = []                                  #正样本
+    data_minus = []                                 #负样本
+    for i in range(len(dataMat)):
+        if labelMat[i] &gt; 0:
+            data_plus.append(dataMat[i])
+        else:
+            data_minus.append(dataMat[i])
+    data_plus_np = np.array(data_plus)                                             #转换为numpy矩阵
+    data_minus_np = np.array(data_minus)                                         #转换为numpy矩阵
+    plt.scatter(np.transpose(data_plus_np)[0], np.transpose(data_plus_np)[1])        #正样本散点图
+    plt.scatter(np.transpose(data_minus_np)[0], np.transpose(data_minus_np)[1])     #负样本散点图
+    plt.show()
+
+if __name__ == '__main__':
+    dataArr,classLabels = loadSimpData()
+    showDataSet(dataArr,classLabels)
+</code></pre>
+<p>代码运行结果如下：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012101912782?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>可以看到，如果想要试着从某个坐标轴上选择一个值（即选择一条与坐标轴平行的直线）来将所有的蓝色圆点和橘色圆点分开，这显然是不可能的。这就是单层决策树难以处理的一个著名问题。通过使用多颗单层决策树，我们可以构建出一个能够对该数据集完全正确分类的分类器。</p>
+<h2><a id="2__235"></a>2 构建单层决策树</h2>
+<p>我们设置一个分类阈值，比如我横向切分，如下图所示：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012102004493?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>蓝横线上边的是一个类别，蓝横线下边是一个类别。显然，此时有一个蓝点分类错误，计算此时的分类误差，误差为1/5 = 0.2。这个横线与坐标轴的y轴的交点，就是我们设置的阈值，通过不断改变阈值的大小，找到使单层决策树的分类误差最小的阈值。同理，竖线也是如此，找到最佳分类的阈值，就找到了最佳单层决策树，编写代码如下：</p>
+<pre><code class="prism language-Python"># -*-coding:utf-8 -*-
+import numpy as np
+import matplotlib.pyplot as plt
+"""
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-10-10
+"""
+def loadSimpData():
+    """
+    创建单层决策树的数据集
+    Parameters:
+        无
+    Returns:
+        dataMat - 数据矩阵
+        classLabels - 数据标签
+    """
+    datMat = np.matrix([[ 1. ,  2.1],
+        [ 1.5,  1.6],
+        [ 1.3,  1. ],
+        [ 1. ,  1. ],
+        [ 2. ,  1. ]])
+    classLabels = [1.0, 1.0, -1.0, -1.0, 1.0]
+    return datMat,classLabels
+
+def stumpClassify(dataMatrix,dimen,threshVal,threshIneq):
+    """
+    单层决策树分类函数
+    Parameters:
+        dataMatrix - 数据矩阵
+        dimen - 第dimen列，也就是第几个特征
+        threshVal - 阈值
+        threshIneq - 标志
+    Returns:
+        retArray - 分类结果
+    """
+    retArray = np.ones((np.shape(dataMatrix)[0],1))                #初始化retArray为1
+    if threshIneq == 'lt':
+        retArray[dataMatrix[:,dimen] &lt;= threshVal] = -1.0         #如果小于阈值,则赋值为-1
+    else:
+        retArray[dataMatrix[:,dimen] &gt; threshVal] = -1.0         #如果大于阈值,则赋值为-1
+    return retArray
+    
+def buildStump(dataArr,classLabels,D):
+    """
+    找到数据集上最佳的单层决策树
+    Parameters:
+        dataArr - 数据矩阵
+        classLabels - 数据标签
+        D - 样本权重
+    Returns:
+        bestStump - 最佳单层决策树信息
+        minError - 最小误差
+        bestClasEst - 最佳的分类结果
+    """
+    dataMatrix = np.mat(dataArr); labelMat = np.mat(classLabels).T
+    m,n = np.shape(dataMatrix)
+    numSteps = 10.0; bestStump = {}; bestClasEst = np.mat(np.zeros((m,1)))
+    minError = float('inf')                                                        #最小误差初始化为正无穷大
+    for i in range(n):                                                            #遍历所有特征
+        rangeMin = dataMatrix[:,i].min(); rangeMax = dataMatrix[:,i].max()        #找到特征中最小的值和最大值
+        stepSize = (rangeMax - rangeMin) / numSteps                                #计算步长
+        for j in range(-1, int(numSteps) + 1):                                     
+            for inequal in ['lt', 'gt']:                                          #大于和小于的情况，均遍历。lt:less than，gt:greater than
+                threshVal = (rangeMin + float(j) * stepSize)                     #计算阈值
+                predictedVals = stumpClassify(dataMatrix, i, threshVal, inequal)#计算分类结果
+                errArr = np.mat(np.ones((m,1)))                                 #初始化误差矩阵
+                errArr[predictedVals == labelMat] = 0                             #分类正确的,赋值为0
+                weightedError = D.T * errArr                                      #计算误差
+                print("split: dim %d, thresh %.2f, thresh ineqal: %s, the weighted error is %.3f" % (i, threshVal, inequal, weightedError))
+                if weightedError &lt; minError:                                     #找到误差最小的分类方式
+                    minError = weightedError
+                    bestClasEst = predictedVals.copy()
+                    bestStump['dim'] = i
+                    bestStump['thresh'] = threshVal
+                    bestStump['ineq'] = inequal
+    return bestStump,minError,bestClasEst
+
+if __name__ == '__main__':
+    dataArr,classLabels = loadSimpData()
+    D = np.mat(np.ones((5, 1)) / 5)
+    bestStump,minError,bestClasEst = buildStump(dataArr,classLabels,D)
+    print('bestStump:\n', bestStump)
+    print('minError:\n', minError)
+    print('bestClasEst:\n', bestClasEst)
+</code></pre>
+<p>代码运行结果如下：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012102053135?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>代码不难理解，就是通过遍历，改变不同的阈值，计算最终的分类误差，找到分类误差最小的分类方式，即为我们要找的最佳单层决策树。这里lt表示less than，表示分类方式，对于小于阈值的样本点赋值为-1，gt表示greater than，也是表示分类方式，对于大于阈值的样本点赋值为-1。经过遍历，我们找到，训练好的最佳单层决策树的最小分类误差为0.2，就是对于该数据集，无论用什么样的单层决策树，分类误差最小就是0.2。这就是我们训练好的弱分类器。接下来，使用AdaBoost算法提升分类器性能，将分类误差缩短到0，看下AdaBoost算法是如何实现的。</p>
+<hr>
+<h1><a id="_AdaBoost_350"></a>五 使用AdaBoost提升分类器性能</h1>
+<p>根据之前介绍的AdaBoost算法实现过程，使用AdaBoost算法提升分类器性能，编写代码如下：</p>
+<pre><code class="prism language-Python"># -*-coding:utf-8 -*-
+import numpy as np
+import matplotlib.pyplot as plt
+"""
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-10-10
+"""
+def loadSimpData():
+    """
+    创建单层决策树的数据集
+    Parameters:
+        无
+    Returns:
+        dataMat - 数据矩阵
+        classLabels - 数据标签
+    """
+    datMat = np.matrix([[ 1. ,  2.1],
+        [ 1.5,  1.6],
+        [ 1.3,  1. ],
+        [ 1. ,  1. ],
+        [ 2. ,  1. ]])
+    classLabels = [1.0, 1.0, -1.0, -1.0, 1.0]
+    return datMat,classLabels
+
+def stumpClassify(dataMatrix,dimen,threshVal,threshIneq):
+    """
+    单层决策树分类函数
+    Parameters:
+        dataMatrix - 数据矩阵
+        dimen - 第dimen列，也就是第几个特征
+        threshVal - 阈值
+        threshIneq - 标志
+    Returns:
+        retArray - 分类结果
+    """
+    retArray = np.ones((np.shape(dataMatrix)[0],1))                #初始化retArray为1
+    if threshIneq == 'lt':
+        retArray[dataMatrix[:,dimen] &lt;= threshVal] = -1.0         #如果小于阈值,则赋值为-1
+    else:
+        retArray[dataMatrix[:,dimen] &gt; threshVal] = -1.0         #如果大于阈值,则赋值为-1
+    return retArray
+    
+def buildStump(dataArr,classLabels,D):
+    """
+    找到数据集上最佳的单层决策树
+    Parameters:
+        dataArr - 数据矩阵
+        classLabels - 数据标签
+        D - 样本权重
+    Returns:
+        bestStump - 最佳单层决策树信息
+        minError - 最小误差
+        bestClasEst - 最佳的分类结果
+    """
+    dataMatrix = np.mat(dataArr); labelMat = np.mat(classLabels).T
+    m,n = np.shape(dataMatrix)
+    numSteps = 10.0; bestStump = {}; bestClasEst = np.mat(np.zeros((m,1)))
+    minError = float('inf')                                                        #最小误差初始化为正无穷大
+    for i in range(n):                                                            #遍历所有特征
+        rangeMin = dataMatrix[:,i].min(); rangeMax = dataMatrix[:,i].max()        #找到特征中最小的值和最大值
+        stepSize = (rangeMax - rangeMin) / numSteps                                #计算步长
+        for j in range(-1, int(numSteps) + 1):                                     
+            for inequal in ['lt', 'gt']:                                          #大于和小于的情况，均遍历。lt:less than，gt:greater than
+                threshVal = (rangeMin + float(j) * stepSize)                     #计算阈值
+                predictedVals = stumpClassify(dataMatrix, i, threshVal, inequal)#计算分类结果
+                errArr = np.mat(np.ones((m,1)))                                 #初始化误差矩阵
+                errArr[predictedVals == labelMat] = 0                             #分类正确的,赋值为0
+                weightedError = D.T * errArr                                      #计算误差
+                print("split: dim %d, thresh %.2f, thresh ineqal: %s, the weighted error is %.3f" % (i, threshVal, inequal, weightedError))
+                if weightedError &lt; minError:                                     #找到误差最小的分类方式
+                    minError = weightedError
+                    bestClasEst = predictedVals.copy()
+                    bestStump['dim'] = i
+                    bestStump['thresh'] = threshVal
+                    bestStump['ineq'] = inequal
+    return bestStump, minError, bestClasEst
+
+def adaBoostTrainDS(dataArr, classLabels, numIt = 40):
+    weakClassArr = []
+    m = np.shape(dataArr)[0]
+    D = np.mat(np.ones((m, 1)) / m)                                            #初始化权重
+    aggClassEst = np.mat(np.zeros((m,1)))
+    for i in range(numIt):
+        bestStump, error, classEst = buildStump(dataArr, classLabels, D)     #构建单层决策树
+        print("D:",D.T)
+        alpha = float(0.5 * np.log((1.0 - error) / max(error, 1e-16)))         #计算弱学习算法权重alpha,使error不等于0,因为分母不能为0
+        bestStump['alpha'] = alpha                                          #存储弱学习算法权重
+        weakClassArr.append(bestStump)                                      #存储单层决策树
+        print("classEst: ", classEst.T)
+        expon = np.multiply(-1 * alpha * np.mat(classLabels).T, classEst)     #计算e的指数项
+        D = np.multiply(D, np.exp(expon))                                      
+        D = D / D.sum()                                                        #根据样本权重公式，更新样本权重
+        #计算AdaBoost误差，当误差为0的时候，退出循环
+        aggClassEst += alpha * classEst                                 
+        print("aggClassEst: ", aggClassEst.T)
+        aggErrors = np.multiply(np.sign(aggClassEst) != np.mat(classLabels).T, np.ones((m,1)))     #计算误差
+        errorRate = aggErrors.sum() / m
+        print("total error: ", errorRate)
+        if errorRate == 0.0: break                                             #误差为0，退出循环
+    return weakClassArr, aggClassEst
+
+if __name__ == '__main__':
+    dataArr,classLabels = loadSimpData()
+    weakClassArr, aggClassEst = adaBoostTrainDS(dataArr, classLabels)
+    print(weakClassArr)
+    print(aggClassEst)
+</code></pre>
+<p>运行结果如下：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012102313026?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>在第一轮迭代中，D中的所有值都相等。于是，只有第一个数据点被错分了。因此在第二轮迭代中，D向量给第一个数据点0.5的权重。这就可以通过变量aggClassEst的符号来了解总的类别。第二次迭代之后，我们就会发现第一个数据点已经正确分类了，但此时最后一个数据点却是错分了。D向量中的最后一个元素变为0.5，而D向量中的其他值都变得非常小。最后，第三次迭代之后aggClassEst所有值的符号和真是类别标签都完全吻合，那么训练错误率为0，程序终止运行。</p>
+<p>最后训练结果包含了三个弱分类器，其中包含了分类所需要的所有信息。一共迭代了3次，所以训练了3个弱分类器构成一个使用AdaBoost算法优化过的分类器，分类器的错误率为0。</p>
+<p>一旦拥有了多个弱分类器以及其对应的alpha值，进行测试就变得想当容易了。编写代码如下：</p>
+<pre><code class="prism language-Python"># -*-coding:utf-8 -*-
+import numpy as np
+import matplotlib.pyplot as plt
+"""
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-10-10
+"""
+def loadSimpData():
+    """
+    创建单层决策树的数据集
+    Parameters:
+        无
+    Returns:
+        dataMat - 数据矩阵
+        classLabels - 数据标签
+    """
+    datMat = np.matrix([[ 1. ,  2.1],
+        [ 1.5,  1.6],
+        [ 1.3,  1. ],
+        [ 1. ,  1. ],
+        [ 2. ,  1. ]])
+    classLabels = [1.0, 1.0, -1.0, -1.0, 1.0]
+    return datMat,classLabels
+def showDataSet(dataMat, labelMat):
+    """
+    数据可视化
+    Parameters:
+        dataMat - 数据矩阵
+        labelMat - 数据标签
+    Returns:
+        无
+    """
+    data_plus = []                                  #正样本
+    data_minus = []                                 #负样本
+    for i in range(len(dataMat)):
+        if labelMat[i] &gt; 0:
+            data_plus.append(dataMat[i])
+        else:
+            data_minus.append(dataMat[i])
+    data_plus_np = np.array(data_plus)                                             #转换为numpy矩阵
+    data_minus_np = np.array(data_minus)                                         #转换为numpy矩阵
+    plt.scatter(np.transpose(data_plus_np)[0], np.transpose(data_plus_np)[1])        #正样本散点图
+    plt.scatter(np.transpose(data_minus_np)[0], np.transpose(data_minus_np)[1])     #负样本散点图
+    plt.show()
+def stumpClassify(dataMatrix,dimen,threshVal,threshIneq):
+    """
+    单层决策树分类函数
+    Parameters:
+        dataMatrix - 数据矩阵
+        dimen - 第dimen列，也就是第几个特征
+        threshVal - 阈值
+        threshIneq - 标志
+    Returns:
+        retArray - 分类结果
+    """
+    retArray = np.ones((np.shape(dataMatrix)[0],1))                #初始化retArray为1
+    if threshIneq == 'lt':
+        retArray[dataMatrix[:,dimen] &lt;= threshVal] = -1.0         #如果小于阈值,则赋值为-1
+    else:
+        retArray[dataMatrix[:,dimen] &gt; threshVal] = -1.0         #如果大于阈值,则赋值为-1
+    return retArray
+    
+def buildStump(dataArr,classLabels,D):
+    """
+    找到数据集上最佳的单层决策树
+    Parameters:
+        dataArr - 数据矩阵
+        classLabels - 数据标签
+        D - 样本权重
+    Returns:
+        bestStump - 最佳单层决策树信息
+        minError - 最小误差
+        bestClasEst - 最佳的分类结果
+    """
+    dataMatrix = np.mat(dataArr); labelMat = np.mat(classLabels).T
+    m,n = np.shape(dataMatrix)
+    numSteps = 10.0; bestStump = {}; bestClasEst = np.mat(np.zeros((m,1)))
+    minError = float('inf')                                                        #最小误差初始化为正无穷大
+    for i in range(n):                                                            #遍历所有特征
+        rangeMin = dataMatrix[:,i].min(); rangeMax = dataMatrix[:,i].max()        #找到特征中最小的值和最大值
+        stepSize = (rangeMax - rangeMin) / numSteps                                #计算步长
+        for j in range(-1, int(numSteps) + 1):                                     
+            for inequal in ['lt', 'gt']:                                          #大于和小于的情况，均遍历。lt:less than，gt:greater than
+                threshVal = (rangeMin + float(j) * stepSize)                     #计算阈值
+                predictedVals = stumpClassify(dataMatrix, i, threshVal, inequal)#计算分类结果
+                errArr = np.mat(np.ones((m,1)))                                 #初始化误差矩阵
+                errArr[predictedVals == labelMat] = 0                             #分类正确的,赋值为0
+                weightedError = D.T * errArr                                      #计算误差
+                # print("split: dim %d, thresh %.2f, thresh ineqal: %s, the weighted error is %.3f" % (i, threshVal, inequal, weightedError))
+                if weightedError &lt; minError:                                     #找到误差最小的分类方式
+                    minError = weightedError
+                    bestClasEst = predictedVals.copy()
+                    bestStump['dim'] = i
+                    bestStump['thresh'] = threshVal
+                    bestStump['ineq'] = inequal
+    return bestStump, minError, bestClasEst
+def adaBoostTrainDS(dataArr, classLabels, numIt = 40):
+    """
+    使用AdaBoost算法提升弱分类器性能
+    Parameters:
+        dataArr - 数据矩阵
+        classLabels - 数据标签
+        numIt - 最大迭代次数
+    Returns:
+        weakClassArr - 训练好的分类器
+        aggClassEst - 类别估计累计值
+    """
+    weakClassArr = []
+    m = np.shape(dataArr)[0]
+    D = np.mat(np.ones((m, 1)) / m)                                            #初始化权重
+    aggClassEst = np.mat(np.zeros((m,1)))
+    for i in range(numIt):
+        bestStump, error, classEst = buildStump(dataArr, classLabels, D)     #构建单层决策树
+        # print("D:",D.T)
+        alpha = float(0.5 * np.log((1.0 - error) / max(error, 1e-16)))         #计算弱学习算法权重alpha,使error不等于0,因为分母不能为0
+        bestStump['alpha'] = alpha                                          #存储弱学习算法权重
+        weakClassArr.append(bestStump)                                      #存储单层决策树
+        # print("classEst: ", classEst.T)
+        expon = np.multiply(-1 * alpha * np.mat(classLabels).T, classEst)     #计算e的指数项
+        D = np.multiply(D, np.exp(expon))                                      
+        D = D / D.sum()                                                        #根据样本权重公式，更新样本权重
+        #计算AdaBoost误差，当误差为0的时候，退出循环
+        aggClassEst += alpha * classEst                                      #计算类别估计累计值                                
+        # print("aggClassEst: ", aggClassEst.T)
+        aggErrors = np.multiply(np.sign(aggClassEst) != np.mat(classLabels).T, np.ones((m,1)))     #计算误差
+        errorRate = aggErrors.sum() / m
+        # print("total error: ", errorRate)
+        if errorRate == 0.0: break                                             #误差为0，退出循环
+    return weakClassArr, aggClassEst
+def adaClassify(datToClass,classifierArr):
+    """
+    AdaBoost分类函数
+    Parameters:
+        datToClass - 待分类样例
+        classifierArr - 训练好的分类器
+    Returns:
+        分类结果
+    """
+    dataMatrix = np.mat(datToClass)
+    m = np.shape(dataMatrix)[0]
+    aggClassEst = np.mat(np.zeros((m,1)))
+    for i in range(len(classifierArr)):                                        #遍历所有分类器，进行分类
+        classEst = stumpClassify(dataMatrix, classifierArr[i]['dim'], classifierArr[i]['thresh'], classifierArr[i]['ineq'])            
+        aggClassEst += classifierArr[i]['alpha'] * classEst
+        print(aggClassEst)
+    return np.sign(aggClassEst)
+if __name__ == '__main__':
+    dataArr,classLabels = loadSimpData()
+    weakClassArr, aggClassEst = adaBoostTrainDS(dataArr, classLabels)
+    print(adaClassify([[0,0],[5,5]], weakClassArr))
+</code></pre>
+<p>运行结果如下图所示：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012102410316?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>代码很简单，在之前代码的基础上，添加adaClassify()函数，该函数遍历所有训练得到的弱分类器，利用单层决策树，输出的类别估计值乘以该单层决策树的分类器权重alpha，然后累加到aggClassEst上，最后通过sign函数最终的结果。可以看到，分类没有问题，(5,5)属于正类，(0,0)属于负类。</p>
+<hr>
+<h1><a id="_AdaBoost_652"></a>六 在一个难数据集上应用AdaBoost</h1>
+<p>在《Python3《机器学习实战》学习笔记（七）：Logistic回归实战篇之预测病马死亡率》文章中，我们使用Logistic回归方法训练马疝病数据集，预测病马死亡率。当时的训练结果如下图所示：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012102452375?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>这个是使用Sklearn的LogisticRegression()训练的分类器，可以看到，正确率约为73.134%，也就是说错误率约为26.866%。可以看到错误率还是蛮高的，现在我们使用AdaBoost算法，训练出一个更强的分类器，这里的数据集有所变化，之前的标签是0和1，现在将标签改为+1和-1，其他数据不变。</p>
+<p>更改好的数据集下载地址：<a href="https://github.com/Jack-Cherish/Machine-Learning/tree/master/AdaBoost" rel="nofollow">https://github.com/Jack-Cherish/Machine-Learning/tree/master/AdaBoost</a></p>
+<h2><a id="1__664"></a>1 自己动手丰衣足食</h2>
+<p>使用自己的用Python写的AbaBoost算法进行训练，添加loadDataSet函数用于加载数据集。编写代码如下：</p>
+<pre><code class="prism language-Python"># -*-coding:utf-8 -*-
+import numpy as np
+import matplotlib.pyplot as plt
+"""
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-10-10
+"""
+def loadDataSet(fileName):
+    numFeat = len((open(fileName).readline().split('\t')))
+    dataMat = []; labelMat = []
+    fr = open(fileName)
+    for line in fr.readlines():
+        lineArr = []
+        curLine = line.strip().split('\t')
+        for i in range(numFeat - 1):
+            lineArr.append(float(curLine[i]))
+        dataMat.append(lineArr)
+        labelMat.append(float(curLine[-1]))
+    return dataMat, labelMat
+def stumpClassify(dataMatrix,dimen,threshVal,threshIneq):
+    """
+    单层决策树分类函数
+    Parameters:
+        dataMatrix - 数据矩阵
+        dimen - 第dimen列，也就是第几个特征
+        threshVal - 阈值
+        threshIneq - 标志
+    Returns:
+        retArray - 分类结果
+    """
+    retArray = np.ones((np.shape(dataMatrix)[0],1))                #初始化retArray为1
+    if threshIneq == 'lt':
+        retArray[dataMatrix[:,dimen] &lt;= threshVal] = -1.0         #如果小于阈值,则赋值为-1
+    else:
+        retArray[dataMatrix[:,dimen] &gt; threshVal] = -1.0         #如果大于阈值,则赋值为-1
+    return retArray
+    
+def buildStump(dataArr,classLabels,D):
+    """
+    找到数据集上最佳的单层决策树
+    Parameters:
+        dataArr - 数据矩阵
+        classLabels - 数据标签
+        D - 样本权重
+    Returns:
+        bestStump - 最佳单层决策树信息
+        minError - 最小误差
+        bestClasEst - 最佳的分类结果
+    """
+    dataMatrix = np.mat(dataArr); labelMat = np.mat(classLabels).T
+    m,n = np.shape(dataMatrix)
+    numSteps = 10.0; bestStump = {}; bestClasEst = np.mat(np.zeros((m,1)))
+    minError = float('inf')                                                        #最小误差初始化为正无穷大
+    for i in range(n):                                                            #遍历所有特征
+        rangeMin = dataMatrix[:,i].min(); rangeMax = dataMatrix[:,i].max()        #找到特征中最小的值和最大值
+        stepSize = (rangeMax - rangeMin) / numSteps                                #计算步长
+        for j in range(-1, int(numSteps) + 1):                                     
+            for inequal in ['lt', 'gt']:                                          #大于和小于的情况，均遍历。lt:less than，gt:greater than
+                threshVal = (rangeMin + float(j) * stepSize)                     #计算阈值
+                predictedVals = stumpClassify(dataMatrix, i, threshVal, inequal)#计算分类结果
+                errArr = np.mat(np.ones((m,1)))                                 #初始化误差矩阵
+                errArr[predictedVals == labelMat] = 0                             #分类正确的,赋值为0
+                weightedError = D.T * errArr                                      #计算误差
+                # print("split: dim %d, thresh %.2f, thresh ineqal: %s, the weighted error is %.3f" % (i, threshVal, inequal, weightedError))
+                if weightedError &lt; minError:                                     #找到误差最小的分类方式
+                    minError = weightedError
+                    bestClasEst = predictedVals.copy()
+                    bestStump['dim'] = i
+                    bestStump['thresh'] = threshVal
+                    bestStump['ineq'] = inequal
+    return bestStump, minError, bestClasEst
+
+def adaBoostTrainDS(dataArr, classLabels, numIt = 40):
+    """
+    使用AdaBoost算法提升弱分类器性能
+    Parameters:
+        dataArr - 数据矩阵
+        classLabels - 数据标签
+        numIt - 最大迭代次数
+    Returns:
+        weakClassArr - 训练好的分类器
+        aggClassEst - 类别估计累计值
+    """
+    weakClassArr = []
+    m = np.shape(dataArr)[0]
+    D = np.mat(np.ones((m, 1)) / m)                                            #初始化权重
+    aggClassEst = np.mat(np.zeros((m,1)))
+    for i in range(numIt):
+        bestStump, error, classEst = buildStump(dataArr, classLabels, D)     #构建单层决策树
+        # print("D:",D.T)
+        alpha = float(0.5 * np.log((1.0 - error) / max(error, 1e-16)))         #计算弱学习算法权重alpha,使error不等于0,因为分母不能为0
+        bestStump['alpha'] = alpha                                          #存储弱学习算法权重
+        weakClassArr.append(bestStump)                                      #存储单层决策树
+        # print("classEst: ", classEst.T)
+        expon = np.multiply(-1 * alpha * np.mat(classLabels).T, classEst)     #计算e的指数项
+        D = np.multiply(D, np.exp(expon))                                      
+        D = D / D.sum()                                                        #根据样本权重公式，更新样本权重
+        #计算AdaBoost误差，当误差为0的时候，退出循环
+        aggClassEst += alpha * classEst                                      #计算类别估计累计值                                
+        # print("aggClassEst: ", aggClassEst.T)
+        aggErrors = np.multiply(np.sign(aggClassEst) != np.mat(classLabels).T, np.ones((m,1)))     #计算误差
+        errorRate = aggErrors.sum() / m
+        # print("total error: ", errorRate)
+        if errorRate == 0.0: break                                             #误差为0，退出循环
+    return weakClassArr, aggClassEst
+
+def adaClassify(datToClass,classifierArr):
+    """
+    AdaBoost分类函数
+    Parameters:
+        datToClass - 待分类样例
+        classifierArr - 训练好的分类器
+    Returns:
+        分类结果
+    """
+    dataMatrix = np.mat(datToClass)
+    m = np.shape(dataMatrix)[0]
+    aggClassEst = np.mat(np.zeros((m,1)))
+    for i in range(len(classifierArr)):                                        #遍历所有分类器，进行分类
+        classEst = stumpClassify(dataMatrix, classifierArr[i]['dim'], classifierArr[i]['thresh'], classifierArr[i]['ineq'])            
+        aggClassEst += classifierArr[i]['alpha'] * classEst
+        # print(aggClassEst)
+    return np.sign(aggClassEst)
+
+if __name__ == '__main__':
+    dataArr, LabelArr = loadDataSet('horseColicTraining2.txt')
+    weakClassArr, aggClassEst = adaBoostTrainDS(dataArr, LabelArr)
+    testArr, testLabelArr = loadDataSet('horseColicTest2.txt')
+    print(weakClassArr)
+    predictions = adaClassify(dataArr, weakClassArr)
+    errArr = np.mat(np.ones((len(dataArr), 1)))
+    print('训练集的错误率:%.3f%%' % float(errArr[predictions != np.mat(LabelArr).T].sum() / len(dataArr) * 100))
+    predictions = adaClassify(testArr, weakClassArr)
+    errArr = np.mat(np.ones((len(testArr), 1)))
+    print('测试集的错误率:%.3f%%' % float(errArr[predictions != np.mat(testLabelArr).T].sum() / len(testArr) * 100))
+</code></pre>
+<p>代码运行结果如下：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012102551114?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>这里输出了AdaBoost算法训练好的分类器的组合，我们只迭代了40次，也就是训练了40个弱分类器。最终，训练集的错误率为19.732%，测试集的错误率为19.403%，可以看到相对于Sklearn的罗辑回归方法，错误率降低了很多。这个仅仅是我们训练40个弱分类器的结果，如果训练更多弱分类器，效果会更好。但是当弱分类器数量过多的时候，你会发现训练集错误率降低很多，但是测试集错误率提升了很多，这种现象就是<strong>过拟合(overfitting)</strong>。分类器对训练集的拟合效果好，但是缺失了普适性，只对训练集的分类效果好，这是我们不希望看到的。</p>
+<h2><a id="2_SklearnAdaBoost_820"></a>2 使用Sklearn的AdaBoost</h2>
+<p>官方英文文档手册：<a href="http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.AdaBoostClassifier.html" rel="nofollow">http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.AdaBoostClassifier.html</a></p>
+<p>sklearn.ensemble模块提供了很多集成方法，AdaBoost、Bagging、随机森林等。本文使用的是AdaBoostClassifier。</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012102637755?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>让我们先看下AdaBoostClassifier这个函数，一共有5个参数：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012102703837?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p><strong>参数说明如下：</strong></p>
+<ul>
+<li>**base_estimator：**可选参数，默认为DecisionTreeClassifier。理论上可以选择任何一个分类或者回归学习器，不过需要支持样本权重。我们常用的一般是CART决策树或者神经网络MLP。默认是决策树，即AdaBoostClassifier默认使用CART分类树DecisionTreeClassifier，而AdaBoostRegressor默认使用CART回归树DecisionTreeRegressor。另外有一个要注意的点是，如果我们选择的AdaBoostClassifier算法是SAMME.R，则我们的弱分类学习器还需要支持概率预测，也就是在scikit-learn中弱分类学习器对应的预测方法除了predict还需要有predict_proba。</li>
+<li>**algorithm：**可选参数，默认为SAMME.R。scikit-learn实现了两种Adaboost分类算法，SAMME和SAMME.R。两者的主要区别是弱学习器权重的度量，SAMME使用对样本集分类效果作为弱学习器权重，而SAMME.R使用了对样本集分类的预测概率大小来作为弱学习器权重。由于SAMME.R使用了概率度量的连续值，迭代一般比SAMME快，因此AdaBoostClassifier的默认算法algorithm的值也是SAMME.R。我们一般使用默认的SAMME.R就够了，但是要注意的是使用了SAMME.R， 则弱分类学习器参数base_estimator必须限制使用支持概率预测的分类器。SAMME算法则没有这个限制。</li>
+<li>**n_estimators：**整数型，可选参数，默认为50。弱学习器的最大迭代次数，或者说最大的弱学习器的个数。一般来说n_estimators太小，容易欠拟合，n_estimators太大，又容易过拟合，一般选择一个适中的数值。默认是50。在实际调参的过程中，我们常常将n_estimators和下面介绍的参数learning_rate一起考虑。</li>
+<li>**learning_rate：**浮点型，可选参数，默认为1.0。每个弱学习器的权重缩减系数，取值范围为0到1，对于同样的训练集拟合效果，较小的v意味着我们需要更多的弱学习器的迭代次数。通常我们用步长和迭代最大次数一起来决定算法的拟合效果。所以这两个参数n_estimators和learning_rate要一起调参。一般来说，可以从一个小一点的v开始调参，默认是1。</li>
+<li>**random_state：**整数型，可选参数，默认为None。如果RandomState的实例，random_state是随机数生成器; 如果None，则随机数生成器是由np.random使用的RandomState实例。</li>
+</ul>
+<p>了解这些，我们就可以开始编写代码了。完成上述代码相似的功能：</p>
+<pre><code class="prism language-Python"># -*-coding:utf-8 -*-
+import numpy as np
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.tree import DecisionTreeClassifier
+"""
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-10-11
+"""
+def loadDataSet(fileName):
+    numFeat = len((open(fileName).readline().split('\t')))
+    dataMat = []; labelMat = []
+    fr = open(fileName)
+    for line in fr.readlines():
+        lineArr = []
+        curLine = line.strip().split('\t')
+        for i in range(numFeat - 1):
+            lineArr.append(float(curLine[i]))
+        dataMat.append(lineArr)
+        labelMat.append(float(curLine[-1]))
+    return dataMat, labelMat
+if __name__ == '__main__':
+    dataArr, classLabels = loadDataSet('horseColicTraining2.txt')
+    testArr, testLabelArr = loadDataSet('horseColicTest2.txt')
+    bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth = 2), algorithm = "SAMME", n_estimators = 10)
+    bdt.fit(dataArr, classLabels)
+    predictions = bdt.predict(dataArr)
+    errArr = np.mat(np.ones((len(dataArr), 1)))
+    print('训练集的错误率:%.3f%%' % float(errArr[predictions != classLabels].sum() / len(dataArr) * 100))
+    predictions = bdt.predict(testArr)
+    errArr = np.mat(np.ones((len(testArr), 1)))
+    print('测试集的错误率:%.3f%%' % float(errArr[predictions != testLabelArr].sum() / len(testArr) * 100))
+</code></pre>
+<p>运行结果如下所示：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012102858295?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>我们使用DecisionTreeClassifier作为使用的弱分类器，使用AdaBoost算法训练分类器。可以看到训练集的错误率为16.054%，测试集的错误率为：17.910%。更改n_estimators参数，你会发现跟我们自己写的代码，更改迭代次数的效果是一样的。n_enstimators参数过大，会导致过拟合。</p>
+<hr>
+<h1><a id="__897"></a>七 分类器性能评价</h1>
+<p>在之前的笔记中，讲了很多分类器。我们都是假设所有类别的分类代价是一样的。比如在逻辑回归那篇文章中，我们构建了一个用于检测患疝病的马屁是否存活的系统。在那里，我们构建了分类器，但是并没有对分类后的情形加以讨论。假如某人给我们牵来一匹马，他希望我们能预测这匹马能否生存。我们说马会死，那么他们就可能会对马实施安乐死，而不是通过给马喂药来延缓其不可避免的死亡过程。我们的预测也许是错误的，马本来是可以继续活着的。毕竟，我们的分类器只有80%的精确率（accuracy）。如果我们预测错误，那么我们将会错杀一个如此昂贵的动物，更不要说人对马还存在情感上的依恋了。</p>
+<p>再比如，如何过滤垃圾邮件呢？如果收件箱中会出现某些垃圾邮件，但合法邮件永远不会扔进垃圾邮件夹中，人们会是否会满意呢？<strong>显然，我们可以忍受收件箱中偶尔出现的垃圾邮件，但是绝不能忍受，合法邮件被误扔如垃圾邮件夹中，万一这是一封女神or男神的表白信，这岂不是因此错过了一段旷世姻缘？</strong></p>
+<p>很多时候，不同类别的分类代价并不相等，这就是非均衡分类问题。我们将会考察一种新的分类器性能度量方法，而不再是简单的通过错误率进行评价，并且通过图像技术来对上述非均衡问题下不同分类器性能进行可视化处理。</p>
+<h2><a id="1__905"></a>1 分类器性能度量指标</h2>
+<p>在之前，我们都是基于错误率来衡量分类器任务的成功程度的。错误率指的是在所有测试样本中错分的样本比例。实际上，这样的度量错误掩盖了样例如何被错分的事实。在机器学习中，有一个普遍适用的称为**混淆矩阵（confusion matrix）**的工具，它可以帮助人们更好地了解分类中的错误。有这样一个关于在房子周围可能发现的动物类型的预测，这个预测的三个类问题的混淆矩阵如下图所示：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012103014052?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>利用混淆矩阵就可以更好地理解分类中的错误了。如果矩阵中的飞对角元素均为0，就会得到一个完美的分类器。</p>
+<p>接下来，我们考虑另外一个混淆矩阵，这次的矩阵只针对一个简单的二类问题。混淆矩阵如下图所示：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012103037294?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>可以看到，在这个二分类问题中，如果对一个正例正确地判为正例，那么就可以认为产生了一个真正例（True Positive，TP，也称真阳）；如果对一个反例正确地判为反例，则认为产生了一个真反例（True Negative，TN，也称真阴）；如果对一个正例错误地判为反例，那么就可以认为产生了一个伪反例（False Negative，FN，为称假阴）；如果对一个反例错误地判为正例，则认为产生了一个伪正例（False Positive，FP，也称假阳）。</p>
+<p>在分类中，当某个类别的重要性高于其他类别时，我们就可以来利用上述定义来定义出多个比错误率更好的指标。从混淆矩阵中，可以衍生出各种评价指标。如下图(<a href="https://en.wikipedia.org/wiki/Confusion_matrix" rel="nofollow">来自wiki</a>)所示：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012103108243?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p><strong>各个指标的定义及含义如下：</strong></p>
+<p>（1）Accuracy</p>
+<p>模型的精度，即模型预测正确的个数/样本的总个数</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012103137453?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>一般情况下，模型的精度越高，说明模型的效果越好。</p>
+<p>（2）Positive predictive value（PPV，Precision）</p>
+<p>正确率，阳性预测值，在模型预测为正类的样本中，真正的正样本所占的比例。</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012103204257?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>一般情况下，正确率越高，说明模型的效果越好。</p>
+<p>（3）False discovery rate（FDR）</p>
+<p>伪发现率，也是错误发现率，表示在模型预测为正类的样本中，真正的负类的样本所占的比例。</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012103229826?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>一般情况下，错误发现率越小，说明模型的效果越好。</p>
+<p>（4）False omission rate（FOR）</p>
+<p>错误遗漏率，表示在模型预测为负类的样本中，真正的正类所占的比例。即评价模型"遗漏"掉的正类的多少。</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012103252201?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>（5）Negative predictive value（NPV）</p>
+<p>阴性预测值，在模型预测为负类的样本中，真正为负类的样本所占的比例。</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012103322370?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>一般情况下，NPV越高，说明的模型的效果越好。</p>
+<p>（6）True positive rate（Recall）</p>
+<p>召回率，真正类率，表示的是，模型预测为正类的样本的数量，占总的正类样本数量的比值。</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012103345293?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>一般情况下，Recall越高，说明有更多的正类样本被模型预测正确，模型的效果越好。</p>
+<p>（7）False positive rate（FPR），Fall-out</p>
+<p>假正率，表示的是，模型预测为正类的样本中，占模型负类样本数量的比值。</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012103410921?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>一般情况下，假正类率越低，说明模型的效果越好。</p>
+<p>（8）False negative rate（FNR），Miss rate</p>
+<p>假负类率，缺失率，模型预测为负类的样本中，是正类的数量，占真实正类样本的比值。</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012103439377?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>缺失值越小，说明模型的效果越好。</p>
+<p>公式有些多？有些眼花撩乱，没关系，慢慢理解就好了。我们可以很容易构造一个高正确率或高召回率的分类器，但是很难同时保证两者成立。如果将任何样本都判为正例，那么召回率达到百分之百而此时正确率很低。<strong>构建一个同时使正确率和召回率最大的分类器是具有挑战性的。</strong></p>
+<p><strong>除了上述的评价指标，另一个用于度量分类中的非均衡的工具是ROC曲线（ROC curve）</strong>，ROC代表接收者操作特征（receiver operating characteristic），它最早在二战期间由电气工程师构建雷达系统时使用过。</p>
+<p>先运行个程序，我们看下结果，再听我细细道来，编写代码如下：</p>
+<pre><code class="prism language-Python"># -*-coding:utf-8 -*-
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.font_manager import FontProperties
+
+"""
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-10-10
+"""
+
+def loadDataSet(fileName):
+    numFeat = len((open(fileName).readline().split('\t')))
+    dataMat = []; labelMat = []
+    fr = open(fileName)
+    for line in fr.readlines():
+        lineArr = []
+        curLine = line.strip().split('\t')
+        for i in range(numFeat - 1):
+            lineArr.append(float(curLine[i]))
+        dataMat.append(lineArr)
+        labelMat.append(float(curLine[-1]))
+
+    return dataMat, labelMat
+
+def stumpClassify(dataMatrix,dimen,threshVal,threshIneq):
+    """
+    单层决策树分类函数
+    Parameters:
+        dataMatrix - 数据矩阵
+        dimen - 第dimen列，也就是第几个特征
+        threshVal - 阈值
+        threshIneq - 标志
+    Returns:
+        retArray - 分类结果
+    """
+    retArray = np.ones((np.shape(dataMatrix)[0],1))                #初始化retArray为1
+    if threshIneq == 'lt':
+        retArray[dataMatrix[:,dimen] &lt;= threshVal] = -1.0         #如果小于阈值,则赋值为-1
+    else:
+        retArray[dataMatrix[:,dimen] &gt; threshVal] = -1.0         #如果大于阈值,则赋值为-1
+    return retArray
+
+
+def buildStump(dataArr,classLabels,D):
+    """
+    找到数据集上最佳的单层决策树
+    Parameters:
+        dataArr - 数据矩阵
+        classLabels - 数据标签
+        D - 样本权重
+    Returns:
+        bestStump - 最佳单层决策树信息
+        minError - 最小误差
+        bestClasEst - 最佳的分类结果
+    """
+    dataMatrix = np.mat(dataArr); labelMat = np.mat(classLabels).T
+    m,n = np.shape(dataMatrix)
+    numSteps = 10.0; bestStump = {}; bestClasEst = np.mat(np.zeros((m,1)))
+    minError = float('inf')                                                        #最小误差初始化为正无穷大
+    for i in range(n):                                                            #遍历所有特征
+        rangeMin = dataMatrix[:,i].min(); rangeMax = dataMatrix[:,i].max()        #找到特征中最小的值和最大值
+        stepSize = (rangeMax - rangeMin) / numSteps                                #计算步长
+        for j in range(-1, int(numSteps) + 1):                                     
+            for inequal in ['lt', 'gt']:                                          #大于和小于的情况，均遍历。lt:less than，gt:greater than
+                threshVal = (rangeMin + float(j) * stepSize)                     #计算阈值
+                predictedVals = stumpClassify(dataMatrix, i, threshVal, inequal)#计算分类结果
+                errArr = np.mat(np.ones((m,1)))                                 #初始化误差矩阵
+                errArr[predictedVals == labelMat] = 0                             #分类正确的,赋值为0
+                weightedError = D.T * errArr                                      #计算误差
+                # print("split: dim %d, thresh %.2f, thresh ineqal: %s, the weighted error is %.3f" % (i, threshVal, inequal, weightedError))
+                if weightedError &lt; minError:                                     #找到误差最小的分类方式
+                    minError = weightedError
+                    bestClasEst = predictedVals.copy()
+                    bestStump['dim'] = i
+                    bestStump['thresh'] = threshVal
+                    bestStump['ineq'] = inequal
+    return bestStump, minError, bestClasEst
+
+def adaBoostTrainDS(dataArr, classLabels, numIt = 40):
+    """
+    使用AdaBoost算法训练分类器
+    Parameters:
+        dataArr - 数据矩阵
+        classLabels - 数据标签
+        numIt - 最大迭代次数
+    Returns:
+        weakClassArr - 训练好的分类器
+        aggClassEst - 类别估计累计值
+    """
+    weakClassArr = []
+    m = np.shape(dataArr)[0]
+    D = np.mat(np.ones((m, 1)) / m)                                            #初始化权重
+    aggClassEst = np.mat(np.zeros((m,1)))
+    for i in range(numIt):
+        bestStump, error, classEst = buildStump(dataArr, classLabels, D)     #构建单层决策树
+        # print("D:",D.T)
+        alpha = float(0.5 * np.log((1.0 - error) / max(error, 1e-16)))         #计算弱学习算法权重alpha,使error不等于0,因为分母不能为0
+        bestStump['alpha'] = alpha                                          #存储弱学习算法权重
+        weakClassArr.append(bestStump)                                      #存储单层决策树
+        # print("classEst: ", classEst.T)
+        expon = np.multiply(-1 * alpha * np.mat(classLabels).T, classEst)     #计算e的指数项
+        D = np.multiply(D, np.exp(expon))                                     
+        D = D / D.sum()                                                        #根据样本权重公式，更新样本权重
+        #计算AdaBoost误差，当误差为0的时候，退出循环
+        aggClassEst += alpha * classEst                                      #计算类别估计累计值                               
+        # print("aggClassEst: ", aggClassEst.T)
+        aggErrors = np.multiply(np.sign(aggClassEst) != np.mat(classLabels).T, np.ones((m,1)))     #计算误差
+        errorRate = aggErrors.sum() / m
+        # print("total error: ", errorRate)
+        if errorRate == 0.0: break                                             #误差为0，退出循环
+    return weakClassArr, aggClassEst
+
+
+def plotROC(predStrengths, classLabels):
+    """
+    绘制ROC
+    Parameters:
+        predStrengths - 分类器的预测强度
+        classLabels - 类别
+    Returns:
+        无
+    """
+    font = FontProperties(fname=r"c:\windows\fonts\simsun.ttc", size=14)
+    cur = (1.0, 1.0)                                                         #绘制光标的位置
+    ySum = 0.0                                                                 #用于计算AUC
+    numPosClas = np.sum(np.array(classLabels) == 1.0)                        #统计正类的数量
+    yStep = 1 / float(numPosClas)                                             #y轴步长   
+    xStep = 1 / float(len(classLabels) - numPosClas)                         #x轴步长
+
+    sortedIndicies = predStrengths.argsort()                                 #预测强度排序
+
+    fig = plt.figure()
+    fig.clf()
+    ax = plt.subplot(111)
+    for index in sortedIndicies.tolist()[0]:
+        if classLabels[index] == 1.0:
+            delX = 0; delY = yStep
+        else:
+            delX = xStep; delY = 0
+            ySum += cur[1]                                                     #高度累加
+        ax.plot([cur[0], cur[0] - delX], [cur[1], cur[1] - delY], c = 'b')     #绘制ROC
+        cur = (cur[0] - delX, cur[1] - delY)                                 #更新绘制光标的位置
+    ax.plot([0,1], [0,1], 'b--')
+    plt.title('AdaBoost马疝病检测系统的ROC曲线', FontProperties = font)
+    plt.xlabel('假阳率', FontProperties = font)
+    plt.ylabel('真阳率', FontProperties = font)
+    ax.axis([0, 1, 0, 1])
+    print('AUC面积为:', ySum * xStep)                                         #计算AUC
+    plt.show()
+
+
+if __name__ == '__main__':
+    dataArr, LabelArr = loadDataSet('horseColicTraining2.txt')
+    weakClassArr, aggClassEst = adaBoostTrainDS(dataArr, classLabels)
+    plotROC(aggClassEst.T, LabelArr)
+</code></pre>
+<p>运行结果如下所示：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012103547201?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>我们可以看到有两个输出结果，一个是AUC面积，另一个ROC曲线图。</p>
+<p>先解释ROC，图中的横坐标是伪正例的比例（假阳率=FP/（FP+TN）），而纵坐标是真正例的比例（真阳率=TP/（TP+FN））。ROC曲线给出的是当阈值变化时假阳率和真阳率的变化情况。左下角的点所对应的将所有样例判为反例的情况，而右上角的点对应的则是将所有样例判为正例的情况。虚线给出的是随机猜测的结果曲线。</p>
+<p>ROC曲线不但可以用于比较分类器，还可以基于成本效益（cost-versus-benefit）分析来做出决策。由于在不同的阈值下，不用的分类器的表现情况是可能各不相同，因此以某种方式将它们组合起来或许更有意义。如果只是简单地观察分类器的错误率，那么我们就难以得到这种更深入的洞察效果了。</p>
+<p>在理想的情况下，最佳的分类器应该尽可能地处于左上角，这就意味着分类器在假阳率很低的同时获得了很高的真阳率。例如在垃圾邮件的过滤中，就相当于过滤了所有的垃圾邮件，但没有将任何合法邮件误识别为垃圾邮件而放入垃圾邮件额文件夹中。</p>
+<p>对不同的ROC曲线进行比较的一个指标是曲线下的面积（Area Unser the Curve，AUC）。AUC给出的是分类器的平均性能值，当然它并不能完全代替对整条曲线的观察。一个完美分类器的ACU为1.0，而随机猜测的AUC则为0.5。</p>
+<p><strong>这个ROC曲线是怎么画的呢？</strong></p>
+<p>对于分类器而言，都有概率输出的功能，拿逻辑回归来举例，我们得到的是该样本属于正样本的概率和属于负样本的概率，属于正样本的概率大，那么就判为正类，否则判为负类，那么实质上这里的阈值是0.5。</p>
+<p>现在假设我们已经得到了所有样本的概率输出（属于正样本的概率），我们根据每个测试样本属于正样本的概率值从大到小排序。如下图所示：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012103629888?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>图中共有20个测试样本，“Inst”一栏表示样本编号，“Class”一栏表示每个测试样本真正的标签（p表示正样本，n表示负样本），“Score”表示每个测试样本属于正样本的概率。其中，一共10个正样本，10个负样本。接下来，我们从高到低，依次将“Score”值作为阈值，当测试样本属于正样本的概率大于或等于这个threshold时，我们认为它为正样本，否则为负样本。</p>
+<p><strong>举例来说：</strong></p>
+<ul>
+<li>当阈值为0.9时，样本1的“Score”值为0.9，大于等于阈值，那么样本1为正类，其余为负类，则TPR=TP/（TP+FN）=1/10=0.1，FPR=FP/（TP+FN）=0/10=0；</li>
+<li>当阈值为0.8时，样本1的“Score”值为0.9，样本2的“Score”值为0.8，大于等于阈值，那么样本1，2为正类，其余为负类，则TPR=2/10=0.2，FPR=0/10=0；</li>
+<li>当阈值为0.7时，样本1，2，3的"Score"值大于等于阈值，那么样本1，2，3为正类，其余为负类，则TPR=2/10=0.2，FPR=1/10=0.1；</li>
+<li>当阈值为0.6时，样本1，2，3，4的"Score"值大于等于阈值，那么样本1，2，3，4为正类，其余为负类，则TPR=3/10=0.3，FPR=1/10=0.1；</li>
+<li>---------以此类推，此处省略一系列求解---------</li>
+<li>当阈值为0.1时，所有样本的"Score"值大于等于阈值，那么所有样本均为正类，则TPR=10/10=1，FPR=10/10=1。</li>
+</ul>
+<p>将它们的结果画出来，就构成了下图：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012103734315?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>**也许你已经发现了这样一个规律：多了一个TP，向Y轴移动一步，多了一个FP，向X轴移动一步。**现在回头看一看绘制ROC曲线的程序吧，你会发现程序中也是如此计算的，只不过区别在于，程序是从&lt;1.0，1.0&gt;这个点开始画的。</p>
+<p><strong>AUC又是如何计算的呢？很简单，这些小矩形的宽度都是固定的xStep，因此先对所有矩形的高度进行累加，即ySum，最后面积就是ySum*xStep。</strong></p>
+<p>上面的ROC曲线绘制结果是在10个弱分类器下，AdaBoost算法性能的结果。我们将迭代次数改为50，也就是训练50个弱分类器，看下ROC曲线和AUC的变化：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171012103851672?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>你会发现，ROC曲线往左上角更靠拢了，并且AUC值增加了。也就表明，分类器效果更佳。</p>
+<p>这就是ROC和AUC对与分类器评价指标，ROC越靠拢于左上角，分类器性能越好。同理AUC越接近于1，分类器性能越好。</p>
+<hr>
+<h1><a id="__1240"></a>八 总结</h1>
+<p><strong>AdaBoost的优缺点：</strong></p>
+<ul>
+<li>优点：泛化错误率低，易编码，可以应用在大部分分类器上，无参数调整。</li>
+<li>缺点：对离群点敏感。</li>
+</ul>
+<p><strong>其他：</strong></p>
+<ul>
+<li>集成方法通过组合多个分类器的分类结果，获得了比简单的单分类器更好的分类结果。本文只介绍了利用同一分类器的集成方法。除此之外，还有一些利用不同分类器的集成方法。</li>
+<li>多个分类器组合可能会进一步凸显出单分类器的不足，比如过拟合问题。</li>
+<li>本文主要介绍了boosting方法中最流行的一个称为AdaBoost的算法。</li>
+<li>最后，本文介绍了一些分类器性能评价指标，召回率、ROC曲线、AUC等。</li>
+<li>下篇文章开始讲解回归方法，欢迎届时捧场。</li>
+<li>如有问题，请留言。如有错误，还望指正，谢谢！</li>
+</ul>
+<p><strong>PS： 如果觉得本篇本章对您有所帮助，欢迎关注、评论、赞！</strong></p>
+<p>本文出现的所有代码和数据集，均可在我的github上下载，欢迎Follow、Star：<a href="https://github.com/Jack-Cherish/Machine-Learning" rel="nofollow">https://github.com/Jack-Cherish/Machine-Learning</a></p>
+<p><strong>参考资料：</strong></p>
+<ul>
+<li>[1] 简单易学的机器学习算法-AdaBoost：<a href="http://blog.csdn.net/google19890102/article/details/46376603" rel="nofollow">http://blog.csdn.net/google19890102/article/details/46376603</a></li>
+<li>[2] Bagging和Boosting概念及区别：<a href="http://www.cnblogs.com/liuwu265/p/4690486.html" rel="nofollow">http://www.cnblogs.com/liuwu265/p/4690486.html</a></li>
+<li>[3] 统计学习方法-CART, Bagging, Radom Forest, Boosting：<a href="http://blog.csdn.net/abcjennifer/article/details/8164315" rel="nofollow">http://blog.csdn.net/abcjennifer/article/details/8164315</a></li>
+<li>[4] 十大经典数据挖掘算法AdaBoost：<a href="http://www.cnblogs.com/en-heng/p/5974371.html" rel="nofollow">http://www.cnblogs.com/en-heng/p/5974371.html</a></li>
+<li>[5] 机器学习模型评价指标–混淆矩阵：<a href="http://blog.csdn.net/u010705209/article/details/53037481" rel="nofollow">http://blog.csdn.net/u010705209/article/details/53037481</a></li>
+<li>[6] ROC和AUC介绍以及如何计算AUC：<a href="https://www.douban.com/note/284051363/" rel="nofollow">https://www.douban.com/note/284051363/</a></li>
+<li>[7] scikit-learn AdaBoost类使用小结：<a href="http://www.cnblogs.com/pinard/p/6136914.html" rel="nofollow">http://www.cnblogs.com/pinard/p/6136914.html</a></li>
+</ul>
+
+            </div>
+						<link href="https://csdnimg.cn/release/phoenix/mdeditor/markdown_views-7b4cdcb592.css" rel="stylesheet">
+                </div>
+	</article>
+</div>
+  <div class="hide-article-box hide-article-pos text-center">
+    <div class="border"></div>
+        <a class="btn article-footer-btn" id="btn-readmore" data-track-view='{"mod":"popu_376","con":",https://blog.csdn.net/c406495762/article/details/78212124,"}' data-track-click='{"mod":"popu_376","con":",https://blog.csdn.net/c406495762/article/details/78212124,"}'>阅读更多</a>
+        <a class="btn article-footer-btn article-footer-bookmark-btn" >
+      <svg class="icon no-active hover-hide" aria-hidden="true">
+        <use xlink:href="#csdnc-bookmark"></use>
+      </svg>
+      <span>收藏</span>
+    </a>
+    <div class="btn article-footer-btn  bds_weixin article-footer-share-btn" data-cmd="weixin" title="分享">
+      <svg class="icon no-active hover-hide" aria-hidden="true">
+        <use xlink:href="#csdnc-share"></use>
+      </svg>
+      <span>分享</span>
+      <div class="bdsharebuttonbox">
+        <a href="#"class="bds_weixin clear-share-style-article-footer" data-cmd="weixin" title="分享"></a>
+      </div>
+    </div>
+    
+  </div>
+  <script>
+  (function(){
+    function collection(){
+      if (currentUserName) {
+        if (!$(this).hasClass("liked")) {
+          $.ajax({
+            url: 'https://my.csdn.net/my/favorite/do_add/2',
+            dataType: 'json',
+            type: 'POST',
+            xhrFields: {
+              withCredentials: true
+            },
+            data: {
+              title: articleTit,
+              url: curentUrl,
+              share: 1,
+              map_name: ''
+            },
+            success: function(data) {
+              if (data.succ == 1) {
+                $('.btn-bookmark').addClass("liked");
+                $('.article-footer-bookmark-btn').addClass("liked").children('span').text('已收藏');
+                
+                alert('收藏成功,可以在个人中心查看我的收藏');
+              } else {
+                if (data.msg === "您已经收藏过") {
+                  $('.btn-bookmark').addClass("liked");
+                  $('.article-footer-bookmark-btn').addClass("liked").children('span').text('已收藏');
+                }
+                alert(data.msg);
+              }
+            }
+          });
+        } else {
+          alert('您已经收藏过');
+        }
+      } else {
+        window.csdn.loginBox.show();
+      }
+    }
+    window.csdn = window.csdn ? window.csdn : {};
+    window.csdn.articleCollection = collection;
+    function setArticleH(btnReadmore,posi){
+      var winH = $(window).height();
+      var articleBox = $("div.article_content");
+      var artH = articleBox.height();
+      if(artH > winH*posi){
+        articleBox.css({
+          'height':winH*posi+'px',
+          'overflow':'hidden'
+        })
+        btnReadmore.click(function(){
+          articleBox.removeAttr("style");
+          $(this).parent().remove()
+        })
+      }else{
+        btnReadmore.parent().remove()
+      }
+    }
+    var btnReadmore = $("#btn-readmore");
+    $('.article-footer-bookmark-btn').click(window.csdn.articleCollection)
+    if(btnReadmore.length>0){
+      if(currentUserName){
+        setArticleH(btnReadmore,3);
+      }else{
+        setArticleH(btnReadmore,1.2);
+      }
+    }else{
+      $('.hide-article-box').addClass('hide-article-style');
+    }
+  })()
+</script>
+<script>
+		$(".MathJax").remove();
+		if($('div.markdown_views pre.prettyprint code.hljs').length > 0 ){
+				$('div.markdown_views')[0].className = 'markdown_views';
+		}
+</script>
+                <a id="commentBox"></a>
+<div class="comment-box">
+	
+	<div class="comment-edit-box d-flex">
+		<a id="commentsedit"></a>
+		<div class="user-img">
+			<a href="//me.csdn.net/qq_37507975" target="_blank">
+				<img class="" src="https://avatar.csdn.net/1/6/8/3_qq_37507975.jpg">
+			</a>
+		</div>
+		<form id="commentform">
+			<input type="hidden" id="comment_replyId">
+			<textarea class="comment-content" name="comment_content" id="comment_content" placeholder="想对作者说点什么"></textarea>
+			<div class="opt-box"> <!-- d-flex -->
+				<div id="ubbtools" class="add_code">
+					<a href="#insertcode" code="code" target="_self"><i class="icon iconfont icon-daima"></i></a>
+				</div>
+				<input type="hidden" id="comment_replyId" name="comment_replyId">
+				<input type="hidden" id="article_id" name="article_id" value="78212124">
+				<input type="hidden" id="comment_userId" name="comment_userId" value="">
+				<input type="hidden" id="commentId" name="commentId" value="">
+				<div style="display: none;" class="csdn-tracking-statistics tracking-click" data-mod="popu_384"><a href="#" target="_blank" class="comment_area_btn">发表评论</a></div>
+				<div class="dropdown" id="myDrap">
+					<a class="dropdown-face d-flex align-items-center" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					<div class="txt-selected text-truncate">添加代码片</div>
+					<svg class="icon d-block" aria-hidden="true">
+						<use xlink:href="#csdnc-triangledown"></use>
+					</svg>
+					</a>
+					<ul class="dropdown-menu" id="commentCode" aria-labelledby="drop4">
+						<li><a data-code="html">HTML/XML</a></li>
+						<li><a data-code="objc">objective-c</a></li>
+						<li><a data-code="ruby">Ruby</a></li>
+						<li><a data-code="php">PHP</a></li>
+						<li><a data-code="csharp">C</a></li>
+						<li><a data-code="cpp">C++</a></li>
+						<li><a data-code="javascript">JavaScript</a></li>
+						<li><a data-code="python">Python</a></li>
+						<li><a data-code="java">Java</a></li>
+						<li><a data-code="css">CSS</a></li>
+						<li><a data-code="sql">SQL</a></li>
+						<li><a data-code="plain">其它</a></li>
+					</ul>
+				</div>  
+				<div class="right-box">
+					<span id="tip_comment" class="tip">还能输入<em>1000</em>个字符</span>
+					<input type="submit" class="btn btn-sm btn-red btn-comment" value="发表评论">
+				</div>
+			</div>
+		</form>
+	</div>
+
+		<div class="comment-list-container">
+		<a id="comments"></a>
+		<div class="comment-list-box">
+		</div>
+		<div id="commentPage" class="pagination-box d-none"></div>
+		<div class="opt-box text-center">
+			<button class="btn btn-sm btn-link-blue" id="btnMoreComment"></button>
+		</div>
+	</div>
+</div>
+        <div class="recommend-box">
+            		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/changzoe/article/details/78921624,BlogCommendFromBaidu_0"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/changzoe/article/details/78921624" target="_blank" title="集成学习Adaboost算法及python实现及sklearn包的调用">
+				<h4 class="text-truncate oneline">
+						集成学习<em>Adaboost</em>算法及python实现及sklearn包的调用				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-28</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							3355</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/changzoe/article/details/78921624" target="_blank" title="集成学习Adaboost算法及python实现及sklearn包的调用">
+							<span class="desc oneline">集成方法（ensemblemethod）集成方法主要包括Bagging和Boosting两种方法。bagging基于数据重抽样的分类器构建方法在Bagging方法中，主要通过对训练数据集进行随机采样，...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/changzoe">来自：	<span class="blog_title"> changzoe的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/piaodexin/article/details/77867020,BlogCommendFromBaidu_1"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/piaodexin/article/details/77867020" target="_blank" title="Python进行参数调优GridSearchCV和RandomizedSearchCV">
+				<h4 class="text-truncate oneline">
+						Python进行参数调优GridSearchCV和RandomizedSearchCV				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-06</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							5228</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/piaodexin/article/details/77867020" target="_blank" title="Python进行参数调优GridSearchCV和RandomizedSearchCV">
+							<span class="desc oneline">#-*-coding:utf-8-*-&quot;&quot;&quot;CreatedonWedSep614:30:242017@author:飘的心&quot;&quot;&quot;fromsklearn.datasetsimportload_digit...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/piaodexin">来自：	<span class="blog_title"> piaodexin的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/gdh756462786/article/details/79268685,BlogCommendFromBaidu_2"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/gdh756462786/article/details/79268685" target="_blank" title="python----贝叶斯优化调参之Hyperopt">
+				<h4 class="text-truncate oneline">
+						python----贝叶斯优化调参之Hyperopt				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">02-06</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							4237</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/gdh756462786/article/details/79268685" target="_blank" title="python----贝叶斯优化调参之Hyperopt">
+							<span class="desc oneline">Hyperopt库为python中的模型选择和参数优化提供了算法和并行方案。机器学习常见的模型有KNN,SVM，PCA，决策树，GBDT等一系列的算法，但是在实际应用中，我们需要选取合适的模型，并对模...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/gdh756462786">来自：	<span class="blog_title"> 入坑AI</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident recommend-other-item-box"  data-track-click='{"mod":"popu_614","con":",https://bbs.csdn.net/topics/390121289,BlogCommendFromBaidu_3"}'>
+		<a href="https://bbs.csdn.net/topics/390121289" target="_blank">
+			<h4 class="text-truncate oneline">
+					svm为弱<em>分类器</em>的<em>adaboost</em>算法，怎么样把多个弱<em>分类器</em>合成强<em>分类器</em>			</h4>
+			<div class="info-box d-flex align-content-center">
+					<span class="date">07-04</span>
+			</div>
+			<p class="content oneline">
+        <span class="desc oneline">最近在学习adaboostsvm算法，就是以svm作为弱分类器，我使用的是libsvm-3.11，可以多分类的工具包，但是它的输出是struct类型的model，多个svm弱分类器怎样合成一个强分类器</span>
+                  <span class="type-show type-show-bbs">论坛</span>
+        			</p>
+		</a>
+
+	</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/takethevow/article/details/79912417,BlogCommendFromBaidu_4"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/takethevow/article/details/79912417" target="_blank" title="使用自己的图片训练CNN分类器-TensorFlow">
+				<h4 class="text-truncate oneline">
+						使用自己的图片训练CNN<em>分类器</em>-TensorFlow				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-12</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							994</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/takethevow/article/details/79912417" target="_blank" title="使用自己的图片训练CNN分类器-TensorFlow">
+							<span class="desc oneline">在看过吴恩达CNN前两周的课，并且完成了课后作业后，对CNN的实现有了具象的了解。整体的实现过程大概分为以下几部分：1.数据准备。我将数据组织成多维数组的形式，关于tfrecord是什么还未去了解，这...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/takethevow">来自：	<span class="blog_title"> takethevow的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident recommend-other-item-box"  data-track-click='{"mod":"popu_614","con":",https://bbs.csdn.net/topics/392345790,BlogCommendFromBaidu_5"}'>
+		<a href="https://bbs.csdn.net/topics/392345790" target="_blank">
+			<h4 class="text-truncate oneline">
+					萌新求助！！opencv 自己训练出来的<em>分类器</em>怎么加载			</h4>
+			<div class="info-box d-flex align-content-center">
+					<span class="date">03-24</span>
+			</div>
+			<p class="content oneline">
+        <span class="desc oneline">如题。。。。QQ644952627</span>
+                  <span class="type-show type-show-bbs">论坛</span>
+        			</p>
+		</a>
+
+	</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/vola9527/article/details/41675229,BlogCommendFromBaidu_6"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/vola9527/article/details/41675229" target="_blank" title="【机器学习算法-python实现】Adaboost的实现(1)-单层决策树(decision stump)">
+				<h4 class="text-truncate oneline">
+						【<em>机器学习</em>算法-python实现】<em>Adaboost</em>的实现(1)-单层决策树(decision stump)				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-02</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1581</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/vola9527/article/details/41675229" target="_blank" title="【机器学习算法-python实现】Adaboost的实现(1)-单层决策树(decision stump)">
+							<span class="desc oneline">转载地址：http://blog.csdn.net/buptgshengod/article/details/250493051.背景   上一节学习支持向量机，感觉公式都太难理解了，弄得我有点头大。...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/vola9527">来自：	<span class="blog_title"> vola的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_36389843/article/details/78242983,BlogCommendFromBaidu_7"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_36389843/article/details/78242983" target="_blank" title="python机器学习实战：Adaboost">
+				<h4 class="text-truncate oneline">
+						python<em>机器学习</em><em>实战</em>：<em>Adaboost</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-15</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							193</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_36389843/article/details/78242983" target="_blank" title="python机器学习实战：Adaboost">
+							<span class="desc oneline">1.AdaBoost算法： 什么叫AdaBoost算法呢，我们可以这样理解：当我们做重要的决定的时候，我们一个人的意见有可能是错误的，但时如果我们能够吸取多个人的意见再做决定，那我们犯错误的几率就会大...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_36389843">来自：	<span class="blog_title"> sky</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u011475210/article/details/78254505,BlogCommendFromBaidu_8"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u011475210/article/details/78254505" target="_blank" title="Python3：《机器学习实战》之AdaBoost算法（2）算法实现">
+				<h4 class="text-truncate oneline">
+						<em>Python3</em>：《<em>机器学习</em><em>实战</em>》之<em>AdaBoost</em>算法（2）算法实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-16</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							5006</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u011475210/article/details/78254505" target="_blank" title="Python3：《机器学习实战》之AdaBoost算法（2）算法实现">
+							<span class="desc oneline">Python3：《机器学习实战》之AdaBoost算法（2）算法实现转载请注明作者和出处：http://blog.csdn.net/u011475210代码地址：https://github.com/...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u011475210">来自：	<span class="blog_title"> WordZzzz</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/jiaqiangbandongg/article/details/52903655,BlogCommendFromBaidu_9"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/jiaqiangbandongg/article/details/52903655" target="_blank" title="提升方法AdaBoost算法完整python代码">
+				<h4 class="text-truncate oneline">
+						<em>提升</em>方法<em>AdaBoost</em>算法完整python代码				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-23</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							5798</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/jiaqiangbandongg/article/details/52903655" target="_blank" title="提升方法AdaBoost算法完整python代码">
+							<span class="desc oneline">提升方法AdaBoost算法提升方法简述俗话说，“三个臭皮匠顶个诸葛亮”，对于一个复杂的问题，一个专家的判断往往没有多个专家的综合判断来得好。通常情况下，学习一个弱学习算法比学习一个强学习算法容易得多...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/jiaqiangbandongg">来自：	<span class="blog_title"> 机器变得更残忍的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+          <div class="recommend-item-box blog-expert-recommend-box">
+				<div class="d-flex">
+					<div class="blog-expert-recommend">
+						<div class="blog-expert">
+							<div class="blog-expert-flexbox"></div>
+						</div>
+					</div>
+				</div>
+      </div>
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_28168421/article/details/81351321,BlogCommendClickRateRank_10"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_28168421/article/details/81351321" target="_blank" title="这可能是最简单易懂的机器学习入门（小白必读）">
+				<h4 class="text-truncate oneline">
+						这可能是最简单易懂的<em>机器学习</em>入门（小白必读）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-31</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1.1万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_28168421/article/details/81351321" target="_blank" title="这可能是最简单易懂的机器学习入门（小白必读）">
+							<span class="desc oneline">作者|LizzieTurner编译|专知翻译|Xiaowen本文用浅显易懂的语言精准概括了机器学习的相关知识，内容全面，总结到位，剖析了机器学习的what，......</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_28168421">来自：	<span class="blog_title"> 机器学习算法与Python学习</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/jrunw/article/details/79205322,BlogCommendClickRateRank_11"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/jrunw/article/details/79205322" target="_blank" title="图解十大经典机器学习算法入门">
+				<h4 class="text-truncate oneline">
+						图解十大经典<em>机器学习</em>算法入门				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-30</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							5.9万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/jrunw/article/details/79205322" target="_blank" title="图解十大经典机器学习算法入门">
+							<span class="desc oneline">弱人工智能近几年取得了重大突破，悄然间，已经成为每个人生活中必不可少的一部分。以我们的智能手机为例，看看到底温藏着多少人工智能的神奇魔术。下图是一部典型的智能手机上安装的一些常见应用程序，可能很多人都...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/jrunw">来自：	<span class="blog_title"> jrunw的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/GitChat/article/details/78526664,BlogCommendClickRateRank_12"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/GitChat/article/details/78526664" target="_blank" title="3分钟了解入门「机器学习」该学习什么？（下）">
+				<h4 class="text-truncate oneline">
+						3分钟了解入门「<em>机器学习</em>」该学习什么？（下）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-14</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							4194</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/GitChat/article/details/78526664" target="_blank" title="3分钟了解入门「机器学习」该学习什么？（下）">
+							<span class="desc oneline">本文来自作者 刘明 在 GitChat 上分享「机器学习/深度学习书单推荐及学习方法」，「阅读原文」查看交流实录「文末高能」编辑|坂本写在前面本人是个对数学和人工智能极其感兴趣的人。平时，我也在线上线...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/GitChat">来自：	<span class="blog_title"> GitChat技术杂谈</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/hualusiyu/article/details/85012288,BlogCommendClickRateRank_13"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/hualusiyu/article/details/85012288" target="_blank" title="人工智能学习笔记-什么是机器学习">
+				<h4 class="text-truncate oneline">
+						人工智能<em>学习笔记</em>-什么是<em>机器学习</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-15</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1841</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/hualusiyu/article/details/85012288" target="_blank" title="人工智能学习笔记-什么是机器学习">
+							<span class="desc oneline">什么是机器学习1.1机器学习的本质1.2机器学习VS专家规则1.3.机器学习基本原理1.4.机器学习的类别 1.1.本质  根据历史看到的样本，总结规律。1.2.机器学习VS专家规则机器学习VS 专家...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/hualusiyu">来自：	<span class="blog_title"> hualusiyu的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix"  data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/qq_22539867/10324225,BlogCommendClickRateRank_14"}'>
+			<a href="https://download.csdn.net/download/qq_22539867/10324225" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							python<em>机器学习</em>						</h4>
+						<span class="data float-right">04-03</span>
+					</div>
+					<div class="desc oneline">
+							python机器学习python机器学习python机器学习python机器学习python机器学习python机器学习python机器学习python机器学习python机器学习python机器学习					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/jnulzl/article/details/49894041,BlogCommendESEnWordWeight_15"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/jnulzl/article/details/49894041" target="_blank" title="史上最好的LDA(线性判别分析)教程">
+				<h4 class="text-truncate oneline">
+						史上最好的LDA(线性判别分析)教程				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-17</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/jnulzl/article/details/49894041" target="_blank" title="史上最好的LDA(线性判别分析)教程">
+							<span class="desc oneline">一、前言最近由于研究需要，要用到线性判别分析(LDA)。于是找了很多资料来看，结果发现大部分讲的都是理论知识，因此最后还是看的一知半解，后来终于找到了个英文的文档，作者由PCA引入LDA，看过后豁然开...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/jnulzl">来自：	<span class="blog_title"> jnulzl的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/roguesir/article/details/77104246,BlogCommendESEnWordWeight_16"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/roguesir/article/details/77104246" target="_blank" title="人脸检测工具face_recognition的安装与应用">
+				<h4 class="text-truncate oneline">
+						人脸检测工具face_recognition的安装与应用				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-11</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2.8万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/roguesir/article/details/77104246" target="_blank" title="人脸检测工具face_recognition的安装与应用">
+							<span class="desc oneline">人脸检测工具face_recognition的安装与应用</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/roguesir">来自：	<span class="blog_title"> roguesir的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/forezp/article/details/70148833,BlogCommendESEnWordWeight_17"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/forezp/article/details/70148833" target="_blank" title="史上最简单的 SpringCloud 教程 | 终章">
+				<h4 class="text-truncate oneline">
+						史上最简单的 SpringCloud 教程 | 终章				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-12</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							134.8万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/forezp/article/details/70148833" target="_blank" title="史上最简单的 SpringCloud 教程 | 终章">
+							<span class="desc oneline">转载请标明出处：http://blog.csdn.net/forezp/article/details/70148833本文出自方志朋的博客错过了这一篇，你可能再也学不会SpringCloud了！Sp...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/forezp">来自：	<span class="blog_title"> 方志朋的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/topgun38/article/details/12749233,BlogCommendFromBaidu_18"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/topgun38/article/details/12749233" target="_blank" title="弱分类器和强分类器">
+				<h4 class="text-truncate oneline">
+						弱<em>分类器</em>和强<em>分类器</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-15</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1.1万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/topgun38/article/details/12749233" target="_blank" title="弱分类器和强分类器">
+							<span class="desc oneline">原文地址：http://blog.csdn.net/qinzx2004/article/details/2824323英文原文地址：http://www.ricoh.com/about/company...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/topgun38">来自：	<span class="blog_title"> TOPGUN的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix"  data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/cfzqxjy/8983213,BlogCommendFromBaidu_19"}'>
+			<a href="https://download.csdn.net/download/cfzqxjy/8983213" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							<em>Adaboost</em>算法Python实现---详细注释版						</h4>
+						<span class="data float-right">08-10</span>
+					</div>
+					<div class="desc oneline">
+							需要安装numpy,scipy。下载地址：http://www.scipy.org/scipylib/download.html 注释详细 适合课程学习。					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/lushuo9156/article/details/56484129,BlogCommendFromBaidu_20"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/lushuo9156/article/details/56484129" target="_blank" title="得到笔记">
+				<h4 class="text-truncate oneline">
+						得到笔记				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">02-22</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2068</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/lushuo9156/article/details/56484129" target="_blank" title="得到笔记">
+							<span class="desc oneline">硅谷来信###132在大学学什么付诸行动的习惯：再好的理论如果没有行动作支撑也是无用的理论。沟通和表达的能力：这是一个现代人的基本素质，我现在还在学习。表示友善和爱的能力：不管是跟爱人还是朋友，有了这...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/lushuo9156">来自：	<span class="blog_title"> lushuo9156的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u014114990/article/details/51178899,BlogCommendFromBaidu_21"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u014114990/article/details/51178899" target="_blank" title="adaboost python 实例">
+				<h4 class="text-truncate oneline">
+						<em>adaboost</em> python 实例				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-18</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							4640</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u014114990/article/details/51178899" target="_blank" title="adaboost python 实例">
+							<span class="desc oneline">#-*-coding:utf-8-*-     ''' 集成方法(ensemblemethod)或者元算法(meta-algorithm)是将不同的分类器组合起来。  使用集成方法时会有多种形式: 可...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u014114990">来自：	<span class="blog_title"> u014114990的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix"  data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/lty135458/9726476,BlogCommendFromBaidu_22"}'>
+			<a href="https://download.csdn.net/download/lty135458/9726476" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							<em>adaboost</em> 例子 <em>机器学习</em>(测试好用)						</h4>
+						<span class="data float-right">01-01</span>
+					</div>
+					<div class="desc oneline">
+							adaboost 例子 机器学习(测试好用)					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/xiaxzhou/article/details/72872270,BlogCommendFromGuangxin_23"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/xiaxzhou/article/details/72872270" target="_blank" title="【读书笔记】机器学习实战 第7章 基于单层决策树的adaboost">
+				<h4 class="text-truncate oneline">
+						【读书笔记】<em>机器学习</em><em>实战</em> 第7章 基于单层决策树的<em>adaboost</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-05</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1597</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/xiaxzhou/article/details/72872270" target="_blank" title="【读书笔记】机器学习实战 第7章 基于单层决策树的adaboost">
+							<span class="desc oneline">机器学习实战第7章7.3-7.5基于单层决策树的adaboost#!/usr/bin/python#-*-coding:utf-8-*-fromnumpyimport*defloadSimpData(...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/xiaxzhou">来自：	<span class="blog_title"> xiaxzhou的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/LY_ysys629/article/details/72842067,BlogCommendFromGuangxin_24"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/LY_ysys629/article/details/72842067" target="_blank" title="集成学习AdaBoost算法原理及python实现">
+				<h4 class="text-truncate oneline">
+						集成学习<em>AdaBoost</em>算法原理及python实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-02</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							5115</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/LY_ysys629/article/details/72842067" target="_blank" title="集成学习AdaBoost算法原理及python实现">
+							<span class="desc oneline">adaboost</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/LY_ysys629">来自：	<span class="blog_title"> 三石</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/lingan_Hong/article/details/78082024,BlogCommendFromGuangxin_25"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/lingan_Hong/article/details/78082024" target="_blank" title="机器学习之AdaBoost元算法（七）">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>之<em>AdaBoost</em>元算法（七）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-25</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2364</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/lingan_Hong/article/details/78082024" target="_blank" title="机器学习之AdaBoost元算法（七）">
+							<span class="desc oneline">主要内容：●组合相似的分类器来提高分类器性能●应用AdaBoost算法●处理非均衡问题分类问题打个比方，做重要决定的时候，大家可能会汲取多个专家而不是一个人的意见。机器学习处理处理问题的时候，也是如此...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/lingan_Hong">来自：	<span class="blog_title"> lingan_Hong的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/weixin_41695564/article/details/79462912,BlogCommendFromGuangxin_26"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/weixin_41695564/article/details/79462912" target="_blank" title="机器学习笔记（一）——基于单层决策树的AdaBoost算法实践">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>笔记（一）——基于单层决策树的<em>AdaBoost</em>算法实践				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-06</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							754</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/weixin_41695564/article/details/79462912" target="_blank" title="机器学习笔记（一）——基于单层决策树的AdaBoost算法实践">
+							<span class="desc oneline">               基于单层决策树的AdaBoost算法实践  最近一直在学习周志华老师的西瓜书，也就是《机器学习》，在第八章集成学习中学习了一个集成学习算法，即AdaBoost算法。Ada...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/weixin_41695564">来自：	<span class="blog_title"> 行歌</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/jiaoyangwm/article/details/79618787,BlogCommendFromQuerySearch_27"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/jiaoyangwm/article/details/79618787" target="_blank" title="机器学习实战（七）利用AdaBoost元算法提高分类性能">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>（七）利用<em>AdaBoost</em>元算法提高分类<em>性能</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-20</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							534</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/jiaoyangwm/article/details/79618787" target="_blank" title="机器学习实战（七）利用AdaBoost元算法提高分类性能">
+							<span class="desc oneline">第七章利用AdaBoost元算法提高分类性能7.1集成方法7.1.1bagging（自举汇聚法）7.1.2随机森林（RandomForest，RF）7.1.3boosting（提升方法）7.1.4Ba...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/jiaoyangwm">来自：	<span class="blog_title"> 呆呆的猫的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/Evitachan/article/details/80441568,BlogCommendFromQuerySearch_28"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Evitachan/article/details/80441568" target="_blank" title="机器学习实战笔记——AdaBoost">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>笔记——<em>AdaBoost</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-25</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							185</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Evitachan/article/details/80441568" target="_blank" title="机器学习实战笔记——AdaBoost">
+							<span class="desc oneline">基本原理Boosting族算法可以将多个弱分类器加权结合成强分类器。其中，AdaBoost是最为显著的代表算法，它的基本思想为：先从初始训练集训练出一个弱分类器，每一次训练的弱分类器参与下一次训练，直...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Evitachan">来自：	<span class="blog_title"> Evitachan的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_33638791/article/details/56289152,BlogCommendFromQuerySearch_29"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_33638791/article/details/56289152" target="_blank" title="py2.7 : 《机器学习实战》 Adaboost 2.24号：ROC曲线的绘制和AUC计算函数">
+				<h4 class="text-truncate oneline">
+						py2.7 : 《<em>机器学习</em><em>实战</em>》 <em>Adaboost</em> 2.24号：ROC曲线的绘制和AUC计算函数				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">02-21</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1294</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_33638791/article/details/56289152" target="_blank" title="py2.7 : 《机器学习实战》 Adaboost 2.24号：ROC曲线的绘制和AUC计算函数">
+							<span class="desc oneline">前言：可以将不同的分类器组合，这种组合结果被称为集成方法 、元算法使用：1.不同算法的集成2.同一算法下的不同设置集成3.不同部分分配给不同分类器的集成算法介绍：AdaBoost优点：泛华错误率低，易...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_33638791">来自：	<span class="blog_title"> Kelisiya</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u011475210/article/details/78253124,BlogCommendFromQuerySearch_30"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u011475210/article/details/78253124" target="_blank" title="Python3：《机器学习实战》之AdaBoost算法（1）算法概述">
+				<h4 class="text-truncate oneline">
+						<em>Python3</em>：《<em>机器学习</em><em>实战</em>》之<em>AdaBoost</em>算法（1）算法概述				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-16</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2013</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u011475210/article/details/78253124" target="_blank" title="Python3：《机器学习实战》之AdaBoost算法（1）算法概述">
+							<span class="desc oneline">Python3：《机器学习实战》之AdaBoost算法（1）算法概述转载请注明作者和出处：http://blog.csdn.net/u011475210代码地址：https://github.com/...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u011475210">来自：	<span class="blog_title"> WordZzzz</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_28773183/article/details/81061564,BlogCommendFromQuerySearch_31"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_28773183/article/details/81061564" target="_blank" title="《机器学习实战》第七章----AdaBoost元算法">
+				<h4 class="text-truncate oneline">
+						《<em>机器学习</em><em>实战</em>》第七章----<em>AdaBoost</em>元算法				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-16</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							112</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_28773183/article/details/81061564" target="_blank" title="《机器学习实战》第七章----AdaBoost元算法">
+							<span class="desc oneline">元算法元算法是对其他算法进行组合的一种方法,其背后的思路就是组合多个专家的经验来得到最终的结论,类似于我们的投票.而提升方法是其中最常用的方法,在分类问题中,它通过改变训练样本的权重,学习多个分类器,...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_28773183">来自：	<span class="blog_title">  FC的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/sun_shengyun/article/details/54289955,BlogCommendFromBaidu_32"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/sun_shengyun/article/details/54289955" target="_blank" title="【集成学习】scikit-learn Adaboost类库使用小结">
+				<h4 class="text-truncate oneline">
+						【集成学习】scikit-learn <em>Adaboost</em>类库使用小结				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-09</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							8939</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/sun_shengyun/article/details/54289955" target="_blank" title="【集成学习】scikit-learn Adaboost类库使用小结">
+							<span class="desc oneline">转自http://www.cnblogs.com/pinard/p/6136914.html在集成学习之Adaboost算法原理小结中，我们对Adaboost的算法原理做了一个总结。这里我们就从实用的...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/sun_shengyun">来自：	<span class="blog_title"> sun_shengyun的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/Jerr__y/article/details/52955148,BlogCommendFromBaidu_33"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Jerr__y/article/details/52955148" target="_blank" title="采用集成学习算法提高分类器的准确性">
+				<h4 class="text-truncate oneline">
+						采用集成学习算法提高<em>分类器</em>的准确性				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-28</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1.3万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Jerr__y/article/details/52955148" target="_blank" title="采用集成学习算法提高分类器的准确性">
+							<span class="desc oneline">原文链接：http://www.wangxianfeng.name/2011/08/ensemble-method-to-improve-the-accuracy-of-the-classifier/...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Jerr__y">来自：	<span class="blog_title"> 大学之道，在明明德</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/zjsghww/article/details/51591009,BlogCommendFromBaidu_34"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/zjsghww/article/details/51591009" target="_blank" title="分类器组合方法Bootstrap, Boosting, Bagging, 随机森林（一）">
+				<h4 class="text-truncate oneline">
+						<em>分类器</em>组合方法Bootstrap, Boosting, Bagging, 随机森林（一）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-06</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1.1万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/zjsghww/article/details/51591009" target="_blank" title="分类器组合方法Bootstrap, Boosting, Bagging, 随机森林（一）">
+							<span class="desc oneline">首先，机器学习的一个重要假设就是样本的分布和总体的分布是一致的。多分类器进行组合的目的是为了将弱分类器（单个分类器）集成为强分类器，提升对未知样本的分类准确率，（实验数据。。。）Bootstrapin...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/zjsghww">来自：	<span class="blog_title"> 张张的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/JH0lmes/article/details/82790997,BlogCommendFromBaidu_35"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/JH0lmes/article/details/82790997" target="_blank" title="分类器">
+				<h4 class="text-truncate oneline">
+						<em>分类器</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-21</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1347</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/JH0lmes/article/details/82790997" target="_blank" title="分类器">
+							<span class="desc oneline">分类器的作用：常规任务是利用给定的类别、已知的训练数据来学习分类规则和分类器，然后对未知数据进行分类（或预测）。逻辑回归（logistics）、SVM等常用于解决二分类问题，对于多分类问题（multi...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/JH0lmes">来自：	<span class="blog_title"> JH0lmes的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/luanpeng825485697/article/details/79710046,BlogCommendFromBaidu_36"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/luanpeng825485697/article/details/79710046" target="_blank" title="python机器学习案例系列教程——基于规则的分类器">
+				<h4 class="text-truncate oneline">
+						python<em>机器学习</em>案例系列教程——基于规则的<em>分类器</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-03</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							3035</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/luanpeng825485697/article/details/79710046" target="_blank" title="python机器学习案例系列教程——基于规则的分类器">
+							<span class="desc oneline">全栈工程师开发手册（作者：栾鹏）python开发大全、系列文章、精品教程算法简介基于规则的分类器是使用一组”if…then…”规则来对记录进行分类的技术。模型的规则用R=(r1∨r2∨∙∙∙∨rk)R...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/luanpeng825485697">来自：	<span class="blog_title"> 全栈工程师开发手册（原创）</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/zwt523211292/article/details/77885671,BlogCommendClickRateRank_37"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/zwt523211292/article/details/77885671" target="_blank" title="机器学习入门概念--心血总结--史上最强--入门必读--回味无穷">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>入门概念--心血总结--史上最强--入门必读--回味无穷				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-07</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2932</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/zwt523211292/article/details/77885671" target="_blank" title="机器学习入门概念--心血总结--史上最强--入门必读--回味无穷">
+							<span class="desc oneline">1.一个故事说明什么是机器学习2.机器学习的定义3.机器学习的方法4.机器学习的应用--大数据领域5.机器学习的范畴--vs统计&amp;挖掘6.机器学习的子类--深度学习7.机器学习的父类--人工智能8.机...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/zwt523211292">来自：	<span class="blog_title"> zwt523211292的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/wsp_1138886114/article/details/81368374,BlogCommendClickRateRank_38"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/wsp_1138886114/article/details/81368374" target="_blank" title="目录三——算法基础代码">
+				<h4 class="text-truncate oneline">
+						目录三——算法基础代码				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-06</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							512</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/wsp_1138886114/article/details/81368374" target="_blank" title="目录三——算法基础代码">
+							<span class="desc oneline">机器学习入门代码机器学习—SVM_SVC_code演示机器学习—KNN_Classifier_Regression_code演示机器学习—tree_DecisionTreeClassifier_cod...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/wsp_1138886114">来自：	<span class="blog_title"> wsp_1138886114的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_33583069/article/details/52550320,BlogCommendClickRateRank_39"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_33583069/article/details/52550320" target="_blank" title="机器学习，深度学习等概念区别【转】">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>，深度学习等概念区别【转】				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-15</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2262</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_33583069/article/details/52550320" target="_blank" title="机器学习，深度学习等概念区别【转】">
+							<span class="desc oneline">1、人工智能-&gt;机器学习-&gt;深度学习  注：-&gt;包含关系2、机器学习领域：  模式识别＝机器学习  数据挖掘＝机器学习＋数据库  统计学习＝机器学习  计算机视觉＝图像处理＋机器学习  语音识别＝语音...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_33583069">来自：	<span class="blog_title"> DacingLink 生命的舞者，SkipList 灵魂的跳跃</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/lcy7289786/article/details/68958324,BlogCommendClickRateRank_40"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/lcy7289786/article/details/68958324" target="_blank" title="《机器学习有意思！ 01》- 世界上最简单的机器学习入门">
+				<h4 class="text-truncate oneline">
+						《<em>机器学习</em>有意思！ 01》- 世界上最简单的<em>机器学习</em>入门				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-03</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							3.3万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/lcy7289786/article/details/68958324" target="_blank" title="《机器学习有意思！ 01》- 世界上最简单的机器学习入门">
+							<span class="desc oneline">本文首发于https://jizhi.im/blog/post/ml_is_fun_01你是否也曾听人们谈起机器学习但是只有一个朦胧的概念？你是否厌倦了在同事的高谈阔论中颓然欲睡？此诚求变之机。本教程...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/lcy7289786">来自：	<span class="blog_title"> 集智-人工智能，机器学习</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix"  data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/qq284277438/10196876,BlogCommendClickRateRank_41"}'>
+			<a href="https://download.csdn.net/download/qq284277438/10196876" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							<em>机器学习</em>（中文版）PDF						</h4>
+						<span class="data float-right">01-09</span>
+					</div>
+					<div class="desc oneline">
+							机器学习（中文版）PDF 目录 第1章 引言 第2章概念学习和一般到特殊序 第3章决策树学习 第4章人工神经网络					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_31726419/article/details/79187178,BlogCommendFromBaidu_42"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_31726419/article/details/79187178" target="_blank" title="统计学习方法Adaboost例题python实现">
+				<h4 class="text-truncate oneline">
+						统计学习方法<em>Adaboost</em>例题python实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-28</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							334</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_31726419/article/details/79187178" target="_blank" title="统计学习方法Adaboost例题python实现">
+							<span class="desc oneline">统计学习方法AdaBoost例题8.1我们用python实现，作图，看一下效果，验证计算结果先贴几张书上的过程下面给出代码实现:importmathimportnumpyasnpimportmatpl...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_31726419">来自：	<span class="blog_title"> lang的飞起的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/liexian2816/article/details/77996868,BlogCommendFromBaidu_43"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/liexian2816/article/details/77996868" target="_blank" title="sklearn中SVM与AdaBoost对手写体数字进行识别">
+				<h4 class="text-truncate oneline">
+						sklearn中SVM与<em>AdaBoost</em>对手写体数字进行识别				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-15</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2488</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/liexian2816/article/details/77996868" target="_blank" title="sklearn中SVM与AdaBoost对手写体数字进行识别">
+							<span class="desc oneline">这篇博文主要基于sklearn中的svm和AdaBoost对MINIST数据集中的手写体数字进行识别。...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/liexian2816">来自：	<span class="blog_title"> Eric.MC的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/henreash/article/details/79089279,BlogCommendFromBaidu_44"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/henreash/article/details/79089279" target="_blank" title="Python机器学习----第4部分 模型评估和参数调优">
+				<h4 class="text-truncate oneline">
+						Python<em>机器学习</em>----第4部分 模型评估和参数调优				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-17</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1978</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/henreash/article/details/79089279" target="_blank" title="Python机器学习----第4部分 模型评估和参数调优">
+							<span class="desc oneline">1、流水线集成数据转换和训练 一般为了优化性能，提高准确率，一个常见的流程如下：对数据进行标准化转换，在采用上篇文章介绍的PCA（主成分分析）技术做特征抽取进行降维；最后在使用学习算法训练模型，并评价...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/henreash">来自：	<span class="blog_title"> henreash的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/abc_138/article/details/80513281,BlogCommendFromBaidu_45"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/abc_138/article/details/80513281" target="_blank" title="sklearn学习笔记 三  集成方法AdaBoost">
+				<h4 class="text-truncate oneline">
+						sklearn<em>学习笔记</em> 三  集成方法<em>AdaBoost</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-30</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							694</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/abc_138/article/details/80513281" target="_blank" title="sklearn学习笔记 三  集成方法AdaBoost">
+							<span class="desc oneline">官方英文文档手册http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.AdaBoostClassifier.htmlskl...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/abc_138">来自：	<span class="blog_title"> abc_138的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/yanzi6969/article/details/70226418,BlogCommendFromBaidu_46"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/yanzi6969/article/details/70226418" target="_blank" title="adaboost训练——参数详解">
+				<h4 class="text-truncate oneline">
+						<em>adaboost</em>训练——参数详解				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-18</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							915</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/yanzi6969/article/details/70226418" target="_blank" title="adaboost训练——参数详解">
+							<span class="desc oneline">转自：http://blog.csdn.net/lanxuecc/article/details/52597244CreateSamples.exe参数详解这个可执行程序主要用来生成用于训练的正样本，...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/yanzi6969">来自：	<span class="blog_title"> yanzi6969的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_43283527/article/details/83307241,BlogCommendFromQuerySearch_47"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_43283527/article/details/83307241" target="_blank" title="提升分类器性能利器-Adaboost">
+				<h4 class="text-truncate oneline">
+						<em>提升</em><em>分类器</em><em>性能</em><em>利器</em>-<em>Adaboost</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-23</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							22</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_43283527/article/details/83307241" target="_blank" title="提升分类器性能利器-Adaboost">
+							<span class="desc oneline">一、前言不同的分类器各有优缺点，我们可以很自然地将不同的分类器组合起来，而这种组合的结果则被称为集成算法（ensemblemethod）或者元算法（meta-algorithm）。使用集成方法会有多种...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_43283527">来自：	<span class="blog_title"> qq_43283527的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/yuzhou164/article/details/61622455,BlogCommendFromQuerySearch_48"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/yuzhou164/article/details/61622455" target="_blank" title="AdaBoost算法理解基于机器学习实战">
+				<h4 class="text-truncate oneline">
+						<em>AdaBoost</em>算法理解基于<em>机器学习</em><em>实战</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-12</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							794</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/yuzhou164/article/details/61622455" target="_blank" title="AdaBoost算法理解基于机器学习实战">
+							<span class="desc oneline">AdaBoost算法就是用一个数据多次训练一个弱的分类器，但是adaboost分类器主要关注那些以被分离器错分的数据。提高分类错误数据的权重，降低分对数据集的权重。最后把每个分类器集合到一起，然后进行...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/yuzhou164">来自：	<span class="blog_title"> yuzhou164的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/icefire_tyh/article/details/52194771,BlogCommendFromQuerySearch_49"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/icefire_tyh/article/details/52194771" target="_blank" title="机器学习(周志华) 参考答案 第八章 集成学习">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>(周志华) 参考答案 第八章 集成学习				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-19</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							9152</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/icefire_tyh/article/details/52194771" target="_blank" title="机器学习(周志华) 参考答案 第八章 集成学习">
+							<span class="desc oneline">机器学习(周志华)参考答案第八章集成学习机器学习(周志华西瓜书)参考答案总目录http://blog.csdn.net/icefire_tyh/article/details/52064910学了那么...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/icefire_tyh">来自：	<span class="blog_title"> 我的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/wuchengzeng/article/details/50037611,BlogCommendHotData_0"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/wuchengzeng/article/details/50037611" target="_blank" title="jquery/js实现一个网页同时调用多个倒计时(最新的)">
+				<h4 class="text-truncate oneline">
+						jquery/js实现一个网页同时调用多个倒计时(最新的)				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-25</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							62952</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/wuchengzeng/article/details/50037611" target="_blank" title="jquery/js实现一个网页同时调用多个倒计时(最新的)">
+							<span class="desc oneline">jquery/js实现一个网页同时调用多个倒计时(最新的)
+
+最近需要网页添加多个倒计时. 查阅网络,基本上都是千遍一律的不好用. 自己按需写了个.希望对大家有用. 有用请赞一个哦!
+
+
+
+//js
+...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/wuchengzeng">来自：	<span class="blog_title"> websites</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/gefangshuai/article/details/50328451,BlogCommendHotData_2"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/gefangshuai/article/details/50328451" target="_blank" title="关于SpringBoot bean无法注入的问题（与文件包位置有关）">
+				<h4 class="text-truncate oneline">
+						关于SpringBoot bean无法注入的问题（与文件包位置有关）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-16</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							70068</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/gefangshuai/article/details/50328451" target="_blank" title="关于SpringBoot bean无法注入的问题（与文件包位置有关）">
+							<span class="desc oneline">问题场景描述整个项目通过Maven构建，大致结构如下：
+核心Spring框架一个module spring-boot-base
+service和dao一个module server-core
+提供系统...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/gefangshuai">来自：	<span class="blog_title"> 开发随笔</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/Tiaaaaa/article/details/58116346,BlogCommendHotData_3"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Tiaaaaa/article/details/58116346" target="_blank" title="R语言逻辑回归、ROC曲线和十折交叉验证">
+				<h4 class="text-truncate oneline">
+						R语言逻辑回归、ROC曲线和十折交叉验证				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">02-27</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							20060</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Tiaaaaa/article/details/58116346" target="_blank" title="R语言逻辑回归、ROC曲线和十折交叉验证">
+							<span class="desc oneline">自己整理编写的逻辑回归模板，作为学习笔记记录分享。数据集用的是14个自变量Xi，一个因变量Y的australian数据集。
+
+
+1. 测试集和训练集3、7分组
+australian ...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Tiaaaaa">来自：	<span class="blog_title"> Tiaaaaa的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq574857122/article/details/16361033,BlogCommendHotData_4"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq574857122/article/details/16361033" target="_blank" title="强连通分量及缩点tarjan算法解析">
+				<h4 class="text-truncate oneline">
+						强连通分量及缩点tarjan算法解析				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-16</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							184795</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq574857122/article/details/16361033" target="_blank" title="强连通分量及缩点tarjan算法解析">
+							<span class="desc oneline">强连通分量：
+简言之 就是找环（每条边只走一次，两两可达）
+孤立的一个点也是一个连通分量 
+ 
+使用tarjan算法 在嵌套的多个环中优先得到最大环( 最小环就是每个孤立点）
+ 
+定义：
+int Ti...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq574857122">来自：	<span class="blog_title"> 九野的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+        <div class="recommend-item-box type_hot_word">
+            <div class="content clearfix">
+        <div class="word float-left">
+                          <span>
+            <a href="https://edu.csdn.net/course/play/8211/168736 " target="_blank">
+            softmax分类器          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/course/play/3904/86504 " target="_blank">
+            神经网络分类器softmax          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/courses/o5329_s5330_k " target="_blank">
+            机器学习          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/course/play/3904/121344 " target="_blank">
+            随机森林提升树          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/combos/o5329_s5330_l0_t " target="_blank">
+            机器学习学习          </a></span>
+                        </div>
+      </div>
+                  <div class="content clearfix">
+        <div class="float-left">
+                  <span>
+            <a href="https://www.csdn.net/gather_2a/MtTaUg1sODItYmxvZwO0O0OO0O0O.html" target="_blank">
+            c#机器学习实战</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_24/NtzaUg0sMzk3LWJsb2cO0O0O.html" target="_blank">
+            bootstrap4学习笔记</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_2f/MtzaMgysNzctYmxvZwO0O0OO0O0O.html" target="_blank">
+            c++实现adaboost人脸检测</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_26/NtzaQg2sMDA5LWJsb2cO0O0O.html" target="_blank">
+            bootstrap 学习笔记</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_2c/NtzaQgwsNzYtYmxvZwO0O0OO0O0O.html" target="_blank">
+            c++提升代码</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_4a/NtTacgysMi1lZHUO0O0O.html" target="_blank">
+            机器学习实战python实现</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_4a/MtTagg3sNC1lZHUO0O0O.html" target="_blank">
+            python3机器学习教程</a>
+          </span>
+                </div>
+      </div>
+          </div>
+
+
+            <div class="recommend-loading-box">
+                <img src='https://csdnimg.cn/release/phoenix/images/feedLoading.gif'>
+            </div>
+            <div class="recommend-end-box">
+                <p class="text-center">没有更多推荐了，<a href="https://blog.csdn.net/" class="c-blue c-blue-hover c-blue-focus">返回首页</a></p>
+            </div>
+        </div>
+    </main>
+
+    <aside>
+		    <div id="asideProfile" class="aside-box">
+    <!-- <h3 class="aside-title">个人资料</h3> -->
+    <div class="profile-intro d-flex">
+        <div class="avatar-box d-flex justify-content-center flex-column">
+            <a href="https://blog.csdn.net/c406495762">
+                <img src="https://avatar.csdn.net/F/1/C/3_c406495762.jpg" class="avatar_pic">
+            </a>
+              <div style="position: absolute;width: 48px;height: 63px;top: -17px;overflow: hidden;box-sizing: content-box;">
+                <div class="rotate-memberhead" style="position: absolute;top: 0;width: 48px;height: 81px;transition: transform .5s ease-out;/* transform: rotate(-180deg); */z-index: 1;">
+                  <img class="memberhead" style="display:none;top: 62px;transform: rotate(-180deg);" src="https://csdnimg.cn/release/phoenix/static_blog/images/pig.png" alt="">
+                                    <svg id="csdnc-memberhead" style="top: -1px;" viewBox="0 0 1303 1024"><path d="M1129.770822 419.281455A93.090909 93.090909 0 1 1 1210.201367 465.454545h-2.141091l-56.971636 478.952728c-5.399273 45.242182-46.731636 79.592727-95.790545 79.592727H249.875549c-48.965818 0-90.112-34.164364-95.697454-79.406545L95.34464 465.454545H93.110458a93.090909 93.090909 0 1 1 80.337455-46.08l229.189818 142.056728 187.485091-398.429091A93.184 93.184 0 0 1 651.655913 0a93.090909 93.090909 0 0 1 61.160727 163.281455l187.485091 398.149818 229.469091-142.149818z" fill="#FDD840"></path><path d="M1117.110458 372.363636a93.090909 93.090909 0 1 1 93.090909 93.090909h-2.141091l-56.971636 478.952728c-5.399273 45.242182-46.731636 79.592727-95.790545 79.592727H652.586822C651.935185 845.451636 651.655913 504.087273 651.655913 0a93.090909 93.090909 0 0 1 61.160727 163.281455l187.485091 398.149818 229.469091-142.149818A93.090909 93.090909 0 0 1 1117.110458 372.363636z" fill="#FFBE00"></path></svg>
+                                  </div>
+                <script type="text/javascript">
+                  $(function(){
+                    if($('#csdnc-memberhead').length){
+                      $(document).on('click','.memberhead, #csdnc-memberhead',function(){
+                        if($(this).hasClass('memberhead')){
+                          $('.rotate-memberhead').css({'transform': 'rotate(0deg)'})
+                          $('.memberhead').fadeOut()
+                        }else{
+                          $('.rotate-memberhead').css({'transform': 'rotate(-180deg)'})
+                          $('.memberhead').fadeIn()
+                        }
+                      })
+                    }else{
+                      $('.rotate-memberhead').css({'transform': 'rotate(-180deg)'})
+                      $('.memberhead').fadeIn()
+                    }
+                  })
+                </script>
+              </div>
+        </div>
+        <div class="user-info d-flex justify-content-center flex-column">
+            <p class="name csdn-tracking-statistics tracking-click" data-mod="popu_379">
+                <a href="https://blog.csdn.net/c406495762" target="_blank" class="" id="uid">Jack-Cui</a>
+            </p>
+                          <p class="flag expert">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#csdnc-blogexpert"></use>
+                </svg>
+                博客专家
+              </p>
+                    </div>
+                <div class="opt-box d-flex justify-content-center flex-column">
+            <span  class="csdn-tracking-statistics tracking-click" data-mod="popu_379">
+                <a class="btn btn-sm btn-red-hollow attention" id="btnAttent">关注</a>
+            </span>
+        </div>
+            </div>
+    <div class="data-info d-flex item-tiling">
+                <dl class="text-center" title="107">
+                        <dt><a href="https://blog.csdn.net/c406495762?t=1">原创</a></dt>
+            <dd><a href="https://blog.csdn.net/c406495762?t=1"><span class="count">107</span></a></dd>
+                    </dl>
+        <dl class="text-center" id="fanBox" title="6001">
+            <dt>粉丝</dt>
+            <dd><span class="count" id="fan">6001</span></dd>
+        </dl>
+        <dl class="text-center" title="1688">
+            <dt>喜欢</dt>
+            <dd><span class="count">1688</span></dd>
+        </dl>
+        <dl class="text-center" title="1979">
+            <dt>评论</dt>
+            <dd><span class="count">1979</span></dd>
+        </dl>
+    </div>
+    <div class="grade-box clearfix">
+        <dl>
+            <dt>等级：</dt>
+            <dd>
+                <a href="https://blog.csdn.net/home/help.html#level" title="6级,点击查看等级说明" target="_blank">
+                    <svg class="icon icon-level" aria-hidden="true">
+                        <use xlink:href="#csdnc-bloglevel-6"></use>
+                    </svg>
+                </a>
+            </dd>
+        </dl>
+        <dl>
+            <dt>访问：</dt>
+            <dd title="1266299">
+                126万+            </dd>
+        </dl>
+        <dl>
+            <dt>积分：</dt>
+            <dd title="8761">
+                8761            </dd>
+        </dl>
+        <dl title="3481">
+            <dt>排名：</dt>
+            <dd>3481</dd>
+        </dl>
+    </div>
+        <div class="badge-box d-flex">
+        <span>勋章：</span>
+                <div class="icon-badge" title="专栏达人">
+            <div class="mouse-box">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#csdnc-m-columns"></use>
+                </svg>
+                <div class="icon-arrow"></div>
+            </div>
+            <div class="grade-detail-box">
+                <div class="pos-box">
+                    <div class="left-box d-flex justify-content-center align-items-center flex-column">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#csdnc-m-columns"></use>
+                        </svg>
+                        <p>专栏达人</p>
+                    </div>
+                    <div class="right-box d-flex justify-content-center align-items-center">
+                        授予成功创建个人博客专栏的用户。专栏中添加五篇以上博文即可点亮！撰写博客专栏浓缩技术精华，专栏达人就是你！
+                    </div>
+                </div>
+            </div>
+        </div>
+                        <div class="icon-badge" title="持之以恒">
+            <div class="mouse-box">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#csdnc-m-lasting"></use>
+                </svg>
+                <div class="icon-arrow"></div>
+            </div>
+            <div class="grade-detail-box">
+                <div class="pos-box">
+                    <div class="left-box d-flex justify-content-center align-items-center flex-column">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#csdnc-m-lasting"></use>
+                        </svg>
+                        <p>持之以恒</p>
+                    </div>
+                    <div class="right-box d-flex justify-content-center align-items-center">
+                        授予每个自然月内发布4篇或4篇以上原创或翻译IT博文的用户。不积跬步无以至千里，不积小流无以成江海，程序人生的精彩需要坚持不懈地积累！
+                    </div>
+                </div>
+            </div>
+        </div>
+                                                <script>
+            (function ($) {
+                setTimeout(function(){
+                    $('div.icon-badge.show-moment').removeClass('show-moment');
+                }, 5000);
+            })(window.jQuery)
+        </script>
+    </div>
+    </div>
+		    		    <!--自定义模块-->
+<div id="asideCustom60787210" class="aside-box custom-box">
+    <h3 class="aside-title">关于</h3>
+    <div class="aside-content clearfix">
+        <strong>微信公众号</strong>
+<img src="https://ww2.sinaimg.cn/large/0072Lfvtly1fxuhd2t2jqj309k09kglk.jpg" width="250" height="250">
+<strong>QQ交流群</strong>
+<div>Coder：328127489（满）</div>
+<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=f7f3508b9c23f6bc7d117ea2f9dc088d166b1053c4bc786fe4badec36b0df8ea"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="Coder" title="Coder"></a>
+<div>Coder2：868084847</div>
+<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=c720c839143ce211b656f9a810e4a6ed04d1332a430da993df1734e67c0db73d"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="Coder-2" title="Coder-2"></a>
+</ul>
+<ul xss=removed>
+<strong>其他</strong>
+<div>个人网站(<font color="red">文章首发</font>) : </div>
+<div><a href="https://cuijiahua.com/" rel="me follow" target="_black">https://cuijiahua.com</a>
+</div>
+<div>Github : </div>
+<div><a href="https://github.com/Jack-Cherish" target="_black">https://github.com/Jack-Cheris</a>
+</div>
+<div>知乎： </div>
+<div><a href="https://www.zhihu.com/people/Jack--Cui/" target="_black">https://www.zhihu.com/people/Jack--Cui/</a>
+</div>
+</ul>
+    </div>
+</div>
+		    <div id="asideNewArticle" class="aside-box">
+    <h3 class="aside-title">最新文章</h3>
+    <div class="aside-content">
+        <ul class="inf_list clearfix csdn-tracking-statistics tracking-click" data-mod="popu_382">
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/82967529" target="_blank">Python3《机器学习实战》学习笔记（十二）：线性回归提高篇之乐高玩具套件二手价预测</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/79984221" target="_blank">2018年春招实习面试经验总结</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/79247243" target="_blank">剑指Offer系列刷题笔记汇总</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/78979946" target="_blank">程序员内功：八大排序算法</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/78760239" target="_blank">Python3《机器学习实战》学习笔记（十一）：线性回归基础篇之预测鲍鱼年龄</a>
+            </li>
+                    </ul>
+    </div>
+</div>
+		    <div id="asideColumn" class="aside-box">
+    <h3 class="aside-title">博主专栏</h3>
+    <div class="aside-content">
+        <ul class="column-box csdn-tracking-statistics tracking-click" data-mod="popu_520" >
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/15321">
+                            <img src="https://img-blog.csdn.net/20170421162245548?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/15321">Python3网络爬虫入门</a></p>
+                        <div class="data">文章数：<span class="count">15 篇</span> 访问量：<span>706243</span></div>
+                    </div>
+                </li>
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/15390">
+                            <img src="https://img-blog.csdn.net/20170510181713373?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/15390">Caffe入门教程</a></p>
+                        <div class="data">文章数：<span class="count">8 篇</span> 访问量：<span>63288</span></div>
+                    </div>
+                </li>
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/15522">
+                            <img src="https://img-blog.csdn.net/20170510095831800?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/15522">Jeston TX1入门教程</a></p>
+                        <div class="data">文章数：<span class="count">6 篇</span> 访问量：<span>63169</span></div>
+                    </div>
+                </li>
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/15523">
+                            <img src="https://img-blog.csdn.net/20170510181945953?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/15523">LeetCode</a></p>
+                        <div class="data">文章数：<span class="count">23 篇</span> 访问量：<span>25954</span></div>
+                    </div>
+                </li>
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/16415">
+                            <img src="https://img-blog.csdn.net/20170717161641862?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/16415">Python3机器学习</a></p>
+                        <div class="data">文章数：<span class="count">12 篇</span> 访问量：<span>212030</span></div>
+                    </div>
+                </li>
+                    </ul>
+    </div>
+    </div>
+		    <div id="asideCategory" class="aside-box flexible-box">
+    <h3 class="aside-title">个人分类</h3>
+    <div class="aside-content">
+        <ul>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/7029976">
+                    <span class="title oneline">机器学习</span>
+                    <span class="count float-right">12篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6144934">
+                    <span class="title oneline">Python</span>
+                    <span class="count float-right">27篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6816210">
+                    <span class="title oneline">Caffe</span>
+                    <span class="count float-right">9篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6134244">
+                    <span class="title oneline">嵌入式</span>
+                    <span class="count float-right">12篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6133011">
+                    <span class="title oneline">C/C++</span>
+                    <span class="count float-right">18篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6718576">
+                    <span class="title oneline">LeetCode</span>
+                    <span class="count float-right">23篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6541830">
+                    <span class="title oneline">STM32</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6391075">
+                    <span class="title oneline">Java</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6796780">
+                    <span class="title oneline">OpenCV</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6964968">
+                    <span class="title oneline">程序人生</span>
+                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/7383243">
+                    <span class="title oneline">算法</span>
+                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                    </ul>
+    </div>
+        <p class="text-center">
+        <a class="btn btn-link-blue flexible-btn" data-fbox="aside-archive">展开</a>
+    </p>
+    </div>
+		    <div id="asideArchive" class="aside-box flexible-box">
+    <h3 class="aside-title">归档</h3>
+    <div class="aside-content">
+        <ul class="archive-list">
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2018/10">
+                    2018年10月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2018/04">
+                    2018年4月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2018/02">
+                    2018年2月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2018/01">
+                    2018年1月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/12">
+                    2017年12月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/10">
+                    2017年10月                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/09">
+                    2017年9月                    <span class="count float-right">5篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/08">
+                    2017年8月                    <span class="count float-right">4篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/07">
+                    2017年7月                    <span class="count float-right">7篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/06">
+                    2017年6月                    <span class="count float-right">4篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/05">
+                    2017年5月                    <span class="count float-right">10篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/04">
+                    2017年4月                    <span class="count float-right">16篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/03">
+                    2017年3月                    <span class="count float-right">14篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/02">
+                    2017年2月                    <span class="count float-right">5篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/12">
+                    2016年12月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/11">
+                    2016年11月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/08">
+                    2016年8月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/07">
+                    2016年7月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/04">
+                    2016年4月                    <span class="count float-right">12篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/03">
+                    2016年3月                    <span class="count float-right">19篇</span>
+                </a>
+            </li>
+                    </ul>
+    </div>
+        <p class="text-center">
+        <a class="btn btn-link-blue flexible-btn" data-fbox="aside-archive">展开</a>
+    </p>
+    </div>
+		    <div id="asideHotArticle" class="aside-box">
+	<h3 class="aside-title">热门文章</h3>
+	<div class="aside-content">
+		<ul class="hotArticle-list csdn-tracking-statistics tracking-click" data-mod="popu_521">
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/58716886">Python3网络爬虫(一)：利用urllib进行简单的网页抓取</a>
+					<p class="read">阅读数 <span>150910</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/60137956">Python3网络爬虫(四)：使用User Agent和代理IP隐藏身份</a>
+					<p class="read">阅读数 <span>73717</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/75172850">Python3《机器学习实战》学习笔记（一）：k-近邻算法(史诗级干货长文)</a>
+					<p class="read">阅读数 <span>69350</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/69817490">Python3网络爬虫(六)：Python3使用Cookie-模拟登陆获取妹子联系方式</a>
+					<p class="read">阅读数 <span>68621</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/71334633">Python3网络爬虫(八)：爱奇艺等主流视频网站的VIP视频破解(在线观看+视频下载)</a>
+					<p class="read">阅读数 <span>65659</span></p>
+				</li>
+					</ul>
+	</div>
+</div>
+		    <div id="asideNewComments" class="aside-box">
+    <h3 class="aside-title">最新评论</h3>
+    <div class="aside-content">
+        <ul class="newcomment-list">
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/77723333#comments">Python3《机器学习实战》学习...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/weixin_41792829" class="user-name" target="_blank">weixin_41792829</a>：[reply]m0_37723350[/reply]
+weights=ones((n,1))  w...                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/77723333#comments">Python3《机器学习实战》学习...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/weixin_41792829" class="user-name" target="_blank">weixin_41792829</a>：[reply]weixin_43179017[/reply]
+b站和网易云课堂都有                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/77723333#comments">Python3《机器学习实战》学习...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/weixin_41792829" class="user-name" target="_blank">weixin_41792829</a>：为什么计算y=(-weights[0]-weights[1]*x)/weights[2]的时候要除...                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/78123502#comments">Python3网络爬虫快速入门实战...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/qq_41531835" class="user-name" target="_blank">qq_41531835</a>：[reply]Elucidator[/reply]
+需要用encoding将他改成utf-8的格式                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/71158264#comments">Python3网络爬虫(七)：使用...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/qq_37016255" class="user-name" target="_blank">qq_37016255</a>：[code=python]
+ #找到《一念永恒》正文卷,使能标志位
+            if ...                </p>
+            </li>
+                    </ul>
+    </div>
+</div>
+		<div id="asideFooter">
+				<div class="aside-box">
+			<div class="persion_article">
+			</div>
+		</div>
+	</div>
+</aside>
+<script src="https://csdnimg.cn/pubfooter/js/publib_footer-1.0.3.js" data-isfootertrack="false" type="text/javascript"></script>
+<script>
+	$("a.flexible-btn").click(function(){
+		$(this).parents('div.aside-box').removeClass('flexible-box');
+		$(this).remove();
+	})
+</script>
+</div>
+<div class="mask-dark"></div>
+<div class="tool-box">
+	<ul class="meau-list">
+		<li class="btn-like-box long-width">
+			<button class=" long-height hover-box btn-like " title="点赞">
+				<svg class="icon active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-thumbsup-ok"></use>
+				</svg>
+				<svg class="icon no-active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-thumbsup"></use>
+				</svg>
+				<span class="hover-show text-box text">
+					<span class="no-active">点赞</span>
+					<span class="active">取消点赞</span>
+				</span>
+				<p>15</p>
+			</button>
+		</li>
+		<li class="">
+						<a class="btn-comments long-height hover-box" title="写评论" href="#commentBox">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-comments"></use>
+				</svg>
+				<span class="hover-show text">评论</span>
+				<p class="">
+						14				</p>
+			</a>
+		</li>
+		<li class="toc-container-box" id="liTocBox">
+			<button class="btn-toc low-height hover-box" title="目录">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-contents"></use>
+				</svg>
+				<span class="hover-show text">目录</span>
+			</button>
+			<div class="toc-container">
+				<div class="pos-box">
+					<div class="icon-arrow"></div>
+					<div class="scroll-box">
+						<div class="toc-box"></div>
+					</div>
+				</div>
+				<div class="opt-box">
+					<button class="btn-opt prev nomore" title="向上">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#csdnc-chevronup"></use>
+						</svg>
+					</button>
+					<button class="btn-opt next">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#csdnc-chevrondown"></use>
+						</svg>
+					</button>
+				</div>
+			</div>
+		</li>
+		<li>
+			<button class="btn-bookmark low-height hover-box" title="收藏">
+				<svg class="icon active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-bookmark-ok"></use>
+				</svg>
+				<svg class="icon no-active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-bookmark"></use>
+				</svg>
+					<span class="hover-show text">收藏</span>
+				<!-- <span class="hover-show text-box text">
+					<span class="no-active">收藏</span>
+					<span class="active">取消收藏</span>
+				</span> -->
+			</button>
+		</li>
+		<li class="bdsharebuttonbox">
+			<div class="weixin-qr btn-comments low-height hover-box" >
+        <a href="#" class="bds_weixin clear-share-style" data-cmd="weixin" title="手机看"></a>
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-usephone"></use>
+				</svg>
+				<span class="hover-show text text3">
+					手机看
+				</span>
+			</div>
+		</li>
+							<li class="widescreen-hide">
+				<a class="btn-comments low-height hover-box" href="https://blog.csdn.net/c406495762/article/details/78158354" title="Python3《机器学习实战》学习笔记（九）：支持向量机实战篇之再撕非线性SVM">
+					<svg class="icon hover-hide" aria-hidden="true">
+						<use xlink:href="#csdnc-chevronleft"></use>
+					</svg>
+					<span class="hover-show text text3">上一篇</span>
+				</a>
+			</li>
+								<li class="widescreen-hide">
+			<a class="btn-comments hover-box low-height" href="https://blog.csdn.net/c406495762/article/details/78760239" title="Python3《机器学习实战》学习笔记（十一）：线性回归基础篇之预测鲍鱼年龄">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-chevronright"></use>
+				</svg>
+				<span class="hover-show text text3">下一篇</span>
+			</a>
+		</li>
+						<!-- 宽屏更多按钮 -->
+		<li class="widescreen-more">
+			<a class="btn-comments chat-ask-button low-height hover-box" title="快问" href="#chatqa">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-more"></use>
+				</svg>
+				<span class="hover-show text">更多</span>
+				
+			</a>
+			<ul class="widescreen-more-box">
+													<li class="widescreen-more">
+						<a class="btn-comments low-height hover-box" href="https://blog.csdn.net/c406495762/article/details/78158354" title="Python3《机器学习实战》学习笔记（九）：支持向量机实战篇之再撕非线性SVM">
+							<svg class="icon hover-hide" aria-hidden="true">
+								<use xlink:href="#csdnc-chevronleft"></use>
+							</svg>
+							<span class="hover-show text text3">上一篇</span>
+						</a>
+					</li>
+																<li class="widescreen-more">
+					<a class="btn-comments hover-box low-height" href="https://blog.csdn.net/c406495762/article/details/78760239" title="Python3《机器学习实战》学习笔记（十一）：线性回归基础篇之预测鲍鱼年龄">
+						<svg class="icon hover-hide" aria-hidden="true">
+							<use xlink:href="#csdnc-chevronright"></use>
+						</svg>
+						<span class="hover-show text text3">下一篇</span>
+					</a>
+				</li>
+							</ul>
+		</li>
+	</ul>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'https://csdnimg.cn/static/api/js/share.js?v=89860594'];</script>
+<script>
+    var recommendCount = 54;
+    recommendCount = recommendCount > 1 ? (recommendCount + (recommendCount>6 ? 2 : 1)) : recommendCount;
+    var articleTit = articleTitles;
+    var ChannelId = 28;
+    var articleId = "78212124";
+    var commentscount = 14;
+    var islock = false;
+    var curentUrl = "https://blog.csdn.net/c406495762/article/details/78212124";
+    var myUrl = "https://my.csdn.net/";
+    //1禁止评论，2正常
+    var commentAuth = 2;
+    //百度搜索
+    var baiduKey = "Python3《机器学习实战》学习笔记（十）：提升分类器性能利器-AdaBoost - Jack-Cui";
+    var needInsertBaidu = true;
+    // 代码段样式
+    var codeStyle = 'atom-one-dark';
+		var highlight = ["python3","\u673a\u5668\u5b66\u4e60","\u5b9e\u6218","\u5b66\u4e60\u7b14\u8bb0","\u63d0\u5347","\u5206\u7c7b\u5668","\u6027\u80fd","\u5229\u5668","adaboost"];//高亮数组
+		// 相关推荐博主数据
+    var RecommendBlogExpertList = [{"user_name":"Gamer_gyt","nick_name":"Thinkgamer_gyt","avatar":"https:\/\/avatar.csdn.net\/1\/0\/F\/3_gamer_gyt.jpg","is_expert":true,"article_count":273,"rank":"1000+"},{"user_name":"u012176591","nick_name":"\u6253\u5de5\u662f\u4e0d\u53ef\u80fd\u6253\u5de5\u6ef4","avatar":"https:\/\/avatar.csdn.net\/7\/8\/9\/3_u012176591.jpg","is_expert":true,"article_count":148,"rank":"4000+"},{"user_name":"jiaoyangwm","nick_name":"\u5446\u5446\u7684\u732b","avatar":"https:\/\/avatar.csdn.net\/8\/4\/3\/3_jiaoyangwm.jpg","is_expert":false,"article_count":132,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"Evitachan","nick_name":"Evitaaaaa","avatar":"https:\/\/avatar.csdn.net\/2\/A\/1\/3_evitachan.jpg","is_expert":false,"article_count":13,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"qq_33638791","nick_name":"Kelisita","avatar":"https:\/\/avatar.csdn.net\/E\/3\/3\/3_qq_33638791.jpg","is_expert":false,"article_count":339,"rank":"8000+"},{"user_name":"u011475210","nick_name":"WordZzzz","avatar":"https:\/\/avatar.csdn.net\/A\/8\/E\/3_u011475210.jpg","is_expert":false,"article_count":173,"rank":"5000+"},{"user_name":"qq_28773183","nick_name":"\u9633\u5149\u4e0b\u7684\u5954\u8dd1_FC","avatar":"https:\/\/avatar.csdn.net\/5\/6\/F\/3_qq_28773183.jpg","is_expert":false,"article_count":47,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"qq_43283527","nick_name":"\u8bc6\u9189\u6c89\u9999","avatar":"https:\/\/avatar.csdn.net\/A\/5\/5\/3_qq_43283527.jpg","is_expert":false,"article_count":36,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"yuzhou164","nick_name":"yuzhou164","avatar":"https:\/\/avatar.csdn.net\/2\/8\/2\/3_yuzhou164.jpg","is_expert":false,"article_count":8,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"icefire_tyh","nick_name":"\u56db\u53bb\u516d\u8fdb\u4e00","avatar":"https:\/\/avatar.csdn.net\/3\/7\/E\/3_icefire_tyh.jpg","is_expert":false,"article_count":52,"rank":"\u5343\u91cc\u4e4b\u5916"}];
+	var articleType = 1;
+	var CopyrightContent = '本文为博主原创文章，未经博主允许不得转载。个人网站：http://cuijiahua.com。';
+</script>
+<script src="https://csdnimg.cn/public/sandalstrap/1.4/js/sandalstrap.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.js"></script>
+<script src='https://csdnimg.cn/public/common/gotop/js/goTop-v1.0.min.js?v201811201455'></script>
+<script>
+    GoTop({
+        right: 8,
+        hasReport: true,
+        reportFun: function() {
+            showReport(false,articleTit);
+        }
+    })
+</script>
+
+<script src="//g.csdnimg.cn/baidu-search/1.0.0/baidu-search.js"  type="text/javascript"></script>
+
+</body>
+
+<!-- 高亮未与 markdown兼容  -->
+	<link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.3.7/ckeditor/plugins/codesnippet/lib/highlight/styles/atom-one-dark.css">
+	<script type="text/javascript" src="https://csdnimg.cn/release/phoenix/production/pc_wap_common-98040b5dc6.js" /></script>
+	
+	<!-- <script type="text/javascript" src="https://csdnimg.cn/release/phoenix/production/markdownCopy-718168246b.js" /></script> -->
+
+
+<script src="https://g.csdnimg.cn/login-box/1.0.4/??login-box.js,login-auto.js?t=20190103145159"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/js/common-2dfea49d18.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/js/detail-bb53a9b64c.min.js"></script>
+	<script src="https://csdnimg.cn/release/phoenix/themes/skin-yellow/skin-yellow-fc7383b956.min.js"></script>
+
+
+<!-- <script type="text/javascript" src="//g.csdnimg.cn/check-adb/1.0.2/check-adb.js"></script> -->
+
+<script type="text/javascript" src="https://csdnimg.cn/release/blog_mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            "HTML-CSS": {
+                    linebreaks: { automatic: true, width: "94%container" },
+                    imageFont: null
+            },
+            tex2jax: {
+                preview: "none"
+            },
+            mml2jax: {
+                preview: 'none'
+            }
+    });
+</script>
+<script type="text/javascript">
+    </script>
+<script src="https://gh.bdstatic.com/static/gh/js/sdk/bword.min.js"></script>
+</html>

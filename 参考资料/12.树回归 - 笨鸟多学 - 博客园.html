@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="origin" />
+    <title>机器学习实战之树回归 - 笨鸟多学 - 博客园</title>
+<meta property="og:description" content="一，引言 尽管线性回归包含了一些强大的方法，但这些方法创建的模型需要拟合所有的样本数据。当数据拥有众多特征并且特征之间的关系比较复杂时，构建全局线性模型就会非常困难。并且，在实际生活中很多问题都是非线" />
+    <link type="text/css" rel="stylesheet" href="/bundles/blog-common.css?v=-duj5vpGTntb85GJoM3iRI972XwWcI-j8zmqDzyfu2w1"/>
+<link id="MainCss" type="text/css" rel="stylesheet" href="/skins/LessIsMoreRight/bundle-LessIsMoreRight.css?v=XnHJrmT6UJMtyGfeJjiTUm7BxKWcwdJrxKsGy7z3YZ81"/>
+<link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="/skins/LessIsMoreRight/bundle-LessIsMoreRight-mobile.css?v=qM7K821bC07wdAlQFyWU6RMqTAL_q0KcZ4T6U6MOu941"/>
+    <link title="RSS" type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/zy230530/rss"/>
+    <link title="RSD" type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/zy230530/rsd.xml"/>
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/zy230530/wlwmanifest.xml"/>
+    <script src="//common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script>var currentBlogId=343941;var currentBlogApp='zy230530',cb_enable_mathjax=false;var isLogined=false;</script>
+    <script src="/bundles/blog-common.js?v=75GlRjvNr9aYgWttsJIxQDp4deiGqNQyDe6Io4CHSa81" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+		
+<!--done-->
+<div class="title"><a id="Header1_HeaderTitle" class="headermaintitle" href="https://www.cnblogs.com/zy230530/">笨鸟多学</a></div>
+<div class="subtitle"></div>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li id="nav_sitehome"><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">博客园</a></li>
+<li id="nav_myhome"><a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/zy230530/">首页</a></li>
+<li id="nav_newpost"><a id="blog_nav_newpost" class="menu" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a></li>
+<li id="nav_contact"><a id="blog_nav_contact" class="menu" rel="nofollow" href="https://msg.cnblogs.com/send/%E7%AC%A8%E9%B8%9F%E5%A4%9A%E5%AD%A6">联系</a></li>
+<li id="nav_rss"><a id="blog_nav_rss" class="menu" href="https://www.cnblogs.com/zy230530/rss">订阅</a>
+<!--<a id="blog_nav_rss_image" class="aHeaderXML" href="https://www.cnblogs.com/zy230530/rss"><img src="//www.cnblogs.com/images/xml.gif" alt="订阅" /></a>--></li>
+<li id="nav_admin"><a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/">管理</a></li>
+</ul>
+
+		<div class="blogStats">
+			
+			<div id="blog_stats">
+<!--done-->
+随笔-27&nbsp;
+文章-5&nbsp;
+评论-38&nbsp;
+</div>
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+        <div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class = "post">
+		<h1 class = "postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="https://www.cnblogs.com/zy230530/p/6985230.html">机器学习实战之树回归</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body" class="blogpost-body"><p>一，引言</p>
+<p>　　尽管线性回归包含了一些强大的方法，但这些方法创建的模型需要拟合所有的样本数据。当数据拥有众多特征并且特征之间的关系比较复杂时，构建全局线性模型就会非常困难。并且，在实际生活中很多问题都是非线性的，很难通过全局线性模型来拟合所有数据。</p>
+<p>　　解决上述非线性数据的拟合问题的一个可行的方法是，将数据集切分成很多份容易建模的数据，然后再利用线性回归方法来对切分后的数据子集分别建模，如果切分后仍难以拟合线性模型就继续切分。这样，就可以比较好的拟合全局数据。</p>
+<p>二，CART算法</p>
+<p>　　CART算法，即分类回归树算法，该算法既可以用于分类，也可以用于回归。该算法数据的建模方法为二元切分法。</p>
+<p>1 复杂数据的局部性建模--二元切分法</p>
+<p>　　ID3决策树算法通过不断将数据切分成小数据集，知道所有目标变量完全相同，或者数据不能再切分为止；决策树是一种贪心算法，要在给定时间内找到最佳选择，并并不关心全局最优问题。</p>
+<p>　　ID3决策树算法存在以下两个问题：</p>
+<p>　　（1）ID3算法每次选取最佳特征来分割数据，并按照该特征所有的取值来切分，即有几种可能的取值，数据就会被切分成几份。而一旦按该特征切分后，该特征在之后的算法执行过程中便不再起作用了，所以存在一些观点认为该算法过于迅速。</p>
+<p>　　（2）ID3算法并不能处理连续型特征，只能事先将连续性特征转化为离散型，才能使用。显然，在转换过程中会破坏连续型变量的内在性质。</p>
+<p>　　相比于ID3算法，显然CART算法更有优势，因为我们知道CART算法不仅可以用于分类，还可以用于回归，这里的回归即是处理连续型特征的体现。CART算法之所以能够处理连续型特征，就在于采用了二元切分法，而使用二元切分法易于对树构建过程进行调整以处理连续型特征。二元切分法的具体过程为：每次将数据集划分为两份，如果数据的某特征值大于给定值就进入左子树，否则就进入右子树。</p>
+<p>2 CART算法树的构建</p>
+<p>　　CART算法既可以用于分类也可以用于回归，回归树与分类树思路类似，但叶节点的数据不是类型不是离散型，而是连续型。这里，我们将通过CART算法构建两种树，一种是回归树，其每个叶节点包含单个值；另外一种是模型树，其每个叶节点包含一个线性方程。</p>
+<p>　　首先，这里采用跟ID3算法中使用相同的字典结果来存储构建树的数据结构。在这里，CART算法构建树包含四个主要元素，待切分特征，待切分的特征值，左子树（当数据不能再切分时，也可以是叶节点），右子树。</p>
+<p>　　事实上，我们也可以像C++一样，采用面向对象的方式来建立树的数据结构，比如，建立如下树节点结构：</p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff">class</span><span style="color: #000000"> treeNode():
+    </span><span style="color: #0000ff">def</span> <span style="color: #800080">__init__</span><span style="color: #000000">(self,feat,val,right,left):
+        featureToSplitOn</span>=<span style="color: #000000">feat
+        valueOfSplit</span>=<span style="color: #000000">val
+        rightBranch</span>=<span style="color: #000000">right
+        leftBranch</span>=left</pre>
+</div>
+<p>　　这里，直接采用字典的数据结构，显然我们无须定义一个类，从而有效的减少了代码量。</p>
+<p>　　CART算法构建树函数createTree()伪代码如下：</p>
+<div class="cnblogs_code">
+<pre><span style="color: #000000">找到最佳的切分特征：
+    如果该节点不能再分，将该节点存为叶节点
+    执行二元切分
+    在左子树递归调用createTree（）方法
+    在右子树递归调用createTree（）方法</span></pre>
+</div>
+<p>　　具体代码如下：</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008000">#</span><span style="color: #008000">解析文本数据</span>
+<span style="color: #0000ff">def</span><span style="color: #000000"> loadDatabase(filename):
+    dataMat</span>=<span style="color: #000000">[]
+    fr</span>=<span style="color: #000000">open(filename)
+    </span><span style="color: #0000ff">for</span> line <span style="color: #0000ff">in</span><span style="color: #000000"> fr.readlines():
+        curLine</span>=line.strip().split(<span style="color: #800000">'</span><span style="color: #800000">\t</span><span style="color: #800000">'</span><span style="color: #000000">)
+        </span><span style="color: #008000">#</span><span style="color: #008000">将每行数据映射为浮点数</span>
+        fltLine=<span style="color: #000000">map(float,curLine)
+        dataMat.append(fltLine)
+    </span><span style="color: #0000ff">return</span><span style="color: #000000"> dataMat
+
+</span><span style="color: #008000">#</span><span style="color: #008000">拆分数据集函数，二元拆分法    </span><span style="color: #008000">
+#</span><span style="color: #008000">@dataSet：待拆分的数据集</span><span style="color: #008000">
+#</span><span style="color: #008000">@feature：作为拆分点的特征索引</span><span style="color: #008000">
+#</span><span style="color: #008000">@value：特征的某一取值作为分割值</span>
+<span style="color: #0000ff">def</span><span style="color: #000000"> binSplitDataSet(dataSet,feature,value):
+    </span><span style="color: #008000">#</span><span style="color: #008000">采用条件过滤的方法获取数据集每个样本目标特征的取值大于</span>
+    <span style="color: #008000">#</span><span style="color: #008000">value的样本存入mat0</span>
+    <span style="color: #008000">#</span><span style="color: #008000">左子集列表的第一行</span>
+    <span style="color: #008000">#</span><span style="color: #008000">mat0=dataSet[nonzero(dataSet[:,feature]&gt;value)[0],:][0]</span>
+    <span style="color: #008000">#</span><span style="color: #008000">左子集列表</span>
+    mat0=dataSet[nonzero(dataSet[:,feature]&gt;<span style="color: #000000">value)[0],:]
+    </span><span style="color: #008000">#</span><span style="color: #008000">同上，样本目标特征取值不大于value的样本存入mat1</span>
+    mat1=dataSet[nonzero(dataSet[:,feature]&lt;=<span style="color: #000000">value)[0],:]
+    </span><span style="color: #008000">#</span><span style="color: #008000">返回获得的两个列表</span>
+    <span style="color: #0000ff">return</span><span style="color: #000000"> mat0,mat1
+
+</span><span style="color: #008000">#</span><span style="color: #008000">创建树函数</span><span style="color: #008000">
+#</span><span style="color: #008000">@dataSet：数据集</span><span style="color: #008000">
+#</span><span style="color: #008000">@leafType：生成叶节点的类型 1 回归树：叶节点为常数值 2 模型树：叶节点为线性模型</span><span style="color: #008000">
+#</span><span style="color: #008000">@errType：计算误差的类型 1 回归错误类型：总方差=均方差*样本数</span><span style="color: #008000">
+#</span><span style="color: #008000">                         2 模型错误类型：预测误差(y-yHat)平方的累加和</span><span style="color: #008000">
+#</span><span style="color: #008000">@ops：用户指定的参数，包含tolS：容忍误差的降低程度 tolN：切分的最少样本数</span>
+<span style="color: #0000ff">def</span> createTree(dataSet,leafType=regLeaf,errType=regErr,ops=(1,4<span style="color: #000000">)):
+    </span><span style="color: #008000">#</span><span style="color: #008000">选取最佳分割特征和特征值</span>
+    feat,val=<span style="color: #000000">chooseBestSplit(dataSet,leafType,errType,ops)
+    </span><span style="color: #008000">#</span><span style="color: #008000">如果特征为none，直接返回叶节点值</span>
+    <span style="color: #0000ff">if</span> feat == None:<span style="color: #0000ff">return</span><span style="color: #000000"> val
+    </span><span style="color: #008000">#</span><span style="color: #008000">树的类型是字典类型</span>
+    retTree=<span style="color: #000000">{}
+    </span><span style="color: #008000">#</span><span style="color: #008000">树字典的一个元素是切分的最佳特征</span>
+    retTree[<span style="color: #800000">'</span><span style="color: #800000">spInd</span><span style="color: #800000">'</span>]=<span style="color: #000000">feat
+    </span><span style="color: #008000">#</span><span style="color: #008000">第二个元素是最佳特征对应的最佳切分特征值</span>
+    retTree[<span style="color: #800000">'</span><span style="color: #800000">spval</span><span style="color: #800000">'</span>]=<span style="color: #000000">val
+    </span><span style="color: #008000">#</span><span style="color: #008000">根据特征索引及特征值对数据集进行二元拆分，并返回拆分的两个数据子集</span>
+    lSet,rSet=<span style="color: #000000">binSplitDataSet(dataSet,feat,val)
+    </span><span style="color: #008000">#</span><span style="color: #008000">第三个元素是树的左分支，通过lSet子集递归生成左子树</span>
+    retTree[<span style="color: #800000">'</span><span style="color: #800000">left</span><span style="color: #800000">'</span>]=<span style="color: #000000">createTree(lSet,leafType,errType,ops)
+    </span><span style="color: #008000">#</span><span style="color: #008000">第四个元素是树的右分支，通过rSet子集递归生成右子树</span>
+    retTree[<span style="color: #800000">'</span><span style="color: #800000">right</span><span style="color: #800000">'</span>]=<span style="color: #000000">createTree(rSet,leafType,errType,ops)
+    </span><span style="color: #008000">#</span><span style="color: #008000">返回生成的数字典</span>
+    <span style="color: #0000ff">return</span> retTree</pre>
+</div>
+<p>　　上面的第一个函数是我们熟知的文本文件的数据解析函数，该函数读取一个以tab键位分隔符的文件，然后通过map(float,curLine)方法将每行内容保存为一组浮点数；</p>
+<p>　　第二个函数是数据切分函数，通过数组过滤的方法将数据集切分得到两个子集并返回；</p>
+<p>　　最后一个函数为树构建函数，是一个递归函数，只要数据集满足切分条件，就会将数据集采取递归的形式继续切分下去。它有四个参数：数据集和其他3个可选参数。三个可选函数决定了树的类型：leafType给出建立叶节点的函树；errType()代表误差计算函数；而ops是一个包含树构建所需参数的元组。具体地，函数首先将数据集分为两个部分，通过chooseBestSplit()函数找出切分的最佳特征和特征值，如果满足停止条件，则直接返回某类模型的值，当构建的是回归树时，叶节点值为一个常数，而构建模型树时，叶节点模型则是一个线性方程。</p>
+<p>&nbsp;3 CART算法用于回归</p>
+<p>　　前面我们已经有了树的创建算法，也知道了树构建算法中除了数据集，还需要另外三个可选参数，即叶节点生成类型，计算误差方法，以及切分终止需要的参数元组。下面，分别一一解释：</p>
+<p>　　（1）leafType：叶节点的生成类型有两种，一种是对应于回归树的类型，即叶节点包含的是一个常数值；另一种对应模型树类型，即叶节点包含一个线性方程</p>
+<p>　　（2）errType：误差计算类型，该参数应用于最佳切分特征及特征值得选取中，通过选择误差最小的切分特征及特征值，来对数据集执行二元切分。这里，回归树和模型树在计算误差的方式上有所不同。回归树计算误差的方法是，首先计算数据集目标变量值的均方差，再乘以数据集的样本数；而模型树的误差计算方法为：首先计算数据集各个样本目标变量的真实值与预测值得差值的平方，然后再进行累加，即类似于前面的平方损失函数</p>
+<p>　　（3）终止条件参数元组ops：两个参数,tolS，即容忍误差的下降值；tolN，最少的切分样本数。这两个参数决定了树构建的终止条件，相当于在树构建的过程中，边构建边剪枝，经常应用于预剪枝</p>
+<p>　　显然，这里我们要构建的是回归树，所以需要选择合适的叶节点生成类型，误差计算方法。此外，还需要给出最佳切分特征及最佳切分特征值的函数，这样，我们才能完整的构建回归树</p>
+<p>　　选取最佳特征及特征值函数的伪代码如下：</p>
+<div class="cnblogs_code">
+<pre><span style="color: #000000">对每个特征：
+    对每个特征值：
+        将数据集切分为两份
+        计算切分误差
+        如果当前误差小于当前最小误差，那么将当前切分设定为最佳切分并更新最小误差
+返回最佳切分的特征和阈值</span></pre>
+</div>
+<p>　　具体代码为：</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008000">#</span><span style="color: #008000">回归树的切分函数</span>
+
+<span style="color: #008000">#</span><span style="color: #008000">叶节点生成函数</span>
+<span style="color: #0000ff">def</span><span style="color: #000000"> regLeaf(dataSet):
+    </span><span style="color: #008000">#</span><span style="color: #008000">数据集列表最后一列特征值的均值作为叶节点返回</span>
+    <span style="color: #0000ff">return</span> mean(dataSet[:,-1<span style="color: #000000">])
+
+</span><span style="color: #008000">#</span><span style="color: #008000">误差计算函数    </span>
+<span style="color: #0000ff">def</span><span style="color: #000000"> regErr(dataSet):
+    </span><span style="color: #008000">#</span><span style="color: #008000">计算数据集最后一列特征值的均方差*数据集样本数，得到总方差返回</span>
+    <span style="color: #0000ff">return</span> var(dataSet[:,-1])*<span style="color: #000000">shape(dataSet)[0]
+
+</span><span style="color: #008000">#</span><span style="color: #008000">选择最佳切分特征和最佳特征取值函数</span><span style="color: #008000">
+#</span><span style="color: #008000">@dataSet：数据集</span><span style="color: #008000">
+#</span><span style="color: #008000">@leafType：生成叶节点的类型，默认为回归树类型</span><span style="color: #008000">
+#</span><span style="color: #008000">@errType：计算误差的类型，默认为总方差类型</span><span style="color: #008000">
+#</span><span style="color: #008000">@ops：用户指定的参数，默认tolS=1.0，tolN=4</span>
+<span style="color: #0000ff">def</span> chooseBestSplit(dataSet,leafType=regLeaf,errType=regErr,ops=(1,4<span style="color: #000000">)):
+    </span><span style="color: #008000">#</span><span style="color: #008000">容忍误差下降值1，最少切分样本数4</span>
+    tolS=ops[0];tolN=ops[1<span style="color: #000000">]
+    </span><span style="color: #008000">#</span><span style="color: #008000">数据集最后一列所有的值都相同</span>
+    <span style="color: #0000ff">if</span> len(set(dataSet[:,-1].T.tolist()[0])==1<span style="color: #000000">):
+        </span><span style="color: #008000">#</span><span style="color: #008000">最优特征返回none，将该数据集最后一列计算均值作为叶节点值返回</span>
+        <span style="color: #0000ff">return</span><span style="color: #000000"> none,leafType(dataSet))
+    </span><span style="color: #008000">#</span><span style="color: #008000">数据集的行与列</span>
+    m,n=<span style="color: #000000">shape(dataSet)
+    </span><span style="color: #008000">#</span><span style="color: #008000">计算未切分前数据集的误差</span>
+    S=<span style="color: #000000">errType(dataSet)
+    </span><span style="color: #008000">#</span><span style="color: #008000">初始化最小误差；最佳切分特征索引；最佳切分特征值</span>
+    bestS=inf;bestIndex=0;bestValue=<span style="color: #000000">0
+    </span><span style="color: #008000">#</span><span style="color: #008000">遍历数据集所有的特征，除最后一列目标变量值</span>
+    <span style="color: #0000ff">for</span> featIndex <span style="color: #0000ff">in</span> range(n-1<span style="color: #000000">):
+        </span><span style="color: #008000">#</span><span style="color: #008000">遍历该特征的每一个可能取值</span>
+        <span style="color: #0000ff">for</span> splitVal <span style="color: #0000ff">in</span><span style="color: #000000"> set(dataSet[:,featIndex]):
+            </span><span style="color: #008000">#</span><span style="color: #008000">以该特征，特征值作为参数对数据集进行切分为左右子集</span>
+            mat0,mat1=<span style="color: #000000">binSplitDataSet(dataSet,featIndex,splitVal)
+            </span><span style="color: #008000">#</span><span style="color: #008000">如何左分支子集样本数小于tolN或者右分支子集样本数小于tolN，跳出本次循环</span>
+            <span style="color: #0000ff">if</span> (shape(mat0)[0]&lt;tolN) <span style="color: #0000ff">or</span> (shape(mat1)[0]&lt;tolN):<span style="color: #0000ff">continue</span>
+            <span style="color: #008000">#</span><span style="color: #008000">计算切分后的误差，即均方差和</span>
+            newS=errType(mat0)+<span style="color: #000000">errType(mat1)
+            </span><span style="color: #008000">#</span><span style="color: #008000">保留最小误差及对应的特征及特征值</span>
+            <span style="color: #0000ff">if</span> newS&lt;<span style="color: #000000">bestS:
+                bestIndex</span>=<span style="color: #000000">featIndex
+                bestValue</span>=<span style="color: #000000">splitVal
+                bestS</span>=<span style="color: #000000">newS
+    </span><span style="color: #008000">#</span><span style="color: #008000">如果切分后比切分前误差下降值未达到tolS</span>
+    <span style="color: #0000ff">if</span> (S-bestS)&lt;<span style="color: #000000">tolS:
+        </span><span style="color: #008000">#</span><span style="color: #008000">不需切分，直接返回目标变量均值作为叶节点</span>
+        <span style="color: #0000ff">return</span><span style="color: #000000">     None,leafType(dataSet)
+    </span><span style="color: #008000">#</span><span style="color: #008000">检查最佳特征及特征值是否满足不切分条件</span>
+    mat0,mat1=<span style="color: #000000">binSplitDataSet(dataSet,bestIndex,bestValue)
+    </span><span style="color: #0000ff">if</span>(shape(mat0)[0]&lt;tolN) <span style="color: #0000ff">or</span> (shape(mat1)[0]&lt;<span style="color: #000000">tolN):
+        </span><span style="color: #0000ff">return</span><span style="color: #000000"> None,leafType(dataSet)
+    </span><span style="color: #008000">#</span><span style="color: #008000">返回最佳切分特征及最佳切分特征取值</span>
+    <span style="color: #0000ff">return</span> bestIndex,bestValue</pre>
+</div>
+<p>　　从上述代码中，我们不难看出，在选取最佳切分特征和特征值过程中，有三种情况不会对数据集进行切分，而是直接创建叶节点。</p>
+<p>（1）如果数据集切分之前，该数据集样本所有的目标变量值相同，那么不需要切分数据集，而直接将目标变量值作为叶节点返回</p>
+<p>（2）当切分数据集后，误差的减小程度不够大（小于tolS）,就不需要切分，而是直接求取数据集目标变量的均值作为叶节点值返回</p>
+<p>（3）当数据集切分后如果某个子集的样本个数小于tolN，也不需要切分，而直接生成叶节点</p>
+<p>有了回归树的构建代码，下面就来利用实际的数据集来测试一下回归树的效果，先看一下简单的数据集构建的回归树：</p>
+<p><img src="https://images2015.cnblogs.com/blog/1134385/201706/1134385-20170611162339856-1949747132.jpg" alt=""></p>
+<p><img style="display: block; margin-left: auto; margin-right: auto" src="https://images2015.cnblogs.com/blog/1134385/201706/1134385-20170611162457856-860667531.jpg" alt="" width="417" height="313"></p>
+<p>　　再看一下稍微复杂一点的数据集构建的回归树：</p>
+<p>　<img src="https://images2015.cnblogs.com/blog/1134385/201706/1134385-20170611162550403-1426235827.jpg" alt="" width="518" height="120"><img style="display: block; margin-left: auto; margin-right: auto" src="https://images2015.cnblogs.com/blog/1134385/201706/1134385-20170611162558356-1923871678.jpg" alt="" width="441" height="353"></p>
+<p>&nbsp;</p>
+<p>4 树剪枝</p>
+<p>　　上面我们利用回归树构建算法构建了回归树，虽然看起来效果不错，但是我们还要需要某种有效的措施来检查构建过程是否得当。这就是树剪枝技术，它通过对决策树剪枝的方式来达到更好的预测效果</p>
+<p>　　一棵树如果节点过多，表明该模型可能对数据进行了过拟合，一旦发生了过拟合，就表明该模型对训练数据拟合效果非常好，而对其他的测试数据拟合效果很差的情况。所以，为避免过拟合，我们需要通过剪枝的方式来降低模型的复杂度。</p>
+<p>　　剪枝包括预剪枝和后剪枝两种方法，而我们在之前的树构建过程中，实际上就采用了预剪枝的方法，即通过设置合理的切分终止条件tolS，tolN，在树构建的过程中进行剪枝过程，从而防止过拟合。而后剪枝过程，需要训练集合测试集两个数据集，首先利用训练集来产生复杂度较大的回归树模型，然后利用测试集则来对决策树进行剪枝，从而降低决策树复杂度。</p>
+<p>（1）预剪枝</p>
+<p>　　预剪枝的方法，即通过设置合理的切分终止条件tolS，tolN，在树构建的过程中进行剪枝过程，从而防止过拟合。在预剪枝过程中，我们需要不断的修改停止条件tolS，tolN来得到较好的结果，这显然不能算作是一种好的办法，因为，寻找到合适的停止条件意味着需要更多的时间损耗。而后剪枝则不需要用户指定参数，是一种比较理想的剪枝方法</p>
+<p>（2）后剪枝</p>
+<p>　　后剪枝的方法意味着我们需要两个不同的数据集，一个作为训练集，另外一个作为测试集。训练集构建出来的树需要足够大，足够复杂，这样才能便于后面的剪枝。接下来，从上而下找到叶节点，用测试集判断将这些叶节点合并是否能降低测试误差。如果是那就将这些叶节点合并。</p>
+<p>　　函数后剪枝的伪代码如下：</p>
+<div class="cnblogs_code">
+<pre><span>基于已有的树切分测试数据：
+    如果存在任一子集是一棵树，则在该子集上递归剪枝过程
+    计算将当前两个叶节点合并后的误差
+    计算不合并的误差
+    如果合并会降低误差，就将两个叶节点合并</span></pre>
+</div>
+<p>　　再来看实际的代码：</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008000">#</span><span style="color: #008000">后剪枝</span><span style="color: #008000">
+#</span><span style="color: #008000">根据目标数据的存储类型是否为字典型，是返回true，否则返回false</span>
+<span style="color: #0000ff">def</span><span style="color: #000000"> isTree(obj):
+    </span><span style="color: #0000ff">return</span> (type(obj).<span style="color: #800080">__name__</span>==<span style="color: #800000">'</span><span style="color: #800000">dict</span><span style="color: #800000">'</span><span style="color: #000000">)
+
+</span><span style="color: #008000">#</span><span style="color: #008000">获取均值函数    </span>
+<span style="color: #0000ff">def</span><span style="color: #000000"> getMean(tree):
+    </span><span style="color: #008000">#</span><span style="color: #008000">树字典的右分支为字典类型：递归获得右子树的均值</span>
+    <span style="color: #0000ff">if</span> isTree(tree[<span style="color: #800000">'</span><span style="color: #800000">right</span><span style="color: #800000">'</span>]):tree[<span style="color: #800000">'</span><span style="color: #800000">right</span><span style="color: #800000">'</span>]=getMean(tree[<span style="color: #800000">'</span><span style="color: #800000">right</span><span style="color: #800000">'</span><span style="color: #000000">])
+    </span><span style="color: #008000">#</span><span style="color: #008000">树字典的左分支为字典类型：递归获得左子树的均值</span>
+    <span style="color: #0000ff">if</span> isTree(tree[<span style="color: #800000">'</span><span style="color: #800000">left</span><span style="color: #800000">'</span>]):tree[<span style="color: #800000">'</span><span style="color: #800000">left</span><span style="color: #800000">'</span>]=getMean(tree[<span style="color: #800000">'</span><span style="color: #800000">left</span><span style="color: #800000">'</span><span style="color: #000000">])
+    </span><span style="color: #008000">#</span><span style="color: #008000">递归直至找到两个叶节点，求二者的均值返回</span>
+    <span style="color: #0000ff">return</span> (tree[<span style="color: #800000">'</span><span style="color: #800000">left</span><span style="color: #800000">'</span>]+tree[<span style="color: #800000">'</span><span style="color: #800000">right</span><span style="color: #800000">'</span>])/2.0
+
+<span style="color: #008000">#</span><span style="color: #008000">剪枝函数</span><span style="color: #008000">
+#</span><span style="color: #008000">@tree:树字典    </span><span style="color: #008000">
+#</span><span style="color: #008000">@testData:用于剪枝的测试集</span>
+<span style="color: #0000ff">def</span><span style="color: #000000"> prune(tree,testData):
+    </span><span style="color: #008000">#</span><span style="color: #008000">测试集为空，直接对树相邻叶子结点进行求均值操作</span>
+    <span style="color: #0000ff">if</span> shape(testData)[0]==0:<span style="color: #0000ff">return</span><span style="color: #000000"> getMean(tree)
+    </span><span style="color: #008000">#</span><span style="color: #008000">左右分支中有非叶子结点类型</span>
+    <span style="color: #0000ff">if</span> (isTree(tree[<span style="color: #800000">'</span><span style="color: #800000">right</span><span style="color: #800000">'</span>]) <span style="color: #0000ff">or</span> isTree(tree[<span style="color: #800000">'</span><span style="color: #800000">left</span><span style="color: #800000">'</span><span style="color: #000000">])):
+        </span><span style="color: #008000">#</span><span style="color: #008000">利用当前树的最佳切分点和特征值对测试集进行树构建过程</span>
+        lSet,rSet=binSplitDataSet(testData,tree[<span style="color: #800000">'</span><span style="color: #800000">spInd</span><span style="color: #800000">'</span>],tree[<span style="color: #800000">'</span><span style="color: #800000">spval</span><span style="color: #800000">'</span><span style="color: #000000">])
+    </span><span style="color: #008000">#</span><span style="color: #008000">左分支非叶子结点，递归利用测试数据的左子集对做分支剪枝</span>
+    <span style="color: #0000ff">if</span> isTree(tree[<span style="color: #800000">'</span><span style="color: #800000">left</span><span style="color: #800000">'</span>]):tree[<span style="color: #800000">'</span><span style="color: #800000">left</span><span style="color: #800000">'</span>]=prune(tree[<span style="color: #800000">'</span><span style="color: #800000">left</span><span style="color: #800000">'</span><span style="color: #000000">],lSet)
+    </span><span style="color: #008000">#</span><span style="color: #008000">同理，右分支非叶子结点，递归利用测试数据的右子集对做分支剪枝</span>
+    <span style="color: #0000ff">if</span> isTree(tree[<span style="color: #800000">'</span><span style="color: #800000">right</span><span style="color: #800000">'</span>]):tree[<span style="color: #800000">'</span><span style="color: #800000">right</span><span style="color: #800000">'</span>]=prune(tree[<span style="color: #800000">'</span><span style="color: #800000">right</span><span style="color: #800000">'</span><span style="color: #000000">],lSet)
+    </span><span style="color: #008000">#</span><span style="color: #008000">左右分支都是叶节点</span>
+    <span style="color: #0000ff">if</span> <span style="color: #0000ff">not</span> isTree(tree[<span style="color: #800000">'</span><span style="color: #800000">left</span><span style="color: #800000">'</span>]) <span style="color: #0000ff">and</span> ont isTree(tree[<span style="color: #800000">'</span><span style="color: #800000">right</span><span style="color: #800000">'</span><span style="color: #000000">]):
+        </span><span style="color: #008000">#</span><span style="color: #008000">利用该子树对应的切分点对测试数据进行切分(树构建)</span>
+        lSet,rSet=binSplitDataSet(testData,tree[<span style="color: #800000">'</span><span style="color: #800000">spInd</span><span style="color: #800000">'</span>],tree[<span style="color: #800000">'</span><span style="color: #800000">spval</span><span style="color: #800000">'</span><span style="color: #000000">])
+        </span><span style="color: #008000">#</span><span style="color: #008000">如果这两个叶节点不合并，计算误差，即（实际值-预测值）的平方和</span>
+        errorNoMerge=sum(power(lSet[:,-1]-tree[<span style="color: #800000">'</span><span style="color: #800000">left</span><span style="color: #800000">'</span>],2))+<span style="color: #000000">\
+                     sum(rSet[:,</span>-1]-tree[<span style="color: #800000">'</span><span style="color: #800000">right</span><span style="color: #800000">'</span>],2<span style="color: #000000">))
+        </span><span style="color: #008000">#</span><span style="color: #008000">求两个叶结点值的均值</span>
+        treeMean=(tree[<span style="color: #800000">'</span><span style="color: #800000">left</span><span style="color: #800000">'</span>]+tree[<span style="color: #800000">'</span><span style="color: #800000">right</span><span style="color: #800000">'</span>])/2.0
+        <span style="color: #008000">#</span><span style="color: #008000">如果两个叶节点合并，计算合并后误差,即(真实值-合并后值）平方和</span>
+        errorMerge=sum(power(testData[:,-1]-treeMean,2<span style="color: #000000">))
+        </span><span style="color: #008000">#</span><span style="color: #008000">合并后误差小于合并前误差</span>
+        <span style="color: #0000ff">if</span> errorMerge&lt;<span style="color: #000000">errorNoMerge:
+            </span><span style="color: #008000">#</span><span style="color: #008000">和并两个叶节点，返回合并后节点值</span>
+            <span style="color: #0000ff">print</span>(<span style="color: #800000">'</span><span style="color: #800000">merging</span><span style="color: #800000">'</span><span style="color: #000000">)
+            </span><span style="color: #0000ff">return</span><span style="color: #000000"> treeMean
+        </span><span style="color: #008000">#</span><span style="color: #008000">否则不合并，返回该子树</span>
+        <span style="color: #0000ff">else</span>:<span style="color: #0000ff">return</span><span style="color: #000000"> tree
+    </span><span style="color: #008000">#</span><span style="color: #008000">不合并，直接返回树</span>
+    <span style="color: #0000ff">else</span>:<span style="color: #0000ff">return</span> tree</pre>
+</div>
+<p>&nbsp;</p>
+<p>　　上面代码的第一个函数，用于判断当前树是否为叶节点。因为，树的存储结构是字典类型，所以对该树的类型进行检测，如果是字典类型那么就是非叶节点的树，返回true，否则是叶节点返回false</p>
+<p>　　第二个函数是求两个相邻叶节点的均值函数，函数采用递归的方法，从根节点开始从上到下，找到叶节点，如果某棵树的左分支和右分支都是叶节点，那么就将这两个叶节点计算均值返回</p>
+<p>　　第三个函数就是具体的后剪枝过程，还是采用递归的方式，从上到下，找到叶节点，当找到两个相邻的叶节点，那么将其合并并计算误差，如果合并后的误差小于不合并的误差，那么就将这两个叶节点合并成一个，返回节点值为两个叶节点值均值。否则，就不合并，直接返回树</p>
+<p><img src="https://images2015.cnblogs.com/blog/1134385/201706/1134385-20170611165506653-1376011015.jpg" alt="" width="540" height="175"></p>
+<p>　　我们能看到，很多的叶节点发生了合并，但没有想预期的那样剪枝成两部分，所以预剪枝在构建树的效果上要比后剪枝好。而后剪枝又比预剪枝更容易实现。所以在实际构建树过程中可以采用二者结合的方法寻求最佳模型</p>
+<p>5 模型树构建</p>
+<p>　　上面的构建的回归树，是将叶节点设定为常数值来进行建模。还有一种方法是把叶节点设为分段线性函数，这里的分段线性是指模型由多个线性片段组成。因为，数据集不是线性的，那么我们很难通过全局线性函数来拟合数据，所以采用将数据集分段，分段后的数据都满足线性要求，这样就分别构建出相应的线性方程，再将分段线性模型组合起来就是全局的模型。比如，下图分段线性数据，显然使用两条直线组合来拟合会比一条直线拟合效果要好。</p>
+<p><img src="https://images2015.cnblogs.com/blog/1134385/201706/1134385-20170611172022825-695863189.jpg" alt="" width="449" height="346"></p>
+<p>　　模型树的构建，与回归树的构建，除了叶节点的类型不同外。选取最佳切分特征及特征值中计算误差的方法也存在差别，对于给定的数据集，先用线性模型来对其进行拟合，然后计算真实目标值和模型预测值得差值。最后将这些差值的平方求和就得到了所需的误差。</p>
+<p>　　模型树叶节点生成函数</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008000">#</span><span style="color: #008000">模型树叶节点生成函数</span>
+<span style="color: #0000ff">def</span><span style="color: #000000"> linearSolve(dataSet):
+    </span><span style="color: #008000">#</span><span style="color: #008000">获取数据行与列数</span>
+    m,n=<span style="color: #000000">shape(dataSet)
+    </span><span style="color: #008000">#</span><span style="color: #008000">构建大小为(m,n)和(m,1)的矩阵</span>
+    X=mat(ones((m,n)));Y=mat(ones((m,1<span style="color: #000000">)))
+    </span><span style="color: #008000">#</span><span style="color: #008000">数据集矩阵的第一列初始化为1，偏置项；每个样本目标变量值存入Y</span>
+    X[:,1:n]=dataSet[:,0:n-1];Y=dataSet[:,-1<span style="color: #000000">]
+    </span><span style="color: #008000">#</span><span style="color: #008000">对数据集矩阵求内积</span>
+    xTx=X.T*<span style="color: #000000">X
+    </span><span style="color: #008000">#</span><span style="color: #008000">计算行列式值是否为0，即判断是否可逆</span>
+    <span style="color: #0000ff">if</span> linalg.det(xTx)==0.0<span style="color: #000000">:
+        </span><span style="color: #008000">#</span><span style="color: #008000">不可逆，打印信息</span>
+        <span style="color: #0000ff">print</span>(<span style="color: #800000">'</span><span style="color: #800000">This matrix is singular,cannot do inverse,\n\
+                try increasing the second value if ops</span><span style="color: #800000">'</span><span style="color: #000000">)
+    </span><span style="color: #008000">#</span><span style="color: #008000">可逆，计算回归系数</span>
+    ws=(xTx).I*(X.T*<span style="color: #000000">Y)
+    </span><span style="color: #008000">#</span><span style="color: #008000">返回回顾系数;数据集矩阵;目标变量值矩阵</span>
+    <span style="color: #0000ff">return</span><span style="color: #000000"> ws,X,Y
+
+</span><span style="color: #008000">#</span><span style="color: #008000">模型树的叶节点模型    </span>
+<span style="color: #0000ff">def</span><span style="color: #000000"> modelLeaf(dataSet):
+    </span><span style="color: #008000">#</span><span style="color: #008000">调用线性回归函数生成叶节点模型</span>
+    ws,X,Y=<span style="color: #000000">linearSolve(dataSet)
+    </span><span style="color: #008000">#</span><span style="color: #008000">返回该叶节点线性方程的回顾系数</span>
+    <span style="color: #0000ff">return</span><span style="color: #000000"> ws
+
+</span><span style="color: #008000">#</span><span style="color: #008000">模型树的误差计算函数</span>
+<span style="color: #0000ff">def</span><span style="color: #000000"> modelErr(dataSet):
+    </span><span style="color: #008000">#</span><span style="color: #008000">构建模型树叶节点的线性方程，返回参数</span>
+    ws,X,Y=<span style="color: #000000">linearSolve(dataSet)
+    </span><span style="color: #008000">#</span><span style="color: #008000">利用线性方程对数据集进行预测</span>
+    yHat=X*<span style="color: #000000">ws
+    </span><span style="color: #008000">#</span><span style="color: #008000">返回误差的平方和，平方损失</span>
+    <span style="color: #0000ff">return</span> sum(power(y-yHat,2))</pre>
+</div>
+<p>　　上面的叶节点生成函数，就是之前用到的简单线性回归方法；模型树的叶节点返回的是线性方程的回归系数；</p>
+<p>6 树回归和标准回归的比较</p>
+<p>　　模型树，回归树和前面的线性回归方法构建的模型，具体哪一种更好呢？这就需要我们采用合适的度量标准，来客观比较各个模型构建方法的优劣。显然，前面用到的相关系数计算方法是一个不错的选择，模型拟合的结果和实际的结果相关系数越接近1.0，显然拟合效果就越好</p>
+<p>　　下面看一下，用树回归进行预测的代码：</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008000">#</span><span style="color: #008000">用树回归进行预测代码</span>
+
+<span style="color: #008000">#</span><span style="color: #008000">回归树的叶节点为float型常量</span>
+<span style="color: #0000ff">def</span><span style="color: #000000"> regTreeEval(model,inDat):
+    </span><span style="color: #0000ff">return</span><span style="color: #000000"> float(model)
+
+</span><span style="color: #008000">#</span><span style="color: #008000">模型树的叶节点浮点型参数的线性方程</span>
+<span style="color: #0000ff">def</span><span style="color: #000000"> modelTreeEval(model,inDat):
+    </span><span style="color: #008000">#</span><span style="color: #008000">获取输入数据的列数</span>
+    n=shape(inDat)[1<span style="color: #000000">]
+    </span><span style="color: #008000">#</span><span style="color: #008000">构建n+1维的单列矩阵</span>
+    X=mat(ones((1,n+1<span style="color: #000000">)))
+    </span><span style="color: #008000">#</span><span style="color: #008000">第一列设置为1，线性方程偏置项b</span>
+    X[:,1:n+1]=<span style="color: #000000">inDat
+    </span><span style="color: #008000">#</span><span style="color: #008000">返回浮点型的回归系数向量</span>
+    <span style="color: #0000ff">return</span> float(X*<span style="color: #000000">model)
+
+</span><span style="color: #008000">#</span><span style="color: #008000">树预测    </span><span style="color: #008000">
+#</span><span style="color: #008000">@tree；树回归模型</span><span style="color: #008000">
+#</span><span style="color: #008000">@inData：输入数据</span><span style="color: #008000">
+#</span><span style="color: #008000">@modelEval：叶节点生成类型，需指定，默认回归树类型</span>
+<span style="color: #0000ff">def</span> treeForeCast(tree,inData,modelEval=<span style="color: #000000">regTreeEval):
+    </span><span style="color: #008000">#</span><span style="color: #008000">如果当前树为叶节点，生成叶节点</span>
+    <span style="color: #0000ff">if</span> <span style="color: #0000ff">not</span> isTree(tree):<span style="color: #0000ff">return</span><span style="color: #000000"> modelEval(tree,inData)
+    </span><span style="color: #008000">#</span><span style="color: #008000">非叶节点，对该子树对应的切分点对输入数据进行切分</span>
+    <span style="color: #0000ff">if</span> inData[tree[<span style="color: #800000">'</span><span style="color: #800000">spInd</span><span style="color: #800000">'</span>]]&gt;tree[<span style="color: #800000">'</span><span style="color: #800000">spval</span><span style="color: #800000">'</span><span style="color: #000000">]:
+        </span><span style="color: #008000">#</span><span style="color: #008000">该树的左分支为非叶节点类型</span>
+        <span style="color: #0000ff">if</span> isTree(tree[<span style="color: #800000">'</span><span style="color: #800000">left</span><span style="color: #800000">'</span><span style="color: #000000">]):
+            </span><span style="color: #008000">#</span><span style="color: #008000">递归调用treeForeCast函数继续树预测过程，直至找到叶节点</span>
+            <span style="color: #0000ff">return</span> treeForeCast(tree[<span style="color: #800000">'</span><span style="color: #800000">left</span><span style="color: #800000">'</span><span style="color: #000000">],inData,modelEval)
+        </span><span style="color: #008000">#</span><span style="color: #008000">左分支为叶节点，生成叶节点</span>
+        <span style="color: #0000ff">else</span>: <span style="color: #0000ff">return</span> modelEval(tree[<span style="color: #800000">'</span><span style="color: #800000">left</span><span style="color: #800000">'</span><span style="color: #000000">],inData)
+    </span><span style="color: #008000">#</span><span style="color: #008000">小于切分点值的右分支</span>
+    <span style="color: #0000ff">else</span><span style="color: #000000">:
+        </span><span style="color: #008000">#</span><span style="color: #008000">非叶节点类型</span>
+        <span style="color: #0000ff">if</span> isTree(tree[<span style="color: #800000">'</span><span style="color: #800000">right</span><span style="color: #800000">'</span><span style="color: #000000">]):
+            </span><span style="color: #008000">#</span><span style="color: #008000">继续递归treeForeCast函数寻找叶节点</span>
+            <span style="color: #0000ff">return</span> treeForeCast(tree[<span style="color: #800000">'</span><span style="color: #800000">right</span><span style="color: #800000">'</span><span style="color: #000000">],inData,modelEval)
+        </span><span style="color: #008000">#</span><span style="color: #008000">叶节点，生成叶节点类型</span>
+        <span style="color: #0000ff">else</span>: <span style="color: #0000ff">return</span> modelEval(tree[<span style="color: #800000">'</span><span style="color: #800000">right</span><span style="color: #800000">'</span><span style="color: #000000">],inData)
+
+</span><span style="color: #008000">#</span><span style="color: #008000">创建预测树        </span>
+<span style="color: #0000ff">def</span> createForeCast(tree,testData,modelEval=<span style="color: #000000">regTreeEval):
+    </span><span style="color: #008000">#</span><span style="color: #008000">测试集样本数</span>
+    m=<span style="color: #000000">len(testData)
+    </span><span style="color: #008000">#</span><span style="color: #008000">初始化行向量各维度值为1</span>
+    yHat=mat(zeros((m,1<span style="color: #000000">)))
+    </span><span style="color: #008000">#</span><span style="color: #008000">遍历每个样本</span>
+    <span style="color: #0000ff">for</span> i <span style="color: #0000ff">in</span><span style="color: #000000"> range(m):
+        </span><span style="color: #008000">#</span><span style="color: #008000">利用树预测函数对测试集进行树构建过程，并计算模型预测值</span>
+        yHat[i,0]=<span style="color: #000000">treeForeCast(tree,mat(testData[i]),modelEval)
+    </span><span style="color: #008000">#</span><span style="color: #008000">返回预测值</span>
+    <span style="color: #0000ff">return</span> yHat</pre>
+</div>
+<p>　　上面代码中回归树和模型树计算模型预测值的方法有所不同，对于树的一个叶节点，回归树得到的预测值是一个float型的常数值，而模型树的叶节点返回的是线性方程的拟合输出值。</p>
+<p>　　接下来利用实际的数据分别利用线性回归，回归树，模型树来拟合数据模型，然后分别计算模型预测目标值和目标真实值得相关系数；然后进行比较系数的大小</p>
+<p>　　回归树：</p>
+<p>　<img src="https://images2015.cnblogs.com/blog/1134385/201706/1134385-20170611174129950-508351384.jpg" alt="" width="569" height="111"></p>
+<p>　　模型树：</p>
+<p><img src="https://images2015.cnblogs.com/blog/1134385/201706/1134385-20170611174146762-1662384735.jpg" alt="" width="470" height="98"></p>
+<p>　　显然，从上面的相关系数可以看出，模型树的预测效果要比回归树的预测效果更好。实施上，我们利用线性回归方法对数据进行拟合的模型的相关系数为：</p>
+<p><img src="https://images2015.cnblogs.com/blog/1134385/201706/1134385-20170611174607950-1590361330.jpg" alt="" width="347" height="78"></p>
+<p><img src="https://images2015.cnblogs.com/blog/1134385/201706/1134385-20170611174620168-1204650735.jpg" alt="" width="347" height="51"></p>
+<p><img src="https://images2015.cnblogs.com/blog/1134385/201706/1134385-20170611174632090-792928048.jpg" alt="" width="344" height="33"></p>
+<p>　　那么我们可以得到以下结论，当数据集比较复杂时，树回归方法要比简单线性回归模型更加有效，并且在树回归中，模型树要比回归树的效果更好。</p>
+<p>三，使用tikinfer创建GUI</p>
+<p>　　　　python中有很多GUI框架，而tkinder是其中易于使用的一个。tkinder的GUI有一些小部件（Widget）组成。包括文本框（Test Box），文本输入框（Entry）按钮（Button），标签（Label）没和复选按钮（Check Button）等对象。此外，当对象调用grid()方法时，就等于把该对象告诉布局管理器，grid()方法将小部件安排在一个二维的表格中，用户可以设定每个小部件所在的行列位置。</p>
+<p>　　下面就先来看一下用于构建树管理器界面的tkinder小部件</p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff">from</span> numpy <span style="color: #0000ff">import</span> *
+<span style="color: #008000">#</span><span style="color: #008000">3.0之前Tkinder，3.0之后（包括3.0）tkinder</span>
+<span style="color: #0000ff">from</span> tkinter <span style="color: #0000ff">import</span> *
+<span style="color: #0000ff">import</span><span style="color: #000000"> regTrees
+
+</span><span style="color: #0000ff">def</span><span style="color: #000000"> reDraw(tolS,tolN):
+    </span><span style="color: #0000ff">pass</span>
+    
+<span style="color: #0000ff">def</span><span style="color: #000000"> drawNewTree():
+    </span><span style="color: #0000ff">pass</span>
+
+<span style="color: #008000">#</span><span style="color: #008000">标签部件    </span>
+Label(root,test=<span style="color: #800000">"</span><span style="color: #800000">Plot Place Holder</span><span style="color: #800000">"</span>).grid(row=0,columnspan=3<span style="color: #000000">)
+Label(root,text</span>=<span style="color: #800000">"</span><span style="color: #800000">tolN</span><span style="color: #800000">"</span>).grid(row=1,column=<span style="color: #000000">0)
+</span><span style="color: #008000">#</span><span style="color: #008000">文本输入框部件</span>
+tolNentry=<span style="color: #000000">Entry(root)
+tolNentry.grid(row</span>=1,column=1<span style="color: #000000">)
+tolNentry.insert(0,</span><span style="color: #800000">'</span><span style="color: #800000">10</span><span style="color: #800000">'</span><span style="color: #000000">)
+Label(root,text</span>=<span style="color: #800000">"</span><span style="color: #800000">tols</span><span style="color: #800000">"</span>).grid(row=2,column=<span style="color: #000000">0)
+tolSentry</span>=<span style="color: #000000">Entry(root)
+tolSentry.grid(row</span>=2,column=1<span style="color: #000000">)
+tolSentry.insert(0,</span><span style="color: #800000">'</span><span style="color: #800000">1.0</span><span style="color: #800000">'</span><span style="color: #000000">)
+</span><span style="color: #008000">#</span><span style="color: #008000">按钮部件</span>
+Button(root,text=<span style="color: #800000">"</span><span style="color: #800000">ReDraw</span><span style="color: #800000">"</span>,command=drawNewTree).grid(row=1<span style="color: #000000">,\                                    
+　　　　　　　　　　　　　　　　　　　　　　　　column</span>=2,rowspan=3<span style="color: #000000">)
+</span><span style="color: #008000">#</span><span style="color: #008000">复选按钮部件</span>
+chkBtnVal=<span style="color: #000000">IntVal()
+chkBtn</span>=checkbutton(root,text=<span style="color: #800000">"</span><span style="color: #800000">Model Tree</span><span style="color: #800000">"</span>,variable=<span style="color: #000000">chkBtnVal)
+chkBtn.grid(row</span>=3,column=0,columnspan=2<span style="color: #000000">)
+reDraw.rawDat</span>=mat(regTrees.loadDataSet(<span style="color: #800000">'</span><span style="color: #800000">sine.txt</span><span style="color: #800000">'</span><span style="color: #000000">))
+reDraw.testDat</span>=<span style="color: #000000">arrange(min(reDraw.rawDat[:,0]),\
+                       max(reDraw.rawDat[:,0],</span>0.01<span style="color: #000000">))
+reDraw(</span>1.0,10<span style="color: #000000">)
+root.mainloop()</span></pre>
+</div>
+<p>&nbsp;</p>
+<p><img src="https://images2015.cnblogs.com/blog/1134385/201706/1134385-20170611180212997-1246135696.jpg" alt="" width="286" height="162"></p>
+<p>　　接下来，就结合matplotlib和tkinder来将图像直接放在GUI上，即通过修改Matplotlib后端，达到在tkinder的GUI上绘图的目的。</p>
+<p>　　先用画布来替换绘制占位符，删除对应标签并添加以下代码：</p>
+<div class="cnblogs_code">
+<pre>reDraw.f=Figure(figsize=(5,4),dpi=100<span>)
+reDraw.canvas=FigureCanvasTkAgg(reDraw.f,master=<span>root)
+reDraw.canvas.show()
+reDraw.canvas.get_tk_widget().grid(row=0,columnspan=3)</span></span></pre>
+</div>
+<p>　　再将matplotlib和tkinder代码集成</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008000">#</span><span style="color: #008000">导入matplotlib工具</span>
+<span style="color: #0000ff">import</span><span style="color: #000000"> matplotlib
+</span><span style="color: #008000">#</span><span style="color: #008000">将matplotlib后端设置为TkAgg</span>
+matplotlib.use(<span style="color: #800000">'</span><span style="color: #800000">TkAgg</span><span style="color: #800000">'</span><span style="color: #000000">)
+</span><span style="color: #0000ff">from</span> matplotlib.backends.backend_tkagg <span style="color: #0000ff">import</span><span style="color: #000000"> FigureCanvasTkAgg
+</span><span style="color: #0000ff">from</span> matplotlib.figure <span style="color: #0000ff">import</span><span style="color: #000000"> Figure
+</span><span style="color: #008000">#</span><span style="color: #008000">以用户输入的终止条件为参数绘图</span>
+<span style="color: #0000ff">def</span><span style="color: #000000"> reDraw(tolS,tolN):
+    reDraw.f.clf()
+    reDraw.a</span>=<span style="color: #000000">reDraw.f.add_subplot(lll)
+    </span><span style="color: #0000ff">if</span><span style="color: #000000"> chkBtnVal.get():
+        myTree</span>=<span style="color: #000000">regTrees.createTree(reDraw.rawDat,regTrees.modelLeaf,\
+            regTrees.modelEval,(tolS,tolN))
+        yHat</span>=regTrees.createForeCast(reDraw.rawDat,ops=<span style="color: #000000">(tolS,tolN))
+    </span><span style="color: #0000ff">else</span><span style="color: #000000">:
+        myTree</span>=regTrees.createTree(reDraw.rawDat,ops=<span style="color: #000000">(tolS,tolN))
+        yHat</span>=regTrees.createForeCast(myTree,ops=<span style="color: #000000">(tolS,tolN))
+    </span><span style="color: #008000">#</span><span style="color: #008000">绘制真实值</span>
+    reDraw.a.scatter(reDraw,rawDat[:,0],reDraw.rawDat[:,1],s=5<span style="color: #000000">)
+    </span><span style="color: #008000">#</span><span style="color: #008000">绘制预测值</span>
+    reDraw.a.plot(reDraw.testDat,yHat,linewidth=2.0<span style="color: #000000">)
+    reDraw.canvas.show()
+</span><span style="color: #008000">#</span><span style="color: #008000">从文本输入框中获取树创建终止条件，没有则用默认值    </span>
+<span style="color: #0000ff">def</span><span style="color: #000000"> getInputs():
+    </span><span style="color: #0000ff">try</span>:tolN=<span style="color: #000000">int(tolNentry.get())
+    </span><span style="color: #0000ff">except</span><span style="color: #000000">:
+        tolN</span>=10
+        <span style="color: #0000ff">print</span>(<span style="color: #800000">'</span><span style="color: #800000">enter Integer for tolN</span><span style="color: #800000">'</span><span style="color: #000000">)
+        tolNentry.delete(0,END)
+        tolNentry.insert(0,</span><span style="color: #800000">'</span><span style="color: #800000">10</span><span style="color: #800000">'</span><span style="color: #000000">)
+    </span><span style="color: #0000ff">try</span>:tolS=<span style="color: #000000">int(tolSentry.get())
+    </span><span style="color: #0000ff">except</span><span style="color: #000000">:
+        tolS</span>=1.0
+        <span style="color: #0000ff">print</span>(<span style="color: #800000">'</span><span style="color: #800000">enter Integer for tolS</span><span style="color: #800000">'</span><span style="color: #000000">)
+        tolSentry.delete(0,END)
+        tolSentry.insert(0,</span><span style="color: #800000">'</span><span style="color: #800000">1.0</span><span style="color: #800000">'</span><span style="color: #000000">)
+    </span><span style="color: #0000ff">return</span><span style="color: #000000"> tolS,tolN
+
+</span><span style="color: #0000ff">def</span><span style="color: #000000"> drawNewTree():
+    tolN,tolS</span>=<span style="color: #000000">getInputs()
+    reDraw(tolS,tolN)</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>　　上面代码中，真实值采用scatter()方法绘制，预测值采用plot()方法绘制，因为scatter()方法构建的是离散型散点图，而plot()方法则构建连续曲线。下面开看一下实际的效果：</p>
+<p><img src="https://images2015.cnblogs.com/blog/1134385/201706/1134385-20170611182336418-1711613834.jpg" alt="" width="488" height="417"></p>
+<p>四，小结</p>
+<p>　　在实际生活中，数据集经常会包含一些复杂的相互关系，输入数据与目标变量之间呈现出非线性关系。对这些复杂数据建模，我们可以采用树回归的方法来对数据进行分段线性预测，分段线性函数包括分段常数（回归树模型）和分段直线方程（模型树）；二者的区别在于构建树的叶节点模型上，若叶节点采用分段常数则是回归树，若使用的模型是线性回归方程则称为模型树。</p>
+<p>　　上面用到的树构建方法，是基于CART算法的二元切分法，通过计算最小误差的方法得到切分该数据集的最佳特征以及最佳的特征取值，从而来对数据集进行二元划分。</p>
+<p>　　很显然，CART算法是一种贪心算法，更多的是关心最佳切分特征及特征值的选取上，而不关注全局模型的最优解。所以，大多时候，该算法构建的树会产生过拟合情况，即对训练数据拟合很好，而对测试数据拟合效果较差</p>
+<p>　　预剪枝和后剪枝是两种对决策树剪枝从而降低模型复杂度的方法，前者在树构建的过程中边构建边剪枝，后者则是先利用训练集构建出树，在对构建的树利用测试集进行剪枝处理；从效果来看，预剪枝要比后剪枝要好；但是，预剪枝需要用户提供合理的输入，对用户输入的参数较为敏感，从这方面来看，后剪枝因为不需要用户的参与而更加理想。在实际的构建树过程中，往往采用两种方法结合的方法对于寻求最佳模型效果较好</p>
+<p>　　tkinder是python的一个GUI工具包。利用tkinder我们可以轻松的绘制各种部件并灵活的安排他们的位置。此外，可以通过设置matplotlib后端为TkAgg的方法，来集成matplotlib和tkinder，从而在tkinder中显示matplotlib绘出的图。</p></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory"></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info">
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"></div>
+</div>
+
+
+		</div>
+		<div class = "postDesc">posted @ <span id="post-date">2017-06-11 18:45</span> <a href='https://www.cnblogs.com/zy230530/'>笨鸟多学</a> 阅读(<span id="post_view_count">...</span>) 评论(<span id="post_comment_count">...</span>)  <a href ="https://i.cnblogs.com/EditPosts.aspx?postid=6985230" rel="nofollow">编辑</a> <a href="#" onclick="AddToWz(6985230);return false;">收藏</a></div>
+	</div>
+	<script type="text/javascript">var allowComments=true,cb_blogId=343941,cb_entryId=6985230,cb_blogApp=currentBlogApp,cb_blogUserGuid='2649156f-1412-e711-845c-ac853d9f53ac',cb_entryCreatedDate='2017/6/11 18:45:00';loadViewCount(cb_entryId);var cb_postType=1;var isMarkdown=false;</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id='comment_form' class='commentform'>
+<a name='commentform'></a>
+<div id='divCommentShow'></div>
+<div id='comment_nav'><span id='span_refresh_tips'></span><a href='javascript:void(0);' onclick='return RefreshCommentList();' id='lnk_RefreshComments' runat='server' clientidmode='Static'>刷新评论</a><a href='#' onclick='return RefreshPage();'>刷新页面</a><a href='#top'>返回顶部</a></div>
+<div id='comment_form_container'></div>
+<div class='ad_text_commentbox' id='ad_text_under_commentbox'></div>
+<div id='ad_t2'></div>
+<div id='opt_under_post'></div>
+<script async='async' src='https://www.googletagservices.com/tag/js/gpt.js'></script>
+<script>
+  var googletag = googletag || {};
+  googletag.cmd = googletag.cmd || [];
+</script>
+<script>
+  googletag.cmd.push(function() {
+        googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1546353474406-0').addService(googletag.pubads());
+        googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1539008685004-0').addService(googletag.pubads());
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+  });
+</script>
+<div id='cnblogs_c1' class='c_ad_block'>
+    <div id='div-gpt-ad-1546353474406-0' style='height:250px; width:300px;'></div>
+</div>
+<div id='under_post_news'></div>
+<div id='cnblogs_c2' class='c_ad_block'>
+    <div id='div-gpt-ad-1539008685004-0' style='height:60px; width:468px;'></div>
+</div>
+<div id='under_post_kb'></div>
+<div id='HistoryToday' class='c_ad_block'></div>
+<script type='text/javascript'>
+ if(enablePostBottom()) {
+    codeHighlight();
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverT2();
+    deliverC1();
+    deliverC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);  
+}
+</script>
+</div>
+
+    
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle">公告</h3>
+	<div id="blog-news"></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="calendar"><div id="blog-calendar" style="display:none"></div><script type="text/javascript">loadBlogDefaultCalendar();</script></div>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright &copy;2019 笨鸟多学
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+</body>
+</html>

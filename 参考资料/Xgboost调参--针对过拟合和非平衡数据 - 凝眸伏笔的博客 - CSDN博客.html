@@ -1,0 +1,3206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="canonical" href="https://blog.csdn.net/pearl8899/article/details/80820067"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="referrer" content="always">
+    <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+    <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848">
+        <meta name="csdn-baidu-search"  content='{"autorun":true,"install":true,"keyword":"Xgboost调参--针对过拟合和非平衡数据 - 凝眸伏笔的博客"}'>
+    
+    <link href="https://csdnimg.cn/public/favicon.ico" rel="SHORTCUT ICON">
+    <title>Xgboost调参--针对过拟合和非平衡数据 - 凝眸伏笔的博客 - CSDN博客</title>
+
+        
+                    <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/detail-d59e2413cb.min.css">
+            
+        
+          <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/themes/skin3-template/skin3-template-9b39979775.min.css">
+        <script type="text/javascript">
+        var username = "pearl8899";
+        var blog_address = "https://blog.csdn.net/pearl8899";
+        var static_host = "https://csdnimg.cn/release/phoenix/";
+        var currentUserName = "qq_37507975";
+        var isShowAds = true;
+        var isOwner = false;
+        var loginUrl = "http://passport.csdn.net/account/login?from=https://blog.csdn.net/pearl8899/article/details/80820067"
+        var blogUrl = "https://blog.csdn.net/";
+        //页面皮肤样式
+        var curSkin = "skin3-template";
+        // 第四范式所需数据
+        var articleTitles = "Xgboost调参--针对过拟合和非平衡数据 - 凝眸伏笔的博客";
+        var articleID = "80820067";
+        
+        var nickName = "凝眸伏笔";
+        var isCorporate = false;
+        var subDomainBlogUrl = "https://blog.csdn.net/"
+    </script>
+    <script type="text/javascript">
+        // Traffic Stats of the entire Web site By baidu
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?6bcd52f51e9b3dce32bec4a3997715ac";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+        // Traffic Stats of the entire Web site By baidu end
+    </script>
+    <script src="https://csdnimg.cn/public/common/libs/jquery/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="https://csdnimg.cn/rabbit/exposure-click/main-1.0.6.js"></script>
+    <script src="//g.csdnimg.cn/fixed-sidebar/1.1.3/fixed-sidebar.js" type="text/javascript"></script>
+    <!-- 新版上报 -->
+    <script src="//g.csdnimg.cn/track/1.2.4/track.js" type="text/javascript"></script>
+    <!-- 新版上报end -->
+            <link rel="stylesheet" href="https://csdnimg.cn/public/sandalstrap/1.4/css/sandalstrap.min.css">
+    <style>
+        .MathJax, .MathJax_Message, .MathJax_Preview{
+            display: none
+        }
+    </style>
+</head>
+<!-- nodata 第三栏接口无数据时样式不变 -->
+<body class="nodata " > 
+    <link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+    <script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<div id="kp_box_476" data-pid="476" data-track-view='{"mod":"kp_popu_476-794","con":",,"}' data-track-click='{"mod":"kp_popu_476-794","con":",,"}'><script src="//csdnimg.cn/public/common/indexSuperise/1.0.3/indexSuperise.js?20190103190825"></script>
+<script>
+ window.csdn.indexSuperise({
+      smallMoveImg: '//ubmcmm.baidustatic.com/media/v1/0f000ji9GQBTQif4KlS1n6.jpg',
+      bigMoveImg: '//ubmcmm.baidustatic.com/media/v1/0f000Dd29O15Im4ZGHXmF0.jpg',
+     link:'//bss.csdn.net/m/topic/blog_star2018/index?utm_source=bloghudong',
+boxStyle:140,
+trackSuperId:476,
+smallMove:'notMove',  
+trackSId:794
+    });
+</script></div><link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+<script type="text/javascript">
+	// 容错处理
+	var NEWS_FEED = function(){}
+</script>
+<script type="text/javascript" src="//static.mediav.com/js/mvf_news_feed.js"></script>
+<script type="text/javascript" src="//g.csdnimg.cn/copyright/1.0.3/copyright.js"></script>
+<div style="display:none;">
+	<img src="" onerror='setTimeout(function(){if(!/(csdn.net|iteye.com|baiducontent.com|googleusercontent.com|360webcache.com|sogoucdn.com|bingj.com|baidu.com)$/.test(window.location.hostname)){window.location.href="\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x63\x73\x64\x6e\x2e\x6e\x65\x74"}},3000);'>
+</div>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/chart-3456820cac.css" />
+<script src="https://dup.baidustatic.com/js/ds.js"></script>
+<div class="container clearfix" id="mainBox">
+			<div class="recommend-right">
+  <ul class="recommend-fixed-box">
+    
+  </ul>
+</div>	
+    <main>
+        <div class="blog-content-box">
+	<div class="article-header-box">
+		<div class="article-header">
+			<div class="article-title-box">
+				<span class="article-type type-4 float-left">译</span>				<h1 class="title-article">Xgboost调参--针对过拟合和非平衡数据</h1>
+			</div>
+			<div class="article-info-box">
+				<div class="article-bar-top">
+																				<span class="time">2018年06月26日 19:53:31</span>
+					<a class="follow-nickName" href="https://me.csdn.net/pearl8899" target="_blank">凝眸伏笔</a>
+						<span class="read-count">阅读数：3444</span>
+										</div>
+				<div class="operating">
+									</div>
+			</div>
+		</div>
+	</div>
+	<article class="baidu_pl">
+		<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog"  data-mod=popu_307  data-dsm = "post" >
+								            <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-f57960eb32.css" />
+						<div class="htmledit_views" id="content_views">
+                调参须知：<br />在机器学习中，调参是一项dark art(可以理解为一项优美而道不明的事情)。一个模型的最优参数取决于很多因素。因此不可能建立一个完备的调参说明书去获取最优参数。<br />理解 Bias-Variance tradeoff<br />(先说一下tradeoff的意思：就是折中的意思，这里是说)<br />如果你上过机器学习或者统计学课程，这是一个非常重要的概念。当我们允许一个模型非常复杂的时候（比如，增加每一棵树的深度depth），模型对训练数据具备较好的拟合能力，就是说训练时候的&lt;y_predict-y&gt;的差值较小，也就是bias这个评价模型好坏的指标，获得了较小的数据，拟合能力强。但是，这种负责的模型要求更多的数据去拟合模型，如果你的数据不够多，那么会产生欠拟合现象，对训练数据拟合。biase越小，模型倾向于过拟合，对测试数据的预测能力差，而我们要的是既不是过拟合也不是欠拟合，二者之间寻找一个平衡，怎么找？调参。<br />xgb中可以调节很多参数用于bias variance tradeoff。一个好的模型，它在模型复杂度和预测能力上会找到一个平衡点。参数文档将会讲解哪些参数使得模型更加conservative，这里的conservative，我理解是_____，参数调优帮你在复杂模型和简单模型之间找到平衡点。<br />控制过拟合：<br />当你观察到训练模型时，训练精度特别高，比如auc较大，但是测试精度很低，很可能是出现了过拟合问题。<br />在xgb调中，一般有两种方式用于控制过拟合：<br />1、直接控制参数的复杂度<br />    包括max_depth min_child_weight gamma<br />2、add randomness来使得对训练对噪声鲁棒。<br />    包括subsample colsample_bytree<br />    或者也可以减小步长 eta，但是需要增加num_round，来平衡步长因子的减小。<br />处理非平衡数据集：<br />会存在一些数据极度不平衡，会影响到xgb模型的训练，有两个方法可以改善这种情况：<br />1、如果你关注预测结果的排序结果auc<br />    平衡正负样本的权重，通过scale_pos_weight来处理。<br />2、如果你关注预测正确的概率：<br />    这种情况下，你不可以对这个数据进行re-balance,如果你采样或者别的操作，会改变原始数据集合的分布。<br /><p>    可以设置参数max_delta_step为一个确定的数，这有助于模型收敛。</p><p>xgb调参：<br />在xgb调参之前，我们需要知道有三种类型的参数：general 参数、booster 参数、和task参数<br />1.general 参数：关系到我们用哪种booster做提升，一般是树模型和线性模型。<br />2.booster 参数：我们选择哪种booster作为xgboost的基本模型。<br />3.learning task 参数：取决于学习的场景。比如：回归任务和排序任务所采用的参数可能不同。<br />4.命令行参数：与xgb的版本中的CLI有关，（CLI指代什么？）<br />General Parameters<br />booster [default=gbtree] <br />    gbtree和、blinear、dart。gbtree和dart使用基于树的模型进行提升计算，gblinear使用线性模型进行提升计算。缺省值为gbtree<br />silent [default=0] <br />    取0时表示打印出运行时信息，取1时表示以缄默方式运行，不打印运行时信息。缺省值为0<br />nthread [default to maximum number of threads available if not set] <br />    XGBoost运行时的线程数。缺省值是当前系统可以获得的最大线程数<br />num_pbuffer [set automatically by xgboost, no need to be set by user] <br />    该参数不需要user设置，xgb可以自动设置。<br />    预测缓存的大小，一般设置为训练实例的数量。这个缓存用于保存最后一个提升步骤的预测结果。<br />    size of prediction buffer, normally set to number of training instances. The buffers are used to save the prediction results of last boosting step.<br />num_feature [xgb自动设置，不需要用户自己设置。 set automatically by xgboost, no need to be set by user] <br />    boosting过程中用到的特征维数，设置为特征个数。XGBoost会自动设置，不需要手工设置<br /><br /><br />Parameter for Tree Booster<br />eta [default=0.3] :学习速率<br />    为了防止过拟合，更新过程中用到的收缩步长。在每次提升计算之后，算法会直接获得新特征的权重。 eta通过缩减特征的权重使提升计算过程更加保守。（这里的保守，是否可以理解为泛化能力强）缺省值为0.3<br />    取值范围为：[0,1]<br />gamma [default=0] ：最小分裂损失<br />    最小化损失函数的减小要求树的叶子节点做出划分，减掉一些叶子节点，这些叶子节点的存在使得损失函数变大，因此这个gamma起到剪枝的作用。这个值越大，算法越保守。<br />    minimum loss reduction required to make a further partition on a leaf node of the tree. the larger, the more conservative the algorithm will be.<br />range: [0,∞]<br />max_depth [default=6] ：单棵树的深度<br />    数的最大深度。增大这个数，将使得模型更为复杂，倾向于过拟合。如果 max_depth = 0,表示对树的深度不做限制，对树的深度也就是层数做限制是为了使得树的生长更为合理。缺省值为6<br />    取值范围为：[1,∞]<br />min_child_weight [default=1] <br />    孩子节点中最小的样本权重和。如果一个叶子节点的样本权重和小于min_child_weight则拆分过程结束。在现行回归模型中，这个参数是指建立每个模型所需要的最小样本数。该参数值越大算法越conservative<br />    取值范围为: [0,∞]<br />max_delta_step [default=0] 在每棵树的权重估计中，允许的最大delta步长。<br />    如果这个值设置为0，意味着没有约束。如果设置为一个正数，它有助于在更新步长的时候，使得模型更加保守。通常，这个参数不需要设置，但是当类别极度不平衡的时候，有助于逻辑回归模型的训练。设置它的值为1-10，可能有助于控制更新。<br />    Maximum delta step we allow each tree’s weight estimation to be. If the value is set to 0, it means there is no constraint. If it is set to a positive value, it can help making the update step more conservative. Usually this parameter is not needed, but it might help in logistic regression when class is extremely imbalanced. Set it to value of 1-10 might help control the update<br />    取值范围为：[0,∞]<br />subsample [default=1] :二次抽样<br />    用于训练模型的子样本占整个样本集合的比例。如果设置为0.5，则意味着XGBoost将随机的从整个样本集合中随机的抽取出50%的子样本建立树模型，这能够防止过拟合。<br />    取值范围为：(0,1]<br />colsample_bytree [default=1] <br />    在建立树时对特征采样的比例。缺省值为1<br />    取值范围：(0,1]<br />colsample_bylevel [default=1]<br />    分裂时，在每个水平层次上，对列的采样比例。<br />    范围：（0，1]<br />lambda [default=1, alias: reg_lambda]:正则化参数lambda<br />    权重的L2正则项，增大这个值将会使得模型更加保守。<br />alpha [default=0, alias: reg_alpha]<br /> <br />    <br /><br /><br />参考链接：https://xgboost.readthedocs.io/en/latest/parameter.html#parameters-for-tweedie-regression<br /></p><p><br /></p><p><br /></p>参考文献：https://xgboost.readthedocs.io/en/latest/how_to/param_tuning.html#handle-imbalanced-dataset            </div>
+                </div>
+	</article>
+</div>
+  <div class="hide-article-box hide-article-pos text-center">
+    <div class="border"></div>
+        <a class="btn article-footer-btn" id="btn-readmore" data-track-view='{"mod":"popu_376","con":",https://blog.csdn.net/pearl8899/article/details/80820067,"}' data-track-click='{"mod":"popu_376","con":",https://blog.csdn.net/pearl8899/article/details/80820067,"}'>阅读更多</a>
+        <a class="btn article-footer-btn article-footer-bookmark-btn" >
+      <svg class="icon no-active hover-hide" aria-hidden="true">
+        <use xlink:href="#csdnc-bookmark"></use>
+      </svg>
+      <span>收藏</span>
+    </a>
+    <div class="btn article-footer-btn  bds_weixin article-footer-share-btn" data-cmd="weixin" title="分享">
+      <svg class="icon no-active hover-hide" aria-hidden="true">
+        <use xlink:href="#csdnc-share"></use>
+      </svg>
+      <span>分享</span>
+      <div class="bdsharebuttonbox">
+        <a href="#"class="bds_weixin clear-share-style-article-footer" data-cmd="weixin" title="分享"></a>
+      </div>
+    </div>
+    
+  </div>
+  <script>
+  (function(){
+    function collection(){
+      if (currentUserName) {
+        if (!$(this).hasClass("liked")) {
+          $.ajax({
+            url: 'https://my.csdn.net/my/favorite/do_add/2',
+            dataType: 'json',
+            type: 'POST',
+            xhrFields: {
+              withCredentials: true
+            },
+            data: {
+              title: articleTit,
+              url: curentUrl,
+              share: 1,
+              map_name: ''
+            },
+            success: function(data) {
+              if (data.succ == 1) {
+                $('.btn-bookmark').addClass("liked");
+                $('.article-footer-bookmark-btn').addClass("liked").children('span').text('已收藏');
+                
+                alert('收藏成功,可以在个人中心查看我的收藏');
+              } else {
+                if (data.msg === "您已经收藏过") {
+                  $('.btn-bookmark').addClass("liked");
+                  $('.article-footer-bookmark-btn').addClass("liked").children('span').text('已收藏');
+                }
+                alert(data.msg);
+              }
+            }
+          });
+        } else {
+          alert('您已经收藏过');
+        }
+      } else {
+        window.csdn.loginBox.show();
+      }
+    }
+    window.csdn = window.csdn ? window.csdn : {};
+    window.csdn.articleCollection = collection;
+    function setArticleH(btnReadmore,posi){
+      var winH = $(window).height();
+      var articleBox = $("div.article_content");
+      var artH = articleBox.height();
+      if(artH > winH*posi){
+        articleBox.css({
+          'height':winH*posi+'px',
+          'overflow':'hidden'
+        })
+        btnReadmore.click(function(){
+          articleBox.removeAttr("style");
+          $(this).parent().remove()
+        })
+      }else{
+        btnReadmore.parent().remove()
+      }
+    }
+    var btnReadmore = $("#btn-readmore");
+    $('.article-footer-bookmark-btn').click(window.csdn.articleCollection)
+    if(btnReadmore.length>0){
+      if(currentUserName){
+        setArticleH(btnReadmore,3);
+      }else{
+        setArticleH(btnReadmore,1.2);
+      }
+    }else{
+      $('.hide-article-box').addClass('hide-article-style');
+    }
+  })()
+</script>
+<script>
+		$(".MathJax").remove();
+		if($('div.markdown_views pre.prettyprint code.hljs').length > 0 ){
+				$('div.markdown_views')[0].className = 'markdown_views';
+		}
+</script>
+        <div id="dmp_ad_58"><div id="kp_box_58" data-pid="58" data-track-view='{"mod":"kp_popu_58-826","con":",,"}' data-track-click='{"mod":"kp_popu_58-826","con":",,"}'><script
+    async="async"
+    charset="utf-8"
+    src="https://shared.ydstatic.com/js/yatdk/3.0.1/stream.js"
+    data-id="6cb24153a03289ff3597c7aab4b69fe9"
+    data-div-Style="width:100%;padding:1.5%;background:#fff;"
+data-tit-Style="margin-bottom: 6px; font-size: 18px; line-height: 24px; color: #3d3d3d;display: inline-block;font-weight:bold;"
+data-des-Style="font-size: 13px; line-height: 22px; white-space: normal; color: #999;"
+data-img-Style="float:left;margin-right:15px;width:90px;height:69px;">
+</script></div></div>        <a id="commentBox"></a>
+<div class="comment-box">
+	
+	<div class="comment-edit-box d-flex">
+		<a id="commentsedit"></a>
+		<div class="user-img">
+			<a href="//me.csdn.net/qq_37507975" target="_blank">
+				<img class="" src="https://avatar.csdn.net/1/6/8/3_qq_37507975.jpg">
+			</a>
+		</div>
+		<form id="commentform">
+			<input type="hidden" id="comment_replyId">
+			<textarea class="comment-content" name="comment_content" id="comment_content" placeholder="想对作者说点什么"></textarea>
+			<div class="opt-box"> <!-- d-flex -->
+				<div id="ubbtools" class="add_code">
+					<a href="#insertcode" code="code" target="_self"><i class="icon iconfont icon-daima"></i></a>
+				</div>
+				<input type="hidden" id="comment_replyId" name="comment_replyId">
+				<input type="hidden" id="article_id" name="article_id" value="80820067">
+				<input type="hidden" id="comment_userId" name="comment_userId" value="">
+				<input type="hidden" id="commentId" name="commentId" value="">
+				<div style="display: none;" class="csdn-tracking-statistics tracking-click" data-mod="popu_384"><a href="#" target="_blank" class="comment_area_btn">发表评论</a></div>
+				<div class="dropdown" id="myDrap">
+					<a class="dropdown-face d-flex align-items-center" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					<div class="txt-selected text-truncate">添加代码片</div>
+					<svg class="icon d-block" aria-hidden="true">
+						<use xlink:href="#csdnc-triangledown"></use>
+					</svg>
+					</a>
+					<ul class="dropdown-menu" id="commentCode" aria-labelledby="drop4">
+						<li><a data-code="html">HTML/XML</a></li>
+						<li><a data-code="objc">objective-c</a></li>
+						<li><a data-code="ruby">Ruby</a></li>
+						<li><a data-code="php">PHP</a></li>
+						<li><a data-code="csharp">C</a></li>
+						<li><a data-code="cpp">C++</a></li>
+						<li><a data-code="javascript">JavaScript</a></li>
+						<li><a data-code="python">Python</a></li>
+						<li><a data-code="java">Java</a></li>
+						<li><a data-code="css">CSS</a></li>
+						<li><a data-code="sql">SQL</a></li>
+						<li><a data-code="plain">其它</a></li>
+					</ul>
+				</div>  
+				<div class="right-box">
+					<span id="tip_comment" class="tip">还能输入<em>1000</em>个字符</span>
+					<input type="submit" class="btn btn-sm btn-red btn-comment" value="发表评论">
+				</div>
+			</div>
+		</form>
+	</div>
+
+		<div class="comment-list-container">
+		<a id="comments"></a>
+		<div class="comment-list-box">
+		</div>
+		<div id="commentPage" class="pagination-box d-none"></div>
+		<div class="opt-box text-center">
+			<button class="btn btn-sm btn-link-blue" id="btnMoreComment"></button>
+		</div>
+	</div>
+</div>
+        <div class="recommend-box">
+            		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/github_38414650/article/details/76061893,BlogCommendFromBaidu_0"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/github_38414650/article/details/76061893" target="_blank" title="通俗、有逻辑的写一篇说下Xgboost的原理，供讨论参考">
+				<h4 class="text-truncate oneline">
+						通俗、有逻辑的写一篇说下<em>Xgboost</em>的原理，供讨论参考				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-25</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							5.4万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/github_38414650/article/details/76061893" target="_blank" title="通俗、有逻辑的写一篇说下Xgboost的原理，供讨论参考">
+							<span class="desc oneline">初看Xgboost，翻了多篇博客发现关于xgboost原理的描述实在难以忍受，缺乏逻辑性，写一篇供讨论。——以下是抛砖引玉。观其大略，而后深入细节，一开始扎进公式反正我是觉得效率不高，还容易打消人的积...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/github_38414650">来自：	<span class="blog_title"> 就俩字，咱们要做精通，不做熟悉</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/hhy518518/article/details/54988024,BlogCommendFromBaidu_1"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/hhy518518/article/details/54988024" target="_blank" title="XGBoost参数调优">
+				<h4 class="text-truncate oneline">
+						<em>XGBoost</em>参数调优				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">02-12</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							3595</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/hhy518518/article/details/54988024" target="_blank" title="XGBoost参数调优">
+							<span class="desc oneline">摘要：转载：http://blog.csdn.net/han_xiaoyang/article/details/526653961.简介如果你的预测模型表现得有些不尽如人意，那就用XGBoost吧。X...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/hhy518518">来自：	<span class="blog_title"> hhy518518的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/RuDing/article/details/78328835,BlogCommendFromBaidu_2"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/RuDing/article/details/78328835" target="_blank" title="XGBoost算法原理简介及调参">
+				<h4 class="text-truncate oneline">
+						<em>XGBoost</em>算法原理简介及调参				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-24</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							9918</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/RuDing/article/details/78328835" target="_blank" title="XGBoost算法原理简介及调参">
+							<span class="desc oneline">译文：CompleteGuidetoParameterTuninginXGBoost简介当模型没有达到预期效果的时候，XGBoost就是数据科学家的最终武器。XGboost是一个高度复杂的算法，有足够...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/RuDing">来自：	<span class="blog_title"> RuDing的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    <div class="recommend-item-box recommend-ad-box"><div id="kp_box_59" data-pid="59" data-track-view='{"mod":"kp_popu_59-78","con":",,"}' data-track-click='{"mod":"kp_popu_59-78","con":",,"}'><script type="text/javascript" src="//rabc1.iteye.com/production/res/rxjg.js?pkcgstj=jm"></script></div></div>
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/MiMicoa/article/details/85019163,BlogCommendFromBaidu_3"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/MiMicoa/article/details/85019163" target="_blank" title="在XGBoost中通过Early Stop避免过拟合">
+				<h4 class="text-truncate oneline">
+						在<em>XGBoost</em>中通过Early Stop避免<em>过拟合</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-15</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							107</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/MiMicoa/article/details/85019163" target="_blank" title="在XGBoost中通过Early Stop避免过拟合">
+							<span class="desc oneline">本文翻译自AvoidOverfittingByEarlyStoppingWithXGBoostInPython，讲述如何在使用XGBoost建模时通过EarlyStop手段来避免过拟合。全文系作者原创...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/MiMicoa">来自：	<span class="blog_title"> 小美哥的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/kylin_learn/article/details/85596047,BlogCommendFromBaidu_4"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/kylin_learn/article/details/85596047" target="_blank" title="early-stopping在xgboost的过拟合使用">
+				<h4 class="text-truncate oneline">
+						early-stopping在<em>xgboost</em>的<em>过拟合</em>使用				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-02</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							48</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/kylin_learn/article/details/85596047" target="_blank" title="early-stopping在xgboost的过拟合使用">
+							<span class="desc oneline">https://machinelearningmastery.com/avoid-overfitting-by-early-stopping-with-xgboost-in-python/baseli...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/kylin_learn">来自：	<span class="blog_title"> kylin_learn的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/wzmsltw/article/details/50994481,BlogCommendFromBaidu_5"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/wzmsltw/article/details/50994481" target="_blank" title="XGBoost-Python完全调参指南-参数解释篇">
+				<h4 class="text-truncate oneline">
+						<em>XGBoost</em>-Python完全调参指南-参数解释篇				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-27</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							6.9万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/wzmsltw/article/details/50994481" target="_blank" title="XGBoost-Python完全调参指南-参数解释篇">
+							<span class="desc oneline">关于XGBoost的参数，发现已经有比较完善的翻译了。故本文转载其内容，并作了一些修改与拓展。原文链接见：http://blog.csdn.net/zc02051126/article/details...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/wzmsltw">来自：	<span class="blog_title"> Will Lin的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/zc02051126/article/details/46711047,BlogCommendFromBaidu_6"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/zc02051126/article/details/46711047" target="_blank" title="XGBoost：参数解释">
+				<h4 class="text-truncate oneline">
+						<em>XGBoost</em>：参数解释				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-01</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							8.8万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/zc02051126/article/details/46711047" target="_blank" title="XGBoost：参数解释">
+							<span class="desc oneline">XGBoost参数在运行XGboost之前，必须设置三种类型成熟：generalparameters，boosterparameters和taskparameters：Generalparameter...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/zc02051126">来自：	<span class="blog_title"> super</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/yaoqiang2011/article/details/52665396,BlogCommendFromBaidu_7"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/yaoqiang2011/article/details/52665396" target="_blank" title="机器学习系列(12)_XGBoost参数调优完全指南（附Python代码）">
+				<h4 class="text-truncate oneline">
+						机器学习系列(12)_<em>XGBoost</em>参数调优完全指南（附Python代码）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-25</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							10.6万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/yaoqiang2011/article/details/52665396" target="_blank" title="机器学习系列(12)_XGBoost参数调优完全指南（附Python代码）">
+							<span class="desc oneline">这篇文章主要讲了如何提升XGBoost模型的表现。首先，我们介绍了相比于GBM，为何XGBoost可以取得这么好的表现。紧接着，我们介绍了每个参数的细节。我们定义了一个可以重复使用的构造模型的函数。最...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/yaoqiang2011">来自：	<span class="blog_title"> 寒小阳</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    <div class="recommend-item-box recommend-ad-box"><div id="kp_box_60" data-pid="60" data-track-view='{"mod":"kp_popu_60-809","con":",,"}' data-track-click='{"mod":"kp_popu_60-809","con":",,"}'><script
+    async="async"
+    charset="utf-8"
+    src="https://shared.ydstatic.com/js/yatdk/3.0.1/stream.js"
+    data-id="6cb24153a03289ff3597c7aab4b69fe9"
+    data-div-Style="width:100%;"
+data-tit-Style="margin-bottom: 6px; font-size: 18px; line-height: 24px; color: #3d3d3d;display: inline-block;font-weight:bold;"
+data-des-Style="font-size: 13px; line-height: 22px; white-space: normal; color: #999;"
+data-img-Style="float:left;margin-right:15px;width:90px;height:60px;">
+</script></div></div>
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/lujiandong1/article/details/52777168,BlogCommendFromBaidu_8"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/lujiandong1/article/details/52777168" target="_blank" title="XGBoost Stopping to Avoid Overfitting(early_stopping_rounds )">
+				<h4 class="text-truncate oneline">
+						<em>XGBoost</em> Stopping to Avoid Overfitting(early_stopping_rounds )				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-10</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							6158</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/lujiandong1/article/details/52777168" target="_blank" title="XGBoost Stopping to Avoid Overfitting(early_stopping_rounds )">
+							<span class="desc oneline">XGBoost模型和其他模型一样，如果迭代次数过多，也会进入过拟合。表现就是随着迭代次数的增加，测试集上的测试误差开始下降。当开始过拟合或者过训练时，测试集上的测试误差开始上升，或者说波动。下面通过实...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/lujiandong1">来自：	<span class="blog_title"> lujiandong1的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/q383700092/article/details/53763328,BlogCommendFromBaidu_9"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/q383700092/article/details/53763328" target="_blank" title="xgboost使用调参">
+				<h4 class="text-truncate oneline">
+						<em>xgboost</em>使用调参				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-20</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2.3万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/q383700092/article/details/53763328" target="_blank" title="xgboost使用调参">
+							<span class="desc oneline">github：https://github.com/dmlc/xgboost论文参考：http://www.kaggle.com/blobs/download/forum-message-attach...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/q383700092">来自：	<span class="blog_title"> 余音丶未散的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+          <div class="recommend-item-box blog-expert-recommend-box">
+				<div class="d-flex">
+					<div class="blog-expert-recommend">
+						<div class="blog-expert">
+							<div class="blog-expert-flexbox"></div>
+						</div>
+					</div>
+				</div>
+      </div>
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/zhangf666/article/details/53088859,BlogCommendClickRateRank_10"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/zhangf666/article/details/53088859" target="_blank" title="在机器学习分类中如何处理训练集中不平衡问题">
+				<h4 class="text-truncate oneline">
+						在机器学习分类中如何处理训练集中不<em>平衡</em>问题				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-08</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							5883</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/zhangf666/article/details/53088859" target="_blank" title="在机器学习分类中如何处理训练集中不平衡问题">
+							<span class="desc oneline">版权声明：未经许可,不能转载目录(?)[-]在分类中如何处理训练集中不平衡问题JasonBrownlee的回答什么是类别不均衡问题类别不均衡问题是现实中很常见的问题八大解决方法选择某一种方法并使用它总...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/zhangf666">来自：	<span class="blog_title"> WhyNot</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/xholes/article/details/78158838,BlogCommendESEnWordWeight_11"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/xholes/article/details/78158838" target="_blank" title="过拟合与数据不平衡">
+				<h4 class="text-truncate oneline">
+						<em>过拟合</em>与<em>数据</em>不<em>平衡</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-04</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							484</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/xholes/article/details/78158838" target="_blank" title="过拟合与数据不平衡">
+							<span class="desc oneline">过拟合与数据不平衡什么是过拟合？过拟合就是学习器对训练样本数据的学习的过于彻底，将一些训练样本的噪声或者不属于全体样本的一般特征也学习了，造成在训练样本上效果表现很好而在测试样本上表现效果非常差的一种...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/xholes">来自：	<span class="blog_title"> 吕爽</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/zc02051126/article/details/46771243,BlogCommendESEnWordWeight_12"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/zc02051126/article/details/46771243" target="_blank" title="XGBoost：多分类问题">
+				<h4 class="text-truncate oneline">
+						<em>XGBoost</em>：多分类问题				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-06</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1.6万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/zc02051126/article/details/46771243" target="_blank" title="XGBoost：多分类问题">
+							<span class="desc oneline">下面用数据UCIDermatologydataset演示XGBoost的多分类问题首先要安装好XGBoost的C++版本和相应的Python模块，然后执行如下脚本，如果本地没有训练所需要的数据，run...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/zc02051126">来自：	<span class="blog_title"> super</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    <div class="recommend-item-box recommend-ad-box"><div id="kp_box_61" data-pid="61" data-track-view='{"mod":"kp_popu_61-809","con":",,"}' data-track-click='{"mod":"kp_popu_61-809","con":",,"}'><script
+    async="async"
+    charset="utf-8"
+    src="https://shared.ydstatic.com/js/yatdk/3.0.1/stream.js"
+    data-id="6cb24153a03289ff3597c7aab4b69fe9"
+    data-div-Style="width:100%;"
+data-tit-Style="margin-bottom: 6px; font-size: 18px; line-height: 24px; color: #3d3d3d;display: inline-block;font-weight:bold;"
+data-des-Style="font-size: 13px; line-height: 22px; white-space: normal; color: #999;"
+data-img-Style="float:left;margin-right:15px;width:90px;height:60px;">
+</script></div></div>
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/Yongchun_Zhu/article/details/78745529,BlogCommendFromBaidu_13"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Yongchun_Zhu/article/details/78745529" target="_blank" title="DART booster">
+				<h4 class="text-truncate oneline">
+						DART booster				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-07</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1551</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Yongchun_Zhu/article/details/78745529" target="_blank" title="DART booster">
+							<span class="desc oneline">DARTbooster的介绍，本文通过翻译XGBoost官方文档以及理解DARTbooster原文得来，帮助大家理解DARTbooster的原理。...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Yongchun_Zhu">来自：	<span class="blog_title"> Yongchun_Zhu的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/u010159842/article/details/53411355,BlogCommendFromBaidu_14"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u010159842/article/details/53411355" target="_blank" title="XGBoost解决多分类问题">
+				<h4 class="text-truncate oneline">
+						<em>XGBoost</em>解决多分类问题				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-30</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							6708</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u010159842/article/details/53411355" target="_blank" title="XGBoost解决多分类问题">
+							<span class="desc oneline">XGBoost解决多分类问题写在前面的话  XGBoost官方给的二分类问题的例子是区别蘑菇有无毒，数据集和代码都可以在xgboost中的demo文件夹对应找到，我是用的Anaconda安装的XGBo...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u010159842">来自：	<span class="blog_title"> 木东的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/ZK_J1994/article/details/71566380,BlogCommendFromBaidu_15"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/ZK_J1994/article/details/71566380" target="_blank" title="机器学习 - xgboost调参">
+				<h4 class="text-truncate oneline">
+						机器学习 - <em>xgboost</em>调参				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-10</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2343</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/ZK_J1994/article/details/71566380" target="_blank" title="机器学习 - xgboost调参">
+							<span class="desc oneline">xgboost入门与实战（原理篇）前言：xgboost是大规模并行boostedtree的工具，它是目前最快最好的开源boostedtree工具包，比常见的工具包快10倍以上。在数据科学方面，有大量k...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/ZK_J1994">来自：	<span class="blog_title"> 呵呵</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/a358463121/article/details/52304670,BlogCommendFromBaidu_16"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/a358463121/article/details/52304670" target="_blank" title="不平衡数据分类算法介绍与比较">
+				<h4 class="text-truncate oneline">
+						不<em>平衡</em><em>数据</em>分类算法介绍与比较				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-28</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2.7万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/a358463121/article/details/52304670" target="_blank" title="不平衡数据分类算法介绍与比较">
+							<span class="desc oneline">在数据挖掘中，经常会存在不平衡数据的分类问题，比如在异常监控预测中，由于异常就大多数情况下都不会出现，因此想要达到良好的识别效果普通的分类算法还远远不够，这里介绍几种处理不平衡数据的常用方法及对比。...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/a358463121">来自：	<span class="blog_title"> Jie Qiao的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/LeYOUNGER/article/details/76863010,BlogCommendFromBaidu_17"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/LeYOUNGER/article/details/76863010" target="_blank" title="[转载]  XGBOOST中值得学习的调参方法">
+				<h4 class="text-truncate oneline">
+						[转载]  <em>XGBOOST</em>中值得学习的调参方法				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-07</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							499</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/LeYOUNGER/article/details/76863010" target="_blank" title="[转载]  XGBOOST中值得学习的调参方法">
+							<span class="desc oneline">Xgboost</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/LeYOUNGER">来自：	<span class="blog_title"> LeYOUNGER的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    <div class="recommend-item-box recommend-ad-box"><div id="kp_box_62" data-pid="62" data-track-view='{"mod":"kp_popu_62-809","con":",,"}' data-track-click='{"mod":"kp_popu_62-809","con":",,"}'><script
+    async="async"
+    charset="utf-8"
+    src="https://shared.ydstatic.com/js/yatdk/3.0.1/stream.js"
+    data-id="6cb24153a03289ff3597c7aab4b69fe9"
+    data-div-Style="width:100%;"
+data-tit-Style="margin-bottom: 6px; font-size: 18px; line-height: 24px; color: #3d3d3d;display: inline-block;font-weight:bold;"
+data-des-Style="font-size: 13px; line-height: 22px; white-space: normal; color: #999;"
+data-img-Style="float:left;margin-right:15px;width:90px;height:60px;">
+</script></div></div>
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/u012155582/article/details/79866245,BlogCommendFromGuangxin_18"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u012155582/article/details/79866245" target="_blank" title="随机森林，GBDT，XGBOOST三种集成算法的特点与对比">
+				<h4 class="text-truncate oneline">
+						随机森林，GBDT，<em>XGBOOST</em>三种集成算法的特点与对比				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-09</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1894</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u012155582/article/details/79866245" target="_blank" title="随机森林，GBDT，XGBOOST三种集成算法的特点与对比">
+							<span class="desc oneline">目前的集成学习方法大致分为两大类：即个体学习器之间存在强依赖关系、必须串行生成的序列化方法，以及个体学习器间不存在强依赖关系、可同时生成的并行化方法；前者的代表就是Boosting，后者的代表是Bag...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u012155582">来自：	<span class="blog_title"> u012155582的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/starmoth/article/details/84575432,BlogCommendFromGuangxin_19"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/starmoth/article/details/84575432" target="_blank" title="xgboost.XGBClassifier参数">
+				<h4 class="text-truncate oneline">
+						<em>xgboost</em>.XGBClassifier参数				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-27</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							91</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/starmoth/article/details/84575432" target="_blank" title="xgboost.XGBClassifier参数">
+							<span class="desc oneline">打*参数为重要XGBClassifier(1.silent=0#设置成1则没有运行信息输出，默认为0.是否在运行时打印消息2.*learning_rate=0.1#学习率，过大收敛不了，小了收敛慢3....</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/starmoth">来自：	<span class="blog_title"> starmoth的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/linxid/article/details/81189154,BlogCommendFromGuangxin_20"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/linxid/article/details/81189154" target="_blank" title="自动化机器学习（AutoML）之自动贝叶斯调参">
+				<h4 class="text-truncate oneline">
+						自动化机器学习（AutoML）之自动贝叶斯调参				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-24</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2212</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/linxid/article/details/81189154" target="_blank" title="自动化机器学习（AutoML）之自动贝叶斯调参">
+							<span class="desc oneline">一、手把手教你Python实现自动贝叶斯调整超参数【导读】机器学习中，调参是一项繁琐但至关重要的任务，因为它很大程度上影响了算法的性能。手动调参十分耗时，网格和随机搜索不需要人力，但需要很长的运行时间...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/linxid">来自：	<span class="blog_title"> 林夕</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/u012535605/article/details/80078903,BlogCommendFromGuangxin_21"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u012535605/article/details/80078903" target="_blank" title="xgboost原理推导和python实现">
+				<h4 class="text-truncate oneline">
+						<em>xgboost</em>原理推导和python实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-26</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							928</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u012535605/article/details/80078903" target="_blank" title="xgboost原理推导和python实现">
+							<span class="desc oneline">        本文通过学习陈天奇博士的slides和一些官方文档梳理了xgboost原理和推导过程，仅仅是初步梳理，还有很多问题需要进一步研究，整体感觉Xgboost很强大，集合了CART、boos...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u012535605">来自：	<span class="blog_title"> 机器学习、数据挖掘</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/niaolianjiulin/article/details/76574216,BlogCommendFromGuangxin_22"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/niaolianjiulin/article/details/76574216" target="_blank" title="XGBoost特点、调参、讨论">
+				<h4 class="text-truncate oneline">
+						<em>XGBoost</em>特点、调参、讨论				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-02</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							7156</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/niaolianjiulin/article/details/76574216" target="_blank" title="XGBoost特点、调参、讨论">
+							<span class="desc oneline">XGBoost是在GBDT（梯度提升决策树）基础上发展而来。GBDT含有几个关键点：梯度提升，提升决策树，回归问题。本质模型为加法模型，基函数为决策树，迭代拟合标注和模型的残差，来不断逼近损失函数最小...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/niaolianjiulin">来自：	<span class="blog_title"> 鸟恋旧林的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    <div class="recommend-item-box recommend-ad-box"><div id="kp_box_63" data-pid="63" data-track-view='{"mod":"kp_popu_63-809","con":",,"}' data-track-click='{"mod":"kp_popu_63-809","con":",,"}'><script
+    async="async"
+    charset="utf-8"
+    src="https://shared.ydstatic.com/js/yatdk/3.0.1/stream.js"
+    data-id="6cb24153a03289ff3597c7aab4b69fe9"
+    data-div-Style="width:100%;"
+data-tit-Style="margin-bottom: 6px; font-size: 18px; line-height: 24px; color: #3d3d3d;display: inline-block;font-weight:bold;"
+data-des-Style="font-size: 13px; line-height: 22px; white-space: normal; color: #999;"
+data-img-Style="float:left;margin-right:15px;width:90px;height:60px;">
+</script></div></div>
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/meyh0x5vDTk48P2/article/details/79876825,BlogCommendFromQuerySearch_23"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/meyh0x5vDTk48P2/article/details/79876825" target="_blank" title="比xgboost强大的LightGBM：调参指南(带贝叶斯优化代码)">
+				<h4 class="text-truncate oneline">
+						比<em>xgboost</em>强大的LightGBM：调参指南(带贝叶斯优化代码)				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-10</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							3788</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/meyh0x5vDTk48P2/article/details/79876825" target="_blank" title="比xgboost强大的LightGBM：调参指南(带贝叶斯优化代码)">
+							<span class="desc oneline">向AI转型的程序员都关注了这个号???大数据挖掘DT数据分析 公众号：datadwxgboost的出现，让数据民工们告别了传统的机器学习算法们：RF、GBM、SVM、LASSO........。现在，...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/meyh0x5vDTk48P2">来自：	<span class="blog_title"> 大数据挖掘DT数据分析</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/m0_38045485/article/details/81781547,BlogCommendFromQuerySearch_24"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/m0_38045485/article/details/81781547" target="_blank" title="GBDT和XGBoost参数调参的思考">
+				<h4 class="text-truncate oneline">
+						GBDT和<em>XGBoost</em>参数调参的思考				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-18</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							75</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/m0_38045485/article/details/81781547" target="_blank" title="GBDT和XGBoost参数调参的思考">
+							<span class="desc oneline">思考一：xgboost/gbdt在调参时树的深度很少（如6）就能达到很高的精度，但是用DecisionTree/RandomForest的时候需要把树的深度调到15或更高。   随机森林(random...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/m0_38045485">来自：	<span class="blog_title"> crb的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/data_scientist/article/details/79033527,BlogCommendFromQuerySearch_25"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/data_scientist/article/details/79033527" target="_blank" title="hyperopt调参实例——XGBoost">
+				<h4 class="text-truncate oneline">
+						hyperopt调参实例——<em>XGBoost</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-11</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1455</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/data_scientist/article/details/79033527" target="_blank" title="hyperopt调参实例——XGBoost">
+							<span class="desc oneline">defxgb_train(dtrain,dtest,param,offline=True,verbose=True,num_boost_round=1000):ifverbose:ifoffline:...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/data_scientist">来自：	<span class="blog_title"> data_scientist的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/sinat_26917383/article/details/75890859,BlogCommendFromQuerySearch_26"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/sinat_26917383/article/details/75890859" target="_blank" title="机器学习︱非平衡数据处理方式与评估">
+				<h4 class="text-truncate oneline">
+						机器学习︱非<em>平衡</em><em>数据</em>处理方式与评估				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-23</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							4130</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/sinat_26917383/article/details/75890859" target="_blank" title="机器学习︱非平衡数据处理方式与评估">
+							<span class="desc oneline">解决这一问题的基本思路是让正负样本在训练过程中拥有相同的话语权，比如利用采样与加权等方法。为了方便起见，我们把数据集中样本较多的那一类称为“大众类”，样本较少的那一类称为“小众类”。解决方式分为：.一...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/sinat_26917383">来自：	<span class="blog_title"> 素质云笔记/Recorder...</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix"  data-track-click='{"mod":"popu_387","con":",https://download.csdn.net/download/hzqgangtiexia/10300921,BlogCommendFromQuerySearch_27"}'>
+			<a href="https://download.csdn.net/download/hzqgangtiexia/10300921" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							机器学习实战项目<em>Xgboost</em>调参						</h4>
+						<span class="data float-right">03-21</span>
+					</div>
+					<div class="desc oneline">
+							机器学习实战项目Xgboost调参，完整的项目，机器学习实战项目Xgboost调参					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    <div class="recommend-item-box recommend-ad-box"><div id="kp_box_64" data-pid="64" data-track-view='{"mod":"kp_popu_64-809","con":",,"}' data-track-click='{"mod":"kp_popu_64-809","con":",,"}'><script
+    async="async"
+    charset="utf-8"
+    src="https://shared.ydstatic.com/js/yatdk/3.0.1/stream.js"
+    data-id="6cb24153a03289ff3597c7aab4b69fe9"
+    data-div-Style="width:100%;"
+data-tit-Style="margin-bottom: 6px; font-size: 18px; line-height: 24px; color: #3d3d3d;display: inline-block;font-weight:bold;"
+data-des-Style="font-size: 13px; line-height: 22px; white-space: normal; color: #999;"
+data-img-Style="float:left;margin-right:15px;width:90px;height:60px;">
+</script></div></div>
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/u012771351/article/details/52997120,BlogCommendFromBaidu_28"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u012771351/article/details/52997120" target="_blank" title="XGBoost细谈">
+				<h4 class="text-truncate oneline">
+						<em>XGBoost</em>细谈				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-01</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2209</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u012771351/article/details/52997120" target="_blank" title="XGBoost细谈">
+							<span class="desc oneline">注：本文中所有公式和思路来自于邹博先生的《机器学习升级版》，我只是为了加深记忆和理解写的本文。XGBoost是陈天奇先生提出的一种提升方法，较GBDT不同的是，XGBoost采用了二阶导的信息，不说废...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u012771351">来自：	<span class="blog_title"> 人生就是不断Boost的过程  最好永远都不要收敛</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/Bryan__/article/details/52056112,BlogCommendFromBaidu_29"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Bryan__/article/details/52056112" target="_blank" title="大杀器xgboost指南">
+				<h4 class="text-truncate oneline">
+						大杀器<em>xgboost</em>指南				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-28</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2.8万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Bryan__/article/details/52056112" target="_blank" title="大杀器xgboost指南">
+							<span class="desc oneline">之前做了一个视频，从基础的决策树到xgboost，再到代码实现，以及python接口，有兴趣的可以去看看https://class.pkbigdata.com/#/classDetail/forum/...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Bryan__">来自：	<span class="blog_title"> Bryan__的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/sb19931201/article/details/52557382,BlogCommendFromBaidu_30"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/sb19931201/article/details/52557382" target="_blank" title="xgboost入门与实战（原理篇）">
+				<h4 class="text-truncate oneline">
+						<em>xgboost</em>入门与实战（原理篇）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-16</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							16.2万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/sb19931201/article/details/52557382" target="_blank" title="xgboost入门与实战（原理篇）">
+							<span class="desc oneline">xgboost入门与实战（原理篇）前言：xgboost是大规模并行boostedtree的工具，它是目前最快最好的开源boostedtree工具包，比常见的工具包快10倍以上。在数据科学方面，有大量k...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/sb19931201">来自：	<span class="blog_title"> hczheng的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/Totoro1745/article/details/53328725,BlogCommendFromBaidu_31"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Totoro1745/article/details/53328725" target="_blank" title="xgboost：一个纯小白的学习历程">
+				<h4 class="text-truncate oneline">
+						<em>xgboost</em>：一个纯小白的学习历程				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-25</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							6953</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Totoro1745/article/details/53328725" target="_blank" title="xgboost：一个纯小白的学习历程">
+							<span class="desc oneline">xgboost：一个纯小白的学习历程短短三天，一开始对决策树都深感陌生的我在网上进行一番“扫荡”之后，研读了相关的技术博客，对各种名词进行了深度了解，也陆陆续续整理了自己的思路，接下来就谈谈这几天我都...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Totoro1745">来自：	<span class="blog_title"> Totoro1745的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/wdxin1322/article/details/71698659,BlogCommendFromBaidu_32"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/wdxin1322/article/details/71698659" target="_blank" title="xgboost使用小结">
+				<h4 class="text-truncate oneline">
+						<em>xgboost</em>使用小结				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-11</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							8251</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/wdxin1322/article/details/71698659" target="_blank" title="xgboost使用小结">
+							<span class="desc oneline">简介xgboost的全称是eXtremeGradientBoosting。正如其名，它是GradientBoostingMachine的一个c++实现，作者为正在华盛顿大学研究机器学习的大牛陈天奇。他...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/wdxin1322">来自：	<span class="blog_title"> 开发之路</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    <div class="recommend-item-box recommend-ad-box"><div id="kp_box_65" data-pid="65" data-track-view='{"mod":"kp_popu_65-809","con":",,"}' data-track-click='{"mod":"kp_popu_65-809","con":",,"}'><script
+    async="async"
+    charset="utf-8"
+    src="https://shared.ydstatic.com/js/yatdk/3.0.1/stream.js"
+    data-id="6cb24153a03289ff3597c7aab4b69fe9"
+    data-div-Style="width:100%;"
+data-tit-Style="margin-bottom: 6px; font-size: 18px; line-height: 24px; color: #3d3d3d;display: inline-block;font-weight:bold;"
+data-des-Style="font-size: 13px; line-height: 22px; white-space: normal; color: #999;"
+data-img-Style="float:left;margin-right:15px;width:90px;height:60px;">
+</script></div></div>
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/so__sunshine/article/details/70232893,BlogCommendFromBaidu_33"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/so__sunshine/article/details/70232893" target="_blank" title="xgboost">
+				<h4 class="text-truncate oneline">
+						<em>xgboost</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-18</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2219</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/so__sunshine/article/details/70232893" target="_blank" title="xgboost">
+							<span class="desc oneline">xgboost对xgboost性能影响比较大的参数主要有：eta：每次迭代完成后更新权重时的步长。越小训练越慢。典型值为0.01-0.2。num_round：总共迭代的次数。subsample：训练每...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/so__sunshine">来自：	<span class="blog_title"> so__sunshine的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/zhangf666/article/details/53364465,BlogCommendFromBaidu_34"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/zhangf666/article/details/53364465" target="_blank" title="非平衡数据机器学习">
+				<h4 class="text-truncate oneline">
+						非<em>平衡</em><em>数据</em>机器学习				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-27</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							4299</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/zhangf666/article/details/53364465" target="_blank" title="非平衡数据机器学习">
+							<span class="desc oneline">【译】非平衡数据机器学习这篇文章翻译至http://www.svds.com/learning-imbalanced-classes/，作者简洁明了地阐述了非平衡数据及解决这类问题的常用方法。其实一些...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/zhangf666">来自：	<span class="blog_title"> WhyNot</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/jiangda_0_0/article/details/78728551,BlogCommendFromBaidu_35"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/jiangda_0_0/article/details/78728551" target="_blank" title="Spark XGBoost的一些问题">
+				<h4 class="text-truncate oneline">
+						Spark <em>XGBoost</em>的一些问题				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-06</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2090</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/jiangda_0_0/article/details/78728551" target="_blank" title="Spark XGBoost的一些问题">
+							<span class="desc oneline">在使用Spark版本的xgboost的时候会有一些单机版本遇不到的问题，可能对使用的人造成一些困扰，经过两周的踩坑，总结一下，希望有帮助1、输入、预测数据的一致性Spark版本的XGBoost处理的输...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/jiangda_0_0">来自：	<span class="blog_title"> jiangda_0_0的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/gangyin5071/article/details/78560228,BlogCommendFromBaidu_36"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/gangyin5071/article/details/78560228" target="_blank" title="xgboost调用sklearn的交叉验证，并且使用自定义的训练集、验证集进行模型的调参">
+				<h4 class="text-truncate oneline">
+						<em>xgboost</em>调用sklearn的交叉验证，并且使用自定义的训练集、验证集进行模型的调参				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-17</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							3853</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/gangyin5071/article/details/78560228" target="_blank" title="xgboost调用sklearn的交叉验证，并且使用自定义的训练集、验证集进行模型的调参">
+							<span class="desc oneline">一、概述如果你的预测模型表现得有些不尽如人意，那就用XGBoost吧。XGBoost算法现在已经成为很多数据工程师的重要武器。它是一种十分精致的算法，可以处理各种不规则的数据。构造一个使用XGBoos...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/gangyin5071">来自：	<span class="blog_title"> AndrewHR的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/qunnie_yi/article/details/80129842,BlogCommendFromBaidu_37"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qunnie_yi/article/details/80129842" target="_blank" title="处理非平衡数据的七个技巧">
+				<h4 class="text-truncate oneline">
+						处理非<em>平衡</em><em>数据</em>的七个技巧				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-06</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1085</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qunnie_yi/article/details/80129842" target="_blank" title="处理非平衡数据的七个技巧">
+							<span class="desc oneline">摘要：本文介绍了在入侵检测、实时出价等数据集非常不平衡的领域应用的数据处理技术。关键字：平衡数据，数据准备，数据科学原文：7TechniquestoHandleImbalancedData作者：YeW...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qunnie_yi">来自：	<span class="blog_title"> qunnie_yi的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    <div class="recommend-item-box recommend-ad-box"><div id="kp_box_66" data-pid="66" data-track-view='{"mod":"kp_popu_66-808","con":",,"}' data-track-click='{"mod":"kp_popu_66-808","con":",,"}'><script
+    async="async"
+    charset="utf-8"
+    src="https://shared.ydstatic.com/js/yatdk/3.0.1/stream.js"
+    data-id="8935aa488dd58452b9e5ee3b44f1212f"
+    data-div-Style="width:100%;"
+data-tit-Style="margin-bottom: 6px; font-size: 18px; line-height: 24px; color: #3d3d3d;display: inline-block;font-weight:bold;"
+data-des-Style="font-size: 13px; line-height: 22px; white-space: normal; color: #999;"
+data-img-Style="float:left;margin-right:15px;width:90px;height:60px;">
+</script></div></div>
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/m0_37477175/article/details/79991198,BlogCommendFromQuerySearch_38"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/m0_37477175/article/details/79991198" target="_blank" title="【機器學習筆記】xgboost中的min_child_weight參數理解。">
+				<h4 class="text-truncate oneline">
+						【機器學習筆記】<em>xgboost</em>中的min_child_weight參數理解。				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-18</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2118</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/m0_37477175/article/details/79991198" target="_blank" title="【機器學習筆記】xgboost中的min_child_weight參數理解。">
+							<span class="desc oneline">對於xgboost,min_child_weight是一個非常重要的參數，官方文檔描述如下：minimumsumofinstanceweight(hessian)neededinachild.Ifth...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/m0_37477175">来自：	<span class="blog_title"> m0_37477175的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix"  data-track-click='{"mod":"popu_387","con":",https://download.csdn.net/download/qq_36986607/10770088,BlogCommendFromQuerySearch_39"}'>
+			<a href="https://download.csdn.net/download/qq_36986607/10770088" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							<em>xgboost</em>调参指南						</h4>
+						<span class="data float-right">11-07</span>
+					</div>
+					<div class="desc oneline">
+							xgboost调参过程，介绍xgboost调参的详细步骤，以及代码示例。					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/chuanda112233/article/details/51913434,BlogCommendFromQuerySearch_40"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/chuanda112233/article/details/51913434" target="_blank" title="xgboost/gbdt在调参时为什么树的深度很少就能达到很高的精度？">
+				<h4 class="text-truncate oneline">
+						<em>xgboost</em>/gbdt在调参时为什么树的深度很少就能达到很高的精度？				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-14</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							4138</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/chuanda112233/article/details/51913434" target="_blank" title="xgboost/gbdt在调参时为什么树的深度很少就能达到很高的精度？">
+							<span class="desc oneline">作者：于菲链接：https://www.zhihu.com/question/45487317/answer/99153174来源：知乎著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/chuanda112233">来自：	<span class="blog_title"> lxin的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/Seven_coding/article/details/77711674,BlogCommendFromQuerySearch_41"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Seven_coding/article/details/77711674" target="_blank" title="gbdt和xgboost的调参模板">
+				<h4 class="text-truncate oneline">
+						gbdt和<em>xgboost</em>的调参模板				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-30</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							881</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Seven_coding/article/details/77711674" target="_blank" title="gbdt和xgboost的调参模板">
+							<span class="desc oneline">#Importlibraries:importpandasaspdimportnumpyasnpimportxgboostasxgb#XGBOOSTfromxgboost.sklearnimportX...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Seven_coding">来自：	<span class="blog_title"> Seven_coding的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/bc7720/article/details/82082368,BlogCommendFromQuerySearch_42"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/bc7720/article/details/82082368" target="_blank" title="xgboost推导与调参">
+				<h4 class="text-truncate oneline">
+						<em>xgboost</em>推导与调参				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-26</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							71</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/bc7720/article/details/82082368" target="_blank" title="xgboost推导与调参">
+							<span class="desc oneline">基本构成boostedtree作为有监督学习算法有几个重要部分：模型、参数、目标函数、优化算法 模型 模型指给定输入x如何去预测输出y 参数 参数指我们需要学习的东西，在线性模型中，参数指我们的线性系...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/bc7720">来自：	<span class="blog_title"> bc7720的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    <div class="recommend-item-box recommend-ad-box"><div id="kp_box_67" data-pid="67" data-track-view='{"mod":"kp_popu_67-809","con":",,"}' data-track-click='{"mod":"kp_popu_67-809","con":",,"}'><script
+    async="async"
+    charset="utf-8"
+    src="https://shared.ydstatic.com/js/yatdk/3.0.1/stream.js"
+    data-id="6cb24153a03289ff3597c7aab4b69fe9"
+    data-div-Style="width:100%;"
+data-tit-Style="margin-bottom: 6px; font-size: 18px; line-height: 24px; color: #3d3d3d;display: inline-block;font-weight:bold;"
+data-des-Style="font-size: 13px; line-height: 22px; white-space: normal; color: #999;"
+data-img-Style="float:left;margin-right:15px;width:90px;height:60px;">
+</script></div></div>
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/rxt2012kc/article/details/71279563,BlogCommendFromBaidu_43"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/rxt2012kc/article/details/71279563" target="_blank" title="机器学习笔记 Boost算法（GDBT,AdaBoost，XGBoost）原理及实践">
+				<h4 class="text-truncate oneline">
+						机器学习笔记 Boost算法（GDBT,AdaBoost，<em>XGBoost</em>）原理及实践				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-06</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							3106</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/rxt2012kc/article/details/71279563" target="_blank" title="机器学习笔记 Boost算法（GDBT,AdaBoost，XGBoost）原理及实践">
+							<span class="desc oneline">在上一篇博客里，我们讨论了关于Bagging的内容，其原理是从现有数据中有放回抽取若干个样本构建分类器，重复若干次建立若干个分类器进行投票，今天我们来讨论另一种算法：提升（Boost）。简单地来说，提...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/rxt2012kc">来自：	<span class="blog_title"> rxt2012kc的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/wang1127248268/article/details/53576109,BlogCommendFromBaidu_44"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/wang1127248268/article/details/53576109" target="_blank" title="XGBOOST参数说明">
+				<h4 class="text-truncate oneline">
+						<em>XGBOOST</em>参数说明				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-11</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2320</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/wang1127248268/article/details/53576109" target="_blank" title="XGBOOST参数说明">
+							<span class="desc oneline">XGBoost参数XGBoost的参数可以分为三种类型：通用参数、booster参数以及学习目标参数Generalparameters：参数控制在提升（boosting）过程中使用哪种booster，...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/wang1127248268">来自：	<span class="blog_title"> 机器学习</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/liulina603/article/details/78687678,BlogCommendFromBaidu_45"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/liulina603/article/details/78687678" target="_blank" title="xgboost 调参经验">
+				<h4 class="text-truncate oneline">
+						<em>xgboost</em> 调参经验				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-01</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2336</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/liulina603/article/details/78687678" target="_blank" title="xgboost 调参经验">
+							<span class="desc oneline">1.xgboost基本方法和默认参数在训练过程中主要用到两个方法：xgboost.train()和xgboost.cv().#xgboost.train()APIxgboost.train(param...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/liulina603">来自：	<span class="blog_title"> liulina603的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/JJprincess/article/details/82193286,BlogCommendFromBaidu_46"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/JJprincess/article/details/82193286" target="_blank" title="Xgboost调参技巧">
+				<h4 class="text-truncate oneline">
+						<em>Xgboost</em>调参技巧				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-29</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							437</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/JJprincess/article/details/82193286" target="_blank" title="Xgboost调参技巧">
+							<span class="desc oneline">版权声明：本文为博主原创文章，未经博主允许不得转载。https://blog.csdn.net/yaoqiang2011/article/details/52665396......</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/JJprincess">来自：	<span class="blog_title"> JJprincess的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/qq1483661204/article/details/80156579,BlogCommendFromBaidu_47"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq1483661204/article/details/80156579" target="_blank" title="XGBoost 自动化调参模块">
+				<h4 class="text-truncate oneline">
+						<em>XGBoost</em> 自动化调参模块				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-01</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							896</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq1483661204/article/details/80156579" target="_blank" title="XGBoost 自动化调参模块">
+							<span class="desc oneline">importpprintimportsklearn.preprocessingaspreprocessingfromxgboostimportXGBRegressorimportxgboostasxg...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq1483661204">来自：	<span class="blog_title"> qq1483661204的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    <div class="recommend-item-box recommend-ad-box"><div id="kp_box_68" data-pid="68" data-track-view='{"mod":"kp_popu_68-809","con":",,"}' data-track-click='{"mod":"kp_popu_68-809","con":",,"}'><script
+    async="async"
+    charset="utf-8"
+    src="https://shared.ydstatic.com/js/yatdk/3.0.1/stream.js"
+    data-id="6cb24153a03289ff3597c7aab4b69fe9"
+    data-div-Style="width:100%;"
+data-tit-Style="margin-bottom: 6px; font-size: 18px; line-height: 24px; color: #3d3d3d;display: inline-block;font-weight:bold;"
+data-des-Style="font-size: 13px; line-height: 22px; white-space: normal; color: #999;"
+data-img-Style="float:left;margin-right:15px;width:90px;height:60px;">
+</script></div></div>
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/u012513618/article/details/78432198,BlogCommendFromBaidu_48"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u012513618/article/details/78432198" target="_blank" title="XGBoost 函数说明">
+				<h4 class="text-truncate oneline">
+						<em>XGBoost</em> 函数说明				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-03</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							393</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u012513618/article/details/78432198" target="_blank" title="XGBoost 函数说明">
+							<span class="desc oneline">XGBoostParametersGeneralParameters1boosterdefaultgbtree2silentdefault03nthreaddefaulttomaximumnumber...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u012513618">来自：	<span class="blog_title"> 来自Daisy和她的单程车票</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/u014084065/article/details/78553166,BlogCommendFromBaidu_49"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u014084065/article/details/78553166" target="_blank" title="XGBoost学习笔记">
+				<h4 class="text-truncate oneline">
+						<em>XGBoost</em>学习笔记				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-16</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1329</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u014084065/article/details/78553166" target="_blank" title="XGBoost学习笔记">
+							<span class="desc oneline">XGBoost是Kaggle上非常火的一种模型，很多项目用它拿到了第一，这是对它的一些学习笔记。...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u014084065">来自：	<span class="blog_title"> JunyongYao的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/imxiangzi/article/details/52155451,BlogCommendHotData_0"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/imxiangzi/article/details/52155451" target="_blank" title="京东抢购服务高并发实践">
+				<h4 class="text-truncate oneline">
+						京东抢购服务高并发实践				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-08</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							5209</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/imxiangzi/article/details/52155451" target="_blank" title="京东抢购服务高并发实践">
+							<span class="desc oneline">声明：本位来自京东张开涛的微信公众号（kaitao-1234567），授权CSDN转载，如需转载请联系作者。 
+作者：张子良，京东高级开发工程师，在京东负责抢购后端服务系统架构和开发工作。 
+责编...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/imxiangzi">来自：	<span class="blog_title"> imxiangzi的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/penglijiang/article/details/8459359,BlogCommendHotData_1"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/penglijiang/article/details/8459359" target="_blank" title="android 适配不同 分辨率和尺寸">
+				<h4 class="text-truncate oneline">
+						android 适配不同 分辨率和尺寸				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-02</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							7107</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/penglijiang/article/details/8459359" target="_blank" title="android 适配不同 分辨率和尺寸">
+							<span class="desc oneline">如题，最近做一个设备界面，为了能够适应不同的分辨率
+下面分享实现方法
+
+首先：你需要在AndroidManifest.xml文件的元素如下添加子元素
+supports-screens
+
+ ...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/penglijiang">来自：	<span class="blog_title"> penglijiang的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/maoyuanming0806/article/details/78067446,BlogCommendHotData_2"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/maoyuanming0806/article/details/78067446" target="_blank" title="搭建图片服务器《二》-linux安装nginx">
+				<h4 class="text-truncate oneline">
+						搭建图片服务器《二》-linux安装nginx				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-22</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							14357</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/maoyuanming0806/article/details/78067446" target="_blank" title="搭建图片服务器《二》-linux安装nginx">
+							<span class="desc oneline">nginx是个好东西，Nginx (engine x) 是一个高性能的HTTP和反向代理服务器，也是一个IMAP/POP3/SMTP服务器。Nginx是由伊戈尔·赛索耶夫为俄罗斯访问量第二的Rambl...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/maoyuanming0806">来自：	<span class="blog_title"> maoyuanming0806的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/Luck_ZZ/article/details/79361497,BlogCommendHotData_3"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Luck_ZZ/article/details/79361497" target="_blank" title="thymeleaf模板实现html5标签的非严格检查">
+				<h4 class="text-truncate oneline">
+						thymeleaf模板实现html5标签的非严格检查				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">02-24</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							8993</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Luck_ZZ/article/details/79361497" target="_blank" title="thymeleaf模板实现html5标签的非严格检查">
+							<span class="desc oneline">一、概述最近在springboot项目引入thymeleaf模板时，使用非严格标签时，运行会报错。默认thymeleaf模板对html5标签是严格检查的。二、在项目中加NekoHTML库在Maven中...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Luck_ZZ">来自：	<span class="blog_title"> Luck_ZZ的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/xu__cg/article/details/52970885,BlogCommendHotData_4"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/xu__cg/article/details/52970885" target="_blank" title="Java设计模式学习06——静态代理与动态代理">
+				<h4 class="text-truncate oneline">
+						Java设计模式学习06——静态代理与动态代理				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-30</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2190</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/xu__cg/article/details/52970885" target="_blank" title="Java设计模式学习06——静态代理与动态代理">
+							<span class="desc oneline">一、代理模式为某个对象提供一个代理，从而控制这个代理的访问。代理类和委托类具有共同的父类或父接口，这样在任何使用委托类对象的地方都可以使用代理类对象替代。代理类负责请求的预处理、过滤、将请求分配给委托...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/xu__cg">来自：	<span class="blog_title"> 小小本科生成长之路</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/u011860731/article/details/48733073,BlogCommendHotData_5"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u011860731/article/details/48733073" target="_blank" title="ThreadLocal的设计理念与作用">
+				<h4 class="text-truncate oneline">
+						ThreadLocal的设计理念与作用				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-25</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							14050</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u011860731/article/details/48733073" target="_blank" title="ThreadLocal的设计理念与作用">
+							<span class="desc oneline">Java中的ThreadLocal类允许我们创建只能被同一个线程读写的变量。因此，如果一段代码含有一个ThreadLocal变量的引用，即使两个线程同时执行这段代码，它们也无法访问到对方的Thread...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u011860731">来自：	<span class="blog_title"> u011860731的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/wuchengzeng/article/details/50037611,BlogCommendHotData_6"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/wuchengzeng/article/details/50037611" target="_blank" title="jquery/js实现一个网页同时调用多个倒计时(最新的)">
+				<h4 class="text-truncate oneline">
+						jquery/js实现一个网页同时调用多个倒计时(最新的)				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-25</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							115092</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/wuchengzeng/article/details/50037611" target="_blank" title="jquery/js实现一个网页同时调用多个倒计时(最新的)">
+							<span class="desc oneline">jquery/js实现一个网页同时调用多个倒计时(最新的)
+
+最近需要网页添加多个倒计时. 查阅网络,基本上都是千遍一律的不好用. 自己按需写了个.希望对大家有用. 有用请赞一个哦!
+
+
+
+//js
+...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/wuchengzeng">来自：	<span class="blog_title"> websites</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/zyjj_99/article/details/39394477,BlogCommendHotData_7"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/zyjj_99/article/details/39394477" target="_blank" title="fatal error LNK1104: 无法打开文件“***.lib“   解决方法">
+				<h4 class="text-truncate oneline">
+						fatal error LNK1104: 无法打开文件“***.lib“   解决方法				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-19</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							29712</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/zyjj_99/article/details/39394477" target="_blank" title="fatal error LNK1104: 无法打开文件“***.lib“   解决方法">
+							<span class="desc oneline">我们在做一个工程时，工程内可能包括几个项目，</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/zyjj_99">来自：	<span class="blog_title"> zyjj_99的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/u012373815/article/details/53837345,BlogCommendHotData_8"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u012373815/article/details/53837345" target="_blank" title="drools 6.5 －DSL 领域特殊语言">
+				<h4 class="text-truncate oneline">
+						drools 6.5 －DSL 领域特殊语言				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-23</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1604</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u012373815/article/details/53837345" target="_blank" title="drools 6.5 －DSL 领域特殊语言">
+							<span class="desc oneline">1. 规则引擎面临的问题：业务规则的实现大部分是由开发人员来实现的 
+业务规则需要业务分析人员能够阅读和理解 
+业务规则的可读性和用户的友好性都不太好2. DSL领域特殊语言DSL == Domain...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u012373815">来自：	<span class="blog_title"> 哎幽的成长</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/lcpangs/article/details/52243438,BlogCommendHotData_9"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/lcpangs/article/details/52243438" target="_blank" title="android5.1修改默认锁屏方式（去除锁屏）">
+				<h4 class="text-truncate oneline">
+						android5.1修改默认锁屏方式（去除锁屏）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-18</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							8532</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/lcpangs/article/details/52243438" target="_blank" title="android5.1修改默认锁屏方式（去除锁屏）">
+							<span class="desc oneline">在5.1上，代码的处理方式变得不一样了，我最开始的做法是更改锁屏默认值，但是第一次刷机有效，第二次开机居然就不进去桌面了.
+第一种方法：目录（不推荐）：frameworks\base\package...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/lcpangs">来自：	<span class="blog_title"> lcpangs的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/wild46cat/article/details/54572361,BlogCommendHotData_10"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/wild46cat/article/details/54572361" target="_blank" title="webService学习（二）—— 调用自定义对象参数">
+				<h4 class="text-truncate oneline">
+						webService学习（二）—— 调用自定义对象参数				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-16</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							8257</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/wild46cat/article/details/54572361" target="_blank" title="webService学习（二）—— 调用自定义对象参数">
+							<span class="desc oneline">webService学习（二）—— 调用自定义对象参数
+本文主要内容：
+1、如何通过idea进行webService Client的简单实现（不再使用wsimport的方式，其实是ide帮我们做了...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/wild46cat">来自：	<span class="blog_title">  止水的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/step_ma/article/details/68929870,BlogCommendHotData_11"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/step_ma/article/details/68929870" target="_blank" title="【Linux】vim的简单配置">
+				<h4 class="text-truncate oneline">
+						【Linux】vim的简单配置				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-31</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							773</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/step_ma/article/details/68929870" target="_blank" title="【Linux】vim的简单配置">
+							<span class="desc oneline">vim配置：
+Linux自带的vim配置过于简陋，不太方便操作，下面是一个最简单的vim配置。
+首先在你的文件中查找一个.vimrc，如若没有，touch一个.vimrc（不能忽略&quot;.&quot;的存在），...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/step_ma">来自：	<span class="blog_title"> step_ma的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/qq_36892341/article/details/73918672,BlogCommendHotData_12"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_36892341/article/details/73918672" target="_blank" title="linux上安装Docker(非常简单的安装方法)">
+				<h4 class="text-truncate oneline">
+						linux上安装Docker(非常简单的安装方法)				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-29</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							118277</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_36892341/article/details/73918672" target="_blank" title="linux上安装Docker(非常简单的安装方法)">
+							<span class="desc oneline">最近比较有空，大四出来实习几个月了，作为实习狗的我，被叫去研究Docker了，汗汗！
+
+Docker的三大核心概念：镜像、容器、仓库
+镜像：类似虚拟机的镜像、用俗话说就是安装文件。
+容器：类似一个轻量...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_36892341">来自：	<span class="blog_title"> 我走小路的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/gefangshuai/article/details/50328451,BlogCommendHotData_13"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/gefangshuai/article/details/50328451" target="_blank" title="关于SpringBoot bean无法注入的问题（与文件包位置有关）">
+				<h4 class="text-truncate oneline">
+						关于SpringBoot bean无法注入的问题（与文件包位置有关）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-16</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							82270</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/gefangshuai/article/details/50328451" target="_blank" title="关于SpringBoot bean无法注入的问题（与文件包位置有关）">
+							<span class="desc oneline">问题场景描述整个项目通过Maven构建，大致结构如下：
+核心Spring框架一个module spring-boot-base
+service和dao一个module server-core
+提供系统...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/gefangshuai">来自：	<span class="blog_title"> 开发随笔</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/sfeng95/article/details/62239539,BlogCommendHotData_14"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/sfeng95/article/details/62239539" target="_blank" title="centos7 开启网络连接">
+				<h4 class="text-truncate oneline">
+						centos7 开启网络连接				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-15</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							22599</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/sfeng95/article/details/62239539" target="_blank" title="centos7 开启网络连接">
+							<span class="desc oneline">1.当我们发现无法联网时，我们运行下面命令或者ping命令
+ip  addr
+
+结果没有显示局域网的IP地址
+2.我们去修改网卡配置文件，把网络连接打开
+cd /
+cd  /etc/sys...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/sfeng95">来自：	<span class="blog_title"> sfeng95的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/wuhuaiyu/article/details/72329397,BlogCommendHotData_15"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/wuhuaiyu/article/details/72329397" target="_blank" title="Paxos Made Simple【中文翻译注解】">
+				<h4 class="text-truncate oneline">
+						Paxos Made Simple【中文翻译注解】				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-16</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							427</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/wuhuaiyu/article/details/72329397" target="_blank" title="Paxos Made Simple【中文翻译注解】">
+							<span class="desc oneline">paxos理解</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/wuhuaiyu">来自：	<span class="blog_title"> wuhuaiyu的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/Tiaaaaa/article/details/58116346,BlogCommendHotData_16"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Tiaaaaa/article/details/58116346" target="_blank" title="R语言逻辑回归、ROC曲线和十折交叉验证">
+				<h4 class="text-truncate oneline">
+						R语言逻辑回归、ROC曲线和十折交叉验证				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">02-27</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							31487</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Tiaaaaa/article/details/58116346" target="_blank" title="R语言逻辑回归、ROC曲线和十折交叉验证">
+							<span class="desc oneline">自己整理编写的逻辑回归模板，作为学习笔记记录分享。数据集用的是14个自变量Xi，一个因变量Y的australian数据集。
+
+
+1. 测试集和训练集3、7分组
+australian ...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Tiaaaaa">来自：	<span class="blog_title"> Tiaaaaa的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/q383965374/article/details/41249959,BlogCommendHotData_17"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/q383965374/article/details/41249959" target="_blank" title="maven项目生成的war包在tomcat下运行报错">
+				<h4 class="text-truncate oneline">
+						maven项目生成的war包在tomcat下运行报错				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-19</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							7320</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/q383965374/article/details/41249959" target="_blank" title="maven项目生成的war包在tomcat下运行报错">
+							<span class="desc oneline">maven项目在tomcat</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/q383965374">来自：	<span class="blog_title"> 直到世界的尽头</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/cheng6076/article/details/42292559,BlogCommendHotData_18"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/cheng6076/article/details/42292559" target="_blank" title="大数据下的相似度计算--minHash">
+				<h4 class="text-truncate oneline">
+						大数据下的相似度计算--minHash				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-31</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2441</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/cheng6076/article/details/42292559" target="_blank" title="大数据下的相似度计算--minHash">
+							<span class="desc oneline">简述
+本文讨论一种在数据量较大的情况下计算两个集合（比如文本）相似度的算法，以及在互联网行业的应用。
+原始问题
+当数据量较小时，计算两个文本的相似度可以直接将两个文本表示为向量，然后计算他们的c...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/cheng6076">来自：	<span class="blog_title"> 积少成多</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/zhangmiaoping23/article/details/50769395,BlogCommendHotData_19"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/zhangmiaoping23/article/details/50769395" target="_blank" title="什么是usbmuxd? iDevice通过USB与桌面系统通信原理小科普">
+				<h4 class="text-truncate oneline">
+						什么是usbmuxd? iDevice通过USB与桌面系统通信原理小科普				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-01</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2090</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/zhangmiaoping23/article/details/50769395" target="_blank" title="什么是usbmuxd? iDevice通过USB与桌面系统通信原理小科普">
+							<span class="desc oneline">转:http://bbs.iosre.com/t/usbmuxd-idevice-usb/1482
+
+
+
+
+os x上，苹果有一个服务，叫usbmuxd，这个服务主要用于在USB协议上实现多...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/zhangmiaoping23">来自：	<span class="blog_title"> zhangmiaoping23的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/wwwqjpcom/article/details/51232302,BlogCommendHotData_20"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/wwwqjpcom/article/details/51232302" target="_blank" title="Selenium Webdriver重新使用已打开的浏览器实例">
+				<h4 class="text-truncate oneline">
+						Selenium Webdriver重新使用已打开的浏览器实例				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-24</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							25822</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/wwwqjpcom/article/details/51232302" target="_blank" title="Selenium Webdriver重新使用已打开的浏览器实例">
+							<span class="desc oneline">2018-2-10更新： 
+新增了适用于Selenium3.8.1+FireFox57的Python版本的实现 
+https://github.com/ANBUZHIDAO/myFirefoxDr...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/wwwqjpcom">来自：	<span class="blog_title"> wwwqjpcom的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/qq574857122/article/details/16361033,BlogCommendHotData_21"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq574857122/article/details/16361033" target="_blank" title="强连通分量及缩点tarjan算法解析">
+				<h4 class="text-truncate oneline">
+						强连通分量及缩点tarjan算法解析				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-16</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							236303</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq574857122/article/details/16361033" target="_blank" title="强连通分量及缩点tarjan算法解析">
+							<span class="desc oneline">强连通分量：
+简言之 就是找环（每条边只走一次，两两可达）
+孤立的一个点也是一个连通分量 
+ 
+使用tarjan算法 在嵌套的多个环中优先得到最大环( 最小环就是每个孤立点）
+ 
+定义：
+int Ti...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq574857122">来自：	<span class="blog_title"> 九野的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix"  data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/legan/article/details/40746829,BlogCommendHotData_22"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/legan/article/details/40746829" target="_blank" title="开源评测系统hustoj-代码解读1">
+				<h4 class="text-truncate oneline">
+						开源评测系统hustoj-代码解读1				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-03</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							9149</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/legan/article/details/40746829" target="_blank" title="开源评测系统hustoj-代码解读1">
+							<span class="desc oneline">/*
+ * Copyright 2008 sempr 
+ *
+ * Refacted and modified by zhblue 
+ * Bug report email newsclan@gmai...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/legan">来自：	<span class="blog_title"> legan的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+        <div class="recommend-item-box type_hot_word">
+            <div class="content clearfix">
+        <div class="word float-left">
+                          <span>
+            <a href="https://edu.csdn.net/course/play/7493/156077 " target="_blank">
+            调参xgboost策略          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/course/play/7493/156078 " target="_blank">
+            调参xgboost结果          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/course/play/3904/121362 " target="_blank">
+            sklearn svm调参求解          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/course/play/3904/121376 " target="_blank">
+            Xgboost算法原理          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/course/play/3904/121399 " target="_blank">
+            xgboost安装          </a></span>
+                        </div>
+      </div>
+                  <div class="content clearfix">
+        <div class="float-left">
+                  <span>
+            <a href="https://www.csdn.net/gather_23/MtjaMg0sMjItYmxvZwO0O0OO0O0O.html" target="_blank">
+            c#获取获取非服务器数据</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_2e/MtzaIg0sNzktYmxvZwO0O0OO0O0O.html" target="_blank">
+            c++版本 xgboost</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_24/NtTaUgzsMzUtYmxvZwO0O0OO0O0O.html" target="_blank">
+            bp神经网络防止过拟合 c++</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_2c/Mtzagg4sOTMtYmxvZwO0O0OO0O0O.html" target="_blank">
+            c++ 获取命令行参</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_27/OtDaAgwsOS1ibG9n.html" target="_blank">
+            c# 无参匿名函数</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_4a/OtDakg4sMC1lZHUO0O0O.html" target="_blank">
+            针对少儿的人工智能课程</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_4a/MtjaQg0sNS1lZHUO0O0O.html" target="_blank">
+            非科班出身python</a>
+          </span>
+                </div>
+      </div>
+          </div>
+
+
+            <div class="recommend-loading-box">
+                <img src='https://csdnimg.cn/release/phoenix/images/feedLoading.gif'>
+            </div>
+            <div class="recommend-end-box">
+                <p class="text-center">没有更多推荐了，<a href="https://blog.csdn.net/" class="c-blue c-blue-hover c-blue-focus">返回首页</a></p>
+            </div>
+        </div>
+    </main>
+
+    <aside>
+		    <div id="asideProfile" class="aside-box">
+    <!-- <h3 class="aside-title">个人资料</h3> -->
+    <div class="profile-intro d-flex">
+        <div class="avatar-box d-flex justify-content-center flex-column">
+            <a href="https://blog.csdn.net/pearl8899">
+                <img src="https://avatar.csdn.net/4/1/D/3_pearl8899.jpg" class="avatar_pic">
+            </a>
+              <div style="position: absolute;width: 48px;height: 63px;top: -17px;overflow: hidden;box-sizing: content-box;">
+                <div class="rotate-memberhead" style="position: absolute;top: 0;width: 48px;height: 81px;transition: transform .5s ease-out;/* transform: rotate(-180deg); */z-index: 1;">
+                  <img class="memberhead" style="display:none;top: 62px;transform: rotate(-180deg);" src="https://csdnimg.cn/release/phoenix/static_blog/images/pig.png" alt="">
+                                  </div>
+                <script type="text/javascript">
+                  $(function(){
+                    if($('#csdnc-memberhead').length){
+                      $(document).on('click','.memberhead, #csdnc-memberhead',function(){
+                        if($(this).hasClass('memberhead')){
+                          $('.rotate-memberhead').css({'transform': 'rotate(0deg)'})
+                          $('.memberhead').fadeOut()
+                        }else{
+                          $('.rotate-memberhead').css({'transform': 'rotate(-180deg)'})
+                          $('.memberhead').fadeIn()
+                        }
+                      })
+                    }else{
+                      $('.rotate-memberhead').css({'transform': 'rotate(-180deg)'})
+                      $('.memberhead').fadeIn()
+                    }
+                  })
+                </script>
+              </div>
+        </div>
+        <div class="user-info d-flex justify-content-center flex-column">
+            <p class="name csdn-tracking-statistics tracking-click" data-mod="popu_379">
+                <a href="https://blog.csdn.net/pearl8899" target="_blank" class="" id="uid">凝眸伏笔</a>
+            </p>
+                    </div>
+                <div class="opt-box d-flex justify-content-center flex-column">
+            <span  class="csdn-tracking-statistics tracking-click" data-mod="popu_379">
+                <a class="btn btn-sm btn-red-hollow attention" id="btnAttent">关注</a>
+            </span>
+        </div>
+            </div>
+    <div class="data-info d-flex item-tiling">
+                <dl class="text-center" title="29">
+                        <dt><a href="https://blog.csdn.net/pearl8899?t=1">原创</a></dt>
+            <dd><a href="https://blog.csdn.net/pearl8899?t=1"><span class="count">29</span></a></dd>
+                    </dl>
+        <dl class="text-center" id="fanBox" title="53">
+            <dt>粉丝</dt>
+            <dd><span class="count" id="fan">53</span></dd>
+        </dl>
+        <dl class="text-center" title="55">
+            <dt>喜欢</dt>
+            <dd><span class="count">55</span></dd>
+        </dl>
+        <dl class="text-center" title="27">
+            <dt>评论</dt>
+            <dd><span class="count">27</span></dd>
+        </dl>
+    </div>
+    <div class="grade-box clearfix">
+        <dl>
+            <dt>等级：</dt>
+            <dd>
+                <a href="https://blog.csdn.net/home/help.html#level" title="3级,点击查看等级说明" target="_blank">
+                    <svg class="icon icon-level" aria-hidden="true">
+                        <use xlink:href="#csdnc-bloglevel-3"></use>
+                    </svg>
+                </a>
+            </dd>
+        </dl>
+        <dl>
+            <dt>访问：</dt>
+            <dd title="44308">
+                4万+            </dd>
+        </dl>
+        <dl>
+            <dt>积分：</dt>
+            <dd title="747">
+                747            </dd>
+        </dl>
+        <dl title="87763">
+            <dt>排名：</dt>
+            <dd>8万+</dd>
+        </dl>
+    </div>
+        <div class="badge-box d-flex">
+        <span>勋章：</span>
+                        <div class="icon-badge" title="持之以恒">
+            <div class="mouse-box">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#csdnc-m-lasting"></use>
+                </svg>
+                <div class="icon-arrow"></div>
+            </div>
+            <div class="grade-detail-box">
+                <div class="pos-box">
+                    <div class="left-box d-flex justify-content-center align-items-center flex-column">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#csdnc-m-lasting"></use>
+                        </svg>
+                        <p>持之以恒</p>
+                    </div>
+                    <div class="right-box d-flex justify-content-center align-items-center">
+                        授予每个自然月内发布4篇或4篇以上原创或翻译IT博文的用户。不积跬步无以至千里，不积小流无以成江海，程序人生的精彩需要坚持不懈地积累！
+                    </div>
+                </div>
+            </div>
+        </div>
+                                                <script>
+            (function ($) {
+                setTimeout(function(){
+                    $('div.icon-badge.show-moment').removeClass('show-moment');
+                }, 5000);
+            })(window.jQuery)
+        </script>
+    </div>
+    </div>
+		    <div class="csdn-tracking-statistics mb8 box-shadow" data-pid="blog" data-mod="popu_4" style="height:250px;">
+    <div class="aside-content text-center" id="cpro_u2734133">
+      <div id="kp_box_56" data-pid="56" data-track-view='{"mod":"kp_popu_56-76","con":",,"}' data-track-click='{"mod":"kp_popu_56-76","con":",,"}'><script type="text/javascript">
+    (function() {
+        var s = "_" + Math.random().toString(36).slice(2);
+        document.write('<div style="" id="' + s + '"></div>');
+        (window.slotbydup = window.slotbydup || []).push({
+            id: "u3032528",
+            container:  s
+        });
+    })();
+</script>
+<!-- 多条广告如下脚本只需引入一次 -->
+<script type="text/javascript" src="//cpro.baidustatic.com/cpro/ui/c.js" async="async" defer="defer" ></script></div>    </div>
+</div>
+		    <div id="asideNewArticle" class="aside-box">
+    <h3 class="aside-title">最新文章</h3>
+    <div class="aside-content">
+        <ul class="inf_list clearfix csdn-tracking-statistics tracking-click" data-mod="popu_382">
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/pearl8899/article/details/87195436" target="_blank">Cuda C 最大线程数</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/pearl8899/article/details/86716723" target="_blank">大数据计算引擎——Flink学习</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/pearl8899/article/details/86691345" target="_blank">git-提交代码-删除部分提交错误的文件夹</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/pearl8899/article/details/86498613" target="_blank">Linux常用命令--实测常用</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/pearl8899/article/details/86032396" target="_blank">git --去除提交密码</a>
+            </li>
+                    </ul>
+    </div>
+</div>
+		    		    <div id="asideCategory" class="aside-box flexible-box">
+    <h3 class="aside-title">个人分类</h3>
+    <div class="aside-content">
+        <ul>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/pearl8899/article/category/6863855">
+                    <span class="title oneline">PRML</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/pearl8899/article/category/6532058">
+                    <span class="title oneline">matlab安装</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/pearl8899/article/category/6174510">
+                    <span class="title oneline">人脸识别</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/pearl8899/article/category/6363981">
+                    <span class="title oneline">随笔</span>
+                    <span class="count float-right">7篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/pearl8899/article/category/7417415">
+                    <span class="title oneline">多项式拟合</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/pearl8899/article/category/7667982">
+                    <span class="title oneline">Spark</span>
+                    <span class="count float-right">8篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/pearl8899/article/category/7669393">
+                    <span class="title oneline">基础技术</span>
+                    <span class="count float-right">11篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/pearl8899/article/category/7691198">
+                    <span class="title oneline">ML</span>
+                    <span class="count float-right">3篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/pearl8899/article/category/7709603">
+                    <span class="title oneline">Scala</span>
+                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/pearl8899/article/category/7713863">
+                    <span class="title oneline">Java</span>
+                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                    </ul>
+    </div>
+        <p class="text-center">
+        <a class="btn btn-link-blue flexible-btn" data-fbox="aside-archive">展开</a>
+    </p>
+    </div>
+		    <div id="asideArchive" class="aside-box flexible-box">
+    <h3 class="aside-title">归档</h3>
+    <div class="aside-content">
+        <ul class="archive-list">
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/pearl8899/article/month/2019/02">
+                    2019年2月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/pearl8899/article/month/2019/01">
+                    2019年1月                    <span class="count float-right">4篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/pearl8899/article/month/2018/10">
+                    2018年10月                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/pearl8899/article/month/2018/08">
+                    2018年8月                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/pearl8899/article/month/2018/07">
+                    2018年7月                    <span class="count float-right">4篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/pearl8899/article/month/2018/06">
+                    2018年6月                    <span class="count float-right">7篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/pearl8899/article/month/2018/05">
+                    2018年5月                    <span class="count float-right">7篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/pearl8899/article/month/2018/01">
+                    2018年1月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/pearl8899/article/month/2017/05">
+                    2017年5月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/pearl8899/article/month/2017/04">
+                    2017年4月                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/pearl8899/article/month/2016/11">
+                    2016年11月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/pearl8899/article/month/2016/10">
+                    2016年10月                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/pearl8899/article/month/2016/08">
+                    2016年8月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/pearl8899/article/month/2016/04">
+                    2016年4月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                    </ul>
+    </div>
+        <p class="text-center">
+        <a class="btn btn-link-blue flexible-btn" data-fbox="aside-archive">展开</a>
+    </p>
+    </div>
+		    <div id="asideHotArticle" class="aside-box">
+	<h3 class="aside-title">热门文章</h3>
+	<div class="aside-content">
+		<ul class="hotArticle-list csdn-tracking-statistics tracking-click" data-mod="popu_521">
+							<li>
+					<a href="https://blog.csdn.net/pearl8899/article/details/53260088">安装MATLAB2016a的完整步骤</a>
+					<p class="read">阅读数 <span>17617</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/pearl8899/article/details/80746651">显示器连接mac后，屏幕不亮无信号输入问题</a>
+					<p class="read">阅读数 <span>4192</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/pearl8899/article/details/80820067">Xgboost调参--针对过拟合和非平衡数据</a>
+					<p class="read">阅读数 <span>3442</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/pearl8899/article/details/86498613">Linux常用命令--实测常用</a>
+					<p class="read">阅读数 <span>3305</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/pearl8899/article/details/80368018">Spark 运行内存溢出问题：memoryOverhead issue in Spark</a>
+					<p class="read">阅读数 <span>2675</span></p>
+				</li>
+					</ul>
+	</div>
+</div>
+		    <div id="asideNewComments" class="aside-box">
+    <h3 class="aside-title">最新评论</h3>
+    <div class="aside-content">
+        <ul class="newcomment-list">
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/pearl8899/article/details/86498613#comments">Linux常用命令--实测常用</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/weixin_44479935" class="user-name" target="_blank">weixin_44479935</a>：&lt;a href=&quot;https://promotion.aliyun.com/ntm...                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/pearl8899/article/details/86498613#comments">Linux常用命令--实测常用</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/boling_cavalry" class="user-name" target="_blank">boling_cavalry</a>：感谢楼主分享                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/pearl8899/article/details/86498613#comments">Linux常用命令--实测常用</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/weixin_42369563" class="user-name" target="_blank">weixin_42369563</a>：安卓版虚拟机                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/pearl8899/article/details/86498613#comments">Linux常用命令--实测常用</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/qq_43011610" class="user-name" target="_blank">qq_43011610</a>：wc -c才是正解                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/pearl8899/article/details/86498613#comments">Linux常用命令--实测常用</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/fate54321" class="user-name" target="_blank">fate54321</a>：wc -c和wc -m不知道那个是对的                </p>
+            </li>
+                    </ul>
+    </div>
+</div>
+		<div id="asideFooter">
+			
+		<div class="aside-box">
+			<div id="kp_box_57" data-pid="57" data-track-view='{"mod":"kp_popu_57-77","con":",,"}' data-track-click='{"mod":"kp_popu_57-77","con":",,"}'><script type="text/javascript">
+    (function() {
+        var s = "_" + Math.random().toString(36).slice(2);
+        document.write('<div style="" id="' + s + '"></div>');
+        (window.slotbydup = window.slotbydup || []).push({
+            id: "u3163270",
+            container:  s
+        });
+    })();
+</script>
+<!-- 多条广告如下脚本只需引入一次 -->
+<script type="text/javascript" src="//cpro.baidustatic.com/cpro/ui/c.js" async="async" defer="defer" ></script></div>		</div>
+				<div class="aside-box">
+			<div class="persion_article">
+			</div>
+		</div>
+	</div>
+</aside>
+<script src="https://csdnimg.cn/pubfooter/js/publib_footer-1.0.3.js" data-isfootertrack="false" type="text/javascript"></script>
+<script>
+	$("a.flexible-btn").click(function(){
+		$(this).parents('div.aside-box').removeClass('flexible-box');
+		$(this).remove();
+	})
+</script>
+</div>
+<div class="mask-dark"></div>
+<div class="tool-box">
+	<ul class="meau-list">
+		<li class="btn-like-box ">
+			<button class=" low-height hover-box btn-like " title="点赞">
+				<svg class="icon active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-thumbsup-ok"></use>
+				</svg>
+				<svg class="icon no-active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-thumbsup"></use>
+				</svg>
+				<span class="hover-show text-box text">
+					<span class="no-active">点赞</span>
+					<span class="active">取消点赞</span>
+				</span>
+				<p>0</p>
+			</button>
+		</li>
+		<li class="">
+						<a class="btn-comments low-height hover-box" title="写评论" href="#commentBox">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-comments"></use>
+				</svg>
+				<span class="hover-show text">评论</span>
+				<p class="">
+										</p>
+			</a>
+		</li>
+		<li class="toc-container-box" id="liTocBox">
+			<button class="btn-toc low-height hover-box" title="目录">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-contents"></use>
+				</svg>
+				<span class="hover-show text">目录</span>
+			</button>
+			<div class="toc-container">
+				<div class="pos-box">
+					<div class="icon-arrow"></div>
+					<div class="scroll-box">
+						<div class="toc-box"></div>
+					</div>
+				</div>
+				<div class="opt-box">
+					<button class="btn-opt prev nomore" title="向上">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#csdnc-chevronup"></use>
+						</svg>
+					</button>
+					<button class="btn-opt next">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#csdnc-chevrondown"></use>
+						</svg>
+					</button>
+				</div>
+			</div>
+		</li>
+		<li>
+			<button class="btn-bookmark low-height hover-box" title="收藏">
+				<svg class="icon active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-bookmark-ok"></use>
+				</svg>
+				<svg class="icon no-active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-bookmark"></use>
+				</svg>
+					<span class="hover-show text">收藏</span>
+				<!-- <span class="hover-show text-box text">
+					<span class="no-active">收藏</span>
+					<span class="active">取消收藏</span>
+				</span> -->
+			</button>
+		</li>
+		<li class="bdsharebuttonbox">
+			<div class="weixin-qr btn-comments low-height hover-box" >
+        <a href="#" class="bds_weixin clear-share-style" data-cmd="weixin" title="手机看"></a>
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-usephone"></use>
+				</svg>
+				<span class="hover-show text text3">
+					手机看
+				</span>
+			</div>
+		</li>
+							<li class="widescreen-hide">
+				<a class="btn-comments low-height hover-box" href="https://blog.csdn.net/pearl8899/article/details/80746651" title="显示器连接mac后，屏幕不亮无信号输入问题">
+					<svg class="icon hover-hide" aria-hidden="true">
+						<use xlink:href="#csdnc-chevronleft"></use>
+					</svg>
+					<span class="hover-show text text3">上一篇</span>
+				</a>
+			</li>
+								<li class="widescreen-hide">
+			<a class="btn-comments hover-box low-height" href="https://blog.csdn.net/pearl8899/article/details/80950478" title="Python 学习笔记">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-chevronright"></use>
+				</svg>
+				<span class="hover-show text text3">下一篇</span>
+			</a>
+		</li>
+						<!-- 宽屏更多按钮 -->
+		<li class="widescreen-more">
+			<a class="btn-comments chat-ask-button low-height hover-box" title="快问" href="#chatqa">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-more"></use>
+				</svg>
+				<span class="hover-show text">更多</span>
+				
+			</a>
+			<ul class="widescreen-more-box">
+													<li class="widescreen-more">
+						<a class="btn-comments low-height hover-box" href="https://blog.csdn.net/pearl8899/article/details/80746651" title="显示器连接mac后，屏幕不亮无信号输入问题">
+							<svg class="icon hover-hide" aria-hidden="true">
+								<use xlink:href="#csdnc-chevronleft"></use>
+							</svg>
+							<span class="hover-show text text3">上一篇</span>
+						</a>
+					</li>
+																<li class="widescreen-more">
+					<a class="btn-comments hover-box low-height" href="https://blog.csdn.net/pearl8899/article/details/80950478" title="Python 学习笔记">
+						<svg class="icon hover-hide" aria-hidden="true">
+							<use xlink:href="#csdnc-chevronright"></use>
+						</svg>
+						<span class="hover-show text text3">下一篇</span>
+					</a>
+				</li>
+							</ul>
+		</li>
+	</ul>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'https://csdnimg.cn/static/api/js/share.js?v=89860594'];</script>
+<script>
+    var recommendCount = 73;
+    recommendCount = recommendCount > 1 ? (recommendCount + (recommendCount>6 ? 2 : 1)) : recommendCount;
+    var articleTit = articleTitles;
+    var ChannelId = 2;
+    var articleId = "80820067";
+    var commentscount = 0;
+    var islock = false;
+    var curentUrl = "https://blog.csdn.net/pearl8899/article/details/80820067";
+    var myUrl = "https://my.csdn.net/";
+    //1禁止评论，2正常
+    var commentAuth = 2;
+    //百度搜索
+    var baiduKey = "Xgboost调参--针对过拟合和非平衡数据 - 凝眸伏笔的博客";
+    var needInsertBaidu = true;
+    // 代码段样式
+    var codeStyle = '';
+		var highlight = ["xgboost","\u9488\u5bf9","\u8fc7\u62df\u5408","\u5e73\u8861","\u6570\u636e"];//高亮数组
+		// 相关推荐博主数据
+    var RecommendBlogExpertList = [{"user_name":"sinat_26917383","nick_name":"\u609f\u4e59\u5df1","avatar":"https:\/\/avatar.csdn.net\/A\/0\/5\/3_sinat_26917383.jpg","is_expert":true,"article_count":305,"rank":"433"},{"user_name":"sinat_33741547","nick_name":"lpty","avatar":"https:\/\/avatar.csdn.net\/6\/2\/2\/3_sinat_33741547.jpg","is_expert":true,"article_count":98,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"meyh0x5vDTk48P2","nick_name":"\u5927\u6570\u636e\u6316\u6398DT\u6570\u636e\u5206\u6790","avatar":"https:\/\/avatar.csdn.net\/1\/1\/5\/3_meyh0x5vdtk48p2.jpg","is_expert":false,"article_count":127,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"m0_38045485","nick_name":"crb_day_day_up","avatar":"https:\/\/avatar.csdn.net\/8\/9\/E\/3_m0_38045485.jpg","is_expert":false,"article_count":12,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"data_scientist","nick_name":"data_evangelists","avatar":"https:\/\/avatar.csdn.net\/B\/D\/9\/3_data_scientist.jpg","is_expert":false,"article_count":49,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"m0_37477175","nick_name":"chestnut--","avatar":"https:\/\/avatar.csdn.net\/5\/3\/0\/3_m0_37477175.jpg","is_expert":false,"article_count":75,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"chuanda112233","nick_name":"lxinbit","avatar":"https:\/\/avatar.csdn.net\/C\/D\/7\/3_chuanda112233.jpg","is_expert":false,"article_count":14,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"Seven_coding","nick_name":"Seven_\u7801\u573a","avatar":"https:\/\/avatar.csdn.net\/9\/5\/4\/3_seven_coding.jpg","is_expert":false,"article_count":1,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"bc7720","nick_name":"bc7720","avatar":"https:\/\/avatar.csdn.net\/A\/2\/B\/3_bc7720.jpg","is_expert":false,"article_count":4,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"rosefun96","nick_name":"rosefun96","avatar":"https:\/\/avatar.csdn.net\/C\/A\/E\/3_rosefun96.jpg","is_expert":false,"article_count":239,"rank":"8000+"}];
+	var articleType = 4;
+	var CopyrightContent = '本文为博主原创文章，未经博主允许不得转载。';
+</script>
+<script src="https://csdnimg.cn/public/sandalstrap/1.4/js/sandalstrap.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.js"></script>
+<script src='https://csdnimg.cn/public/common/gotop/js/goTop-v1.0.min.js?v201811201455'></script>
+<script>
+    GoTop({
+        right: 8,
+        hasReport: true,
+        reportFun: function() {
+            showReport(false,articleTit);
+        }
+    })
+</script>
+
+<script src="//g.csdnimg.cn/baidu-search/1.0.0/baidu-search.js"  type="text/javascript"></script>
+
+</body>
+
+<!-- 右侧第四栏 -->
+<div class="fourth_column">
+	<div class="title-box">
+		<b class="title">猿学习</b>
+		<span class="fourth_column_close">    
+			<svg class="icon" aria-hidden="true">
+				<use xlink:href="#csdnc-times"></use>
+			</svg>
+		</span>
+		
+	</div>
+	<ul class="">
+		<li><div id="kp_box_456" data-pid="456" data-track-view='{"mod":"kp_popu_456-721","con":",,"}' data-track-click='{"mod":"kp_popu_456-721","con":",,"}'><a href="https://gitchat.csdn.net/column/5a7d1a13a7f22b3dffca7e49?utm_source=csdn100" target="_blank"><div class="blogkp3"><img src="http://img-ads.csdn.net/2018/201811091452349556.png"width="100" height="100"><h6>Python 爬虫和数据分析实战</h6><span style="position:absolute;right:0;bottom:0;background:url(https://img-ads.csdn.net/2016/201608021757063065.png) no-repeat;width:33px;height:18px;display:block;z-index: 9999;"></span></div></a></div></li>		<li><div id="kp_box_457" data-pid="457" data-track-view='{"mod":"kp_popu_457-681","con":",,"}' data-track-click='{"mod":"kp_popu_457-681","con":",,"}'><img src="http://img-ads.csdn.net/2019/201901081453403307.jpg"width="100" height="100"></div></li>		<li><div id="kp_box_458" data-pid="458" data-track-view='{"mod":"kp_popu_458-640","con":",,"}' data-track-click='{"mod":"kp_popu_458-640","con":",,"}'><a href="https://gitchat.csdn.net/column/5a7d1a13a7f22b3dffca7e49?utm_source=csdn100" target="_blank"><div class="blogkp3"><img src="http://img-ads.csdn.net/2018/201811091452349556.png"width="100" height="100"><h6>Python 爬虫和数据分析实战</h6><span style="position:absolute;right:0;bottom:0;background:url(https://img-ads.csdn.net/2016/201608021757063065.png) no-repeat;width:33px;height:18px;display:block;z-index: 9999;"></span></div></a></div></li>		<li><div id="kp_box_459" data-pid="459" data-track-view='{"mod":"kp_popu_459-684","con":",,"}' data-track-click='{"mod":"kp_popu_459-684","con":",,"}'><img src="http://img-ads.csdn.net/2018/201811231419286183.jpg"width="100" height="100"></div></li>	</ul>
+</div>
+<script type="text/javascript">
+	$('.fourth_column_close').click(function(){
+		$('.fourth_column').remove();
+	})
+</script>
+<!-- 右侧第四栏end -->
+<!-- 高亮未与 markdown兼容  -->
+	<link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.3.7/ckeditor/plugins/chart/chart.css" />
+	<script type="text/javascript" src="https://csdnimg.cn/release/blog_editor_html/release1.3.7/ckeditor/plugins/chart/lib/chart.min.js"></script>
+	<script type="text/javascript" src="https://csdnimg.cn/release/blog_editor_html/release1.3.7/ckeditor/plugins/chart/widget2chart.js"></script>
+	<link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.3.7/ckeditor/plugins/codesnippet/lib/highlight/styles/atom-one-light.css">
+	<script type="text/javascript" src="https://csdnimg.cn/release/phoenix/production/pc_wap_common-98040b5dc6.js" /></script>
+
+	<script type="text/javascript">
+	$(function(){
+		var allEscRegex = /&(lt|gt|amp|quot|nbsp|shy|#\d{1,5});/g,
+		    namedEntities = {
+					lt: '<',
+					gt: '>',
+					amp: '&',
+					quot: '"',
+					nbsp: '\u00a0',
+					shy: '\u00ad'
+				}
+		var allEscDecode = function( match, code ) {
+				return namedEntities[ code ];
+		};
+		htmlDecodeAttr = function( text ) {
+				return text.replace( allEscRegex, allEscDecode );
+		}
+	  hljs.initHighlighting();
+	  hljs.initCopyButtonOnLoad();
+	  hljs.initLineNumbersOnLoad();
+		if($('pre .language-plain').length>0){
+			$('pre .language-plain').each(function(i,e){
+				var highlightRe = hljs.highlightAuto(htmlDecodeAttr(e.innerHTML))
+				e.innerHTML = highlightRe.value;
+				e.className = 'language-'+highlightRe.language;
+			});
+		}
+	})
+	</script>
+
+<script src="https://g.csdnimg.cn/login-box/1.0.4/??login-box.js,login-auto.js?t=20190103145159"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/js/common-2dfea49d18.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/js/detail-bb53a9b64c.min.js"></script>
+	<script src="https://csdnimg.cn/release/phoenix/themes/skin3-template/skin3-template-fc7383b956.min.js"></script>
+
+
+<!-- <script type="text/javascript" src="//g.csdnimg.cn/check-adb/1.0.2/check-adb.js"></script> -->
+
+<script type="text/javascript" src="https://csdnimg.cn/release/blog_mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            "HTML-CSS": {
+                    linebreaks: { automatic: true, width: "94%container" },
+                    imageFont: null
+            },
+            tex2jax: {
+                preview: "none"
+            },
+            mml2jax: {
+                preview: 'none'
+            }
+    });
+</script>
+<script type="text/javascript">
+            window.baidu_blueword ={
+            di:'24004469_oem_dg',
+            id:['content_views'],// 需要飘蓝区域：id要求以数组或，分隔的字符串形式传入
+            blueclass:['baidu_pl'],// 需要飘蓝区域：class要求以数组或，分隔的字符串形式传入, 传入值会覆盖默认值
+            user:'',
+            isMobile:false,
+            title: document.title,
+            page_url: location.href,
+            ignore:'baidu-blue-word-no',// 需要忽略掉的区域1
+            frequency:1,// 词频1
+            maxword:3// 最大接受飘词个数
+        }
+    </script>
+<script src="https://gh.bdstatic.com/static/gh/js/sdk/bword.min.js"></script>
+</html>

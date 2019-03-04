@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="origin" />
+    <title>条件随机场CRF(二) 前向后向算法评估标记序列概率 - 刘建平Pinard - 博客园</title>
+<meta property="og:description" content="条件随机场CRF(一)从随机场到线性链条件随机场 条件随机场CRF(二) 前向后向算法评估标记序列概率 条件随机场CRF(三) 模型学习与维特比算法解码 在条件随机场CRF(一)中我们总结了CRF的模" />
+    <link type="text/css" rel="stylesheet" href="/bundles/blog-common.css?v=-duj5vpGTntb85GJoM3iRI972XwWcI-j8zmqDzyfu2w1"/>
+<link id="MainCss" type="text/css" rel="stylesheet" href="/skins/BlackLowKey/bundle-BlackLowKey.css?v=porUb1GRMsPCuLZTJKjoDyrJre6Y7-Oiq-zx-_VcGG81"/>
+<link type="text/css" rel="stylesheet" href="/blog/customcss/311024.css?v=YY%2fB9GiizlktSBml7X95KXekn%2bg%3d"/>
+<link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="/skins/BlackLowKey/bundle-BlackLowKey-mobile.css?v=Go8Bj0ZU9gZXuPSKWcSQabps3E1njgJKYz4DiOq6-N41"/>
+    <link title="RSS" type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/pinard/rss"/>
+    <link title="RSD" type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/pinard/rsd.xml"/>
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/pinard/wlwmanifest.xml"/>
+    <script src="//common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script>var currentBlogId=311024;var currentBlogApp='pinard',cb_enable_mathjax=true;var isLogined=false;</script>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']], processClass: 'math', processEscapes: true },
+        TeX: { 
+            equationNumbers: { autoNumber: ['AMS'], useLabelIds: true }, 
+            extensions: ['extpfeil.js'],
+            Macros: {bm: "\\boldsymbol"}
+        },
+        'HTML-CSS': { linebreaks: { automatic: true } },
+        SVG: { linebreaks: { automatic: true } }
+        });
+    </script><script src="//mathjax.cnblogs.com/2_7_2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="/bundles/blog-common.js?v=8XwPau4_W3R9_33N9oT6O2s_wBwLVeOw65HXVt3t7Kk1" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<!--PageBeginHtml Block Begin-->
+<a class="git-link" href="https://github.com/ljpzzz/machinelearning"></a>
+<!--PageBeginHtml Block End-->
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a id="lnkBlogLogo" href="https://www.cnblogs.com/pinard/"><img id="blogLogo" src="/Skins/custom/images/logo.gif" alt="返回主页" /></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="https://www.cnblogs.com/pinard/">刘建平Pinard</a></h1>
+<h2>十年码农，对数学统计学，数据挖掘，机器学习，大数据平台，大数据平台应用开发，大数据可视化感兴趣。</h2>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">博客园</a></li>
+<li><a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/pinard/">首页</a></li>
+<li><a id="blog_nav_newpost" class="menu" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a></li>
+<li><a id="blog_nav_contact" class="menu" rel="nofollow" href="https://msg.cnblogs.com/send/%E5%88%98%E5%BB%BA%E5%B9%B3Pinard">联系</a></li>
+<li><a id="blog_nav_rss" class="menu" href="https://www.cnblogs.com/pinard/rss">订阅</a>
+<!--<a id="blog_nav_rss_image" class="aHeaderXML" href="https://www.cnblogs.com/pinard/rss"><img src="//www.cnblogs.com/images/xml.gif" alt="订阅" /></a>--></li>
+<li><a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/">管理</a></li>
+</ul>
+		<div class="blogStats">
+			
+			<div id="blog_stats">
+<span id="stats_post_count">随笔 - 126&nbsp; </span>
+<span id="stats_article_count">文章 - 0&nbsp; </span>
+<span id="stats-comment_count">评论 - 5012</span>
+</div>
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+        <div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class = "post">
+		<h1 class = "postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="https://www.cnblogs.com/pinard/p/7055072.html">条件随机场CRF(二) 前向后向算法评估标记序列概率</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body" class="blogpost-body"><p>　　　　<a id="homepage1_HomePageDays_DaysList_ctl00_DayList_TitleUrl_0" class="postTitle2" href="http://www.cnblogs.com/pinard/p/7048333.html">条件随机场CRF(一)从随机场到线性链条件随机场</a></p>
+<p>　　　　条件随机场CRF(二) 前向后向算法评估标记序列概率</p>
+<p>　　　　<a id="homepage1_HomePageDays_DaysList_ctl00_DayList_TitleUrl_0" class="postTitle2" href="http://www.cnblogs.com/pinard/p/7068574.html">条件随机场CRF(三) 模型学习与维特比算法解码</a></p>
+<p>　　　　在<a id="homepage1_HomePageDays_DaysList_ctl00_DayList_TitleUrl_0" class="postTitle2" href="http://www.cnblogs.com/pinard/p/7048333.html">条件随机场CRF(一)</a>中我们总结了CRF的模型，主要是linear-CRF的模型原理。本文就继续讨论linear-CRF需要解决的三个问题：评估，学习和解码。这三个问题和HMM是非常类似的，本文关注于第一个问题：评估。第二个和第三个问题会在下一篇总结。</p>
+<h1>1. linear-CRF的三个基本问题</h1>
+<p>　　　　在<a id="homepage1_HomePageDays_DaysList_ctl05_DayList_TitleUrl_0" class="postTitle2" href="http://www.cnblogs.com/pinard/p/6945257.html">隐马尔科夫模型HMM</a>中，我们讲到了HMM的三个基本问题，而linear-CRF也有三个类似的的基本问题。不过和HMM不同，在linear-CRF中，我们对于给出的观测序列$x$是一直作为一个整体看待的，也就是不会拆开看$(x_1,x_2,...)$，因此linear-CRF的问题模型要比HMM简单一些，如果你很熟悉HMM，那么CRF的这三个问题的求解就不难了。</p>
+<p>　　　　&nbsp;linear-CRF第一个问题是评估，即给定&nbsp;linear-CRF的条件概率分布$P(y|x)$, 在给定输入序列$x$和输出序列$y$时，计算条件概率$P(y_i|x)$和$P(y_{i-1}，y_i|x)$以及对应的期望. 本文接下来会详细讨论问题一。</p>
+<p>　　　　&nbsp;linear-CRF第二个问题是学习，即给定训练数据集$X$和$Y$，学习linear-CRF的模型参数$w_k$和条件概率$P_w(y|x)$，这个问题的求解比HMM的学习算法简单的多，普通的梯度下降法，拟牛顿法都可以解决。</p>
+<p>　　　　&nbsp;linear-CRF第三个问题是解码，即给定&nbsp;linear-CRF的条件概率分布$P(y|x)$,和输入序列$x$, 计算使条件概率最大的输出序列$y$。类似于HMM，使用维特比算法可以很方便的解决这个问题。　</p>
+<h1>2.linear-CRF的前向后向概率概述</h1>
+<p>　　　　要计算条件概率$P(y_i|x)$和$P(y_{i-1}，y_i|x)$，我们也可以使用和HMM类似的方法，使用前向后向算法来完成。首先我们来看前向概率的计算。</p>
+<p>　　　　我们定义$\alpha_i(y_i|x)$表示序列位置$i$的标记是$y_i$时，在位置$i$之前的部分标记序列的非规范化概率。之所以是非规范化概率是因为我们不想加入一个不影响结果计算的规范化因子$Z(x)$在分母里面。</p>
+<p>　　　　在<a id="homepage1_HomePageDays_DaysList_ctl00_DayList_TitleUrl_0" class="postTitle2" href="http://www.cnblogs.com/pinard/p/7048333.html">条件随机场CRF(一)</a>第八节中，我们定义了下式：$$M_i(y_{i-1},y_i |x) = exp(\sum\limits_{k=1}^Kw_kf_k(y_{i-1},y_i, x,i))$$</p>
+<p>　　　　这个式子定义了在给定$y_{i-1}$时，从$y_{i-1}$转移到$y_i$的非规范化概率。</p>
+<p>　　　　这样，我们很容易得到序列位置$i+1$的标记是$y_{i+1}$时，在位置$i+1$之前的部分标记序列的非规范化概率$\alpha_{i+1}(y_{i+1}|x)$的递推公式：$$\alpha_{i+1}(y_{i+1}|x) = \alpha_i(y_i|x)M_{i+1}(y_{i+1},y_i|x) \;\; i=1,2,...,n+1$$</p>
+<p>　　　　在起点处，我们定义：$$\alpha_0(y_0|x)= \begin{cases} 1 &amp; {y_0 =start}\\ 0 &amp; {else} \end{cases}$$</p>
+<p>　　　　假设我们可能的标记总数是$m$, 则$y_i$的取值就有$m$个，我们用$\alpha_i(x)$表示这$m$个值组成的前向向量如下：$$\alpha_i(x) = (\alpha_i(y_i=1|x), \alpha_i(y_i=2|x), ...&nbsp;\alpha_i(y_i=m|x))^T$$</p>
+<p>　　　　同时用矩阵$M_i(x)$表示由$M_i(y_{i-1},y_i |x)&nbsp;$形成的$m \times m$阶矩阵：$$M_i(x) = \Big[ M_i(y_{i-1},y_i |x)\Big]$$</p>
+<p>　　　　这样递推公式可以用矩阵乘积表示：$$\alpha_{i+1}^T(x) = \alpha_i^T(x)M_{i+1}(x)$$</p>
+<p>　　　　同样的。我们定义$\beta_i(y_i|x)$表示序列位置$i$的标记是$y_i$时，在位置$i$之后的从$i+1$到$n$的部分标记序列的非规范化概率。</p>
+<p>　　　　这样，我们很容易得到序列位置$i+1$的标记是$y_{i+1}$时，在位置$i$之后的部分标记序列的非规范化概率$\beta_{i}(y_{i}|x)$的递推公式：$$\beta_{i}(y_{i}|x) = M_{i+1}(y_i,y_{i+1}|x)\beta_{i+1}(y_{i+1}|x)$$</p>
+<p>　　　　在终点处，我们定义：$$\beta_{n+1}(y_{n+1}|x)= \begin{cases} 1 &amp; {y_{n+1} =stop}\\ 0 &amp; {else} \end{cases}$$</p>
+<p>　　　　如果用向量表示，则有：$$\beta_i(x) = M_{i+1}(x)\beta_{i+1}(x)$$</p>
+<p>　　　　由于规范化因子$Z(x)$的表达式是：$$Z(x) = \sum\limits_{c=1}^m\alpha_{n}(y_c|x) = \sum\limits_{c=1}^m\beta_{1}(y_c|x)$$</p>
+<p>　　　　也可以用向量来表示$Z(x)$:$$Z(x) = \alpha_{n}^T(x) \bullet \mathbf{1} = \mathbf{1}^T&nbsp;\bullet&nbsp;\beta_{1}(x)$$</p>
+<p>　　　　其中，$\mathbf{1}$是$m$维全1向量。</p>
+<h1>3.&nbsp;linear-CRF的前向后向概率计算</h1>
+<p>　　　　有了前向后向概率的定义和计算方法，我们就很容易计算序列位置$i$的标记是$y_i$时的条件概率$P(y_i|x)$:$$P(y_i|x) = \frac{\alpha_i^T(y_i|x)\beta_i(y_i|x)}{Z(x)} = \frac{\alpha_i^T(y_i|x)\beta_i(y_i|x)}{&nbsp;\alpha_{n}^T(x) \bullet \mathbf{1}}$$</p>
+<p>　　　　也容易计算序列位置$i$的标记是$y_i$，位置$i-1$的标记是$y_{i-1}$ 时的条件概率$P(y_{i-1},y_i|x)$:$$P(y_{i-1},y_i|x) = \frac{\alpha_{i-1}^T(y_{i-1}|x)M_i(y_{i-1},y_i|x)\beta_i(y_i|x)}{Z(x)} = \frac{\alpha_{i-1}^T(y_{i-1}|x)M_i(y_{i-1},y_i|x)\beta_i(y_i|x)}{&nbsp;\alpha_{n}^T(x) \bullet \mathbf{1}}$$</p>
+<h1>4.&nbsp;linear-CRF的期望计算</h1>
+<p>　　　　有了上一节计算的条件概率，我们也可以很方便的计算联合分布$P(x,y)$与条件分布$P(y|x)$的期望。</p>
+<p>　　　　特征函数$f_k(x,y)$关于条件分布$P(y|x)$的期望表达式是：$$\begin{align} E_{P(y|x)}[f_k] &nbsp;&amp; = E_{P(y|x)}[f_k(y,x)] \\ &amp; = \sum\limits_{i=1}^{n+1}&nbsp;\sum\limits_{y_{i-1}\;\;y_i}P(y_{i-1},y_i|x)f_k(y_{i-1},y_i,x, i) \\ &amp; =&nbsp;&nbsp;\sum\limits_{i=1}^{n+1}&nbsp;\sum\limits_{y_{i-1}\;\;y_i}f_k(y_{i-1},y_i,x, i) &nbsp;\frac{\alpha_{i-1}^T(y_{i-1}|x)M_i(y_{i-1},y_i|x)\beta_i(y_i|x)}{&nbsp;\alpha_{n}^T(x) \bullet \mathbf{1}}&nbsp;\end{align}$$</p>
+<p>　　　　同样可以计算联合分布$P(x,y)$的期望：$$\begin{align}&nbsp;E_{P(x,y)}[f_k] &nbsp;&amp; =&nbsp;\sum\limits_{x,y}P(x,y)&nbsp;\sum\limits_{i=1}^{n+1}f_k(y_{i-1},y_i,x, i) \\&amp; = &nbsp;\sum\limits_{x}\overline{P}(x)&nbsp;\sum\limits_{y}P(y|x)&nbsp;\sum\limits_{i=1}^{n+1}f_k(y_{i-1},y_i,x, i) \\&amp; =&nbsp;&nbsp;\sum\limits_{x}\overline{P}(x)\sum\limits_{i=1}^{n+1}&nbsp;\sum\limits_{y_{i-1}\;\;y_i}f_k(y_{i-1},y_i,x, i) &nbsp;\frac{\alpha_{i-1}^T(y_{i-1}|x)M_i(y_{i-1},y_i|x)\beta_i(y_i|x)}{&nbsp;\alpha_{n}^T(x) \bullet \mathbf{1}}&nbsp;&nbsp;&nbsp;&nbsp;\end{align}$$</p>
+<p>　　　　假设一共有$K$个特征函数，则$k=1,2,...K$</p>
+<h1>5.&nbsp;linear-CRF前向后向算法总结</h1>
+<p>　　　　以上就是linear-CRF的前向后向算法，个人觉得比HMM简单的多，因此大家如果理解了HMM的前向后向算法，这一篇是很容易理解的。</p>
+<p>　　　　注意到我们上面的非规范化概率$M_{i+1}(y_{i+1},y_i|x)$起的作用和HMM中的隐藏状态转移概率很像。但是这儿的概率是非规范化的，也就是不强制要求所有的状态的概率和为1。而HMM中的隐藏状态转移概率也规范化的。从这一点看，linear-CRF对序列状态转移的处理要比HMM灵活。</p>
+<p>&nbsp;</p>
+<p>（欢迎转载，转载请注明出处。欢迎沟通交流： liujianping-ok@163.com）&nbsp;　　　　　</p></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory"></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info">
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"></div>
+</div>
+
+
+		</div>
+		<div class = "postDesc">posted @ <span id="post-date">2017-06-22 14:14</span> <a href='https://www.cnblogs.com/pinard/'>刘建平Pinard</a> 阅读(<span id="post_view_count">...</span>) 评论(<span id="post_comment_count">...</span>)  <a href ="https://i.cnblogs.com/EditPosts.aspx?postid=7055072" rel="nofollow">编辑</a> <a href="#" onclick="AddToWz(7055072);return false;">收藏</a></div>
+	</div>
+	<script type="text/javascript">var allowComments=true,cb_blogId=311024,cb_entryId=7055072,cb_blogApp=currentBlogApp,cb_blogUserGuid='7d95b75d-b891-e611-845c-ac853d9f53ac',cb_entryCreatedDate='2017/6/22 14:14:00';loadViewCount(cb_entryId);var cb_postType=1;var isMarkdown=false;</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id='comment_form' class='commentform'>
+<a name='commentform'></a>
+<div id='divCommentShow'></div>
+<div id='comment_nav'><span id='span_refresh_tips'></span><a href='javascript:void(0);' onclick='return RefreshCommentList();' id='lnk_RefreshComments' runat='server' clientidmode='Static'>刷新评论</a><a href='#' onclick='return RefreshPage();'>刷新页面</a><a href='#top'>返回顶部</a></div>
+<div id='comment_form_container'></div>
+<div class='ad_text_commentbox' id='ad_text_under_commentbox'></div>
+<div id='ad_t2'></div>
+<div id='opt_under_post'></div>
+<script async='async' src='https://www.googletagservices.com/tag/js/gpt.js'></script>
+<script>
+  var googletag = googletag || {};
+  googletag.cmd = googletag.cmd || [];
+</script>
+<script>
+  googletag.cmd.push(function() {
+        googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1546353474406-0').addService(googletag.pubads());
+        googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1539008685004-0').addService(googletag.pubads());
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+  });
+</script>
+<div id='cnblogs_c1' class='c_ad_block'>
+    <div id='div-gpt-ad-1546353474406-0' style='height:250px; width:300px;'></div>
+</div>
+<div id='under_post_news'></div>
+<div id='cnblogs_c2' class='c_ad_block'>
+    <div id='div-gpt-ad-1539008685004-0' style='height:60px; width:468px;'></div>
+</div>
+<div id='under_post_kb'></div>
+<div id='HistoryToday' class='c_ad_block'></div>
+<script type='text/javascript'>
+ if(enablePostBottom()) {
+    codeHighlight();
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverT2();
+    deliverC1();
+    deliverC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);  
+}
+</script>
+</div>
+
+    
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle">公告</h3>
+	<div id="blog-news"></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="blog-calendar" style="display:none"></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright &copy;2019 刘建平Pinard
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+</body>
+</html>

@@ -1,0 +1,4181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="canonical" href="https://blog.csdn.net/c406495762/article/details/78072313"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="referrer" content="always">
+    <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+    <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848">
+        <meta name="csdn-baidu-search"  content='{"autorun":true,"install":true,"keyword":"Python3《机器学习实战》学习笔记（八）：支持向量机原理篇之手撕线性SVM - Jack-Cui"}'>
+    
+    <link href="https://csdnimg.cn/public/favicon.ico" rel="SHORTCUT ICON">
+    <title>Python3《机器学习实战》学习笔记（八）：支持向量机原理篇之手撕线性SVM - Jack-Cui - CSDN博客</title>
+
+        
+                    <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/detail-d59e2413cb.min.css">
+            
+            <script type="application/ld+json">{"@context":"https:\/\/ziyuan.baidu.com\/contexts\/cambrian.jsonld","@id":"https:\/\/blog.csdn.net\/c406495762\/article\/details\/78072313","appid":"1563894916825412","title":"Python3\u300a\u673a\u5668\u5b66\u4e60\u5b9e\u6218\u300b\u5b66\u4e60\u7b14\u8bb0\uff08\u516b\uff09\uff1a\u652f\u6301\u5411\u91cf\u673a\u539f\u7406\u7bc7\u4e4b\u624b\u6495\u7ebf\u6027SVM - Jack-Cui","images":["https:\/\/img-blog.csdn.net\/20170923165027315?watermark\/2\/text\/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==\/font\/5a6L5L2T\/fontsize\/400\/fill\/I0JBQkFCMA==\/dissolve\/70\/gravity\/SouthEast","https:\/\/img-blog.csdn.net\/20170923165115473?watermark\/2\/text\/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==\/font\/5a6L5L2T\/fontsize\/400\/fill\/I0JBQkFCMA==\/dissolve\/70\/gravity\/SouthEast","https:\/\/img-blog.csdn.net\/20170923165142381?watermark\/2\/text\/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==\/font\/5a6L5L2T\/fontsize\/400\/fill\/I0JBQkFCMA==\/dissolve\/70\/gravity\/SouthEast"],"pubDate":"2019-02-09T19:40:55"}</script>
+        
+          <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/themes/skin-blackboard/skin-blackboard-1340d63bd5.min.css">
+        <script type="text/javascript">
+        var username = "c406495762";
+        var blog_address = "https://blog.csdn.net/c406495762";
+        var static_host = "https://csdnimg.cn/release/phoenix/";
+        var currentUserName = "qq_37507975";
+        var isShowAds = false;
+        var isOwner = false;
+        var loginUrl = "http://passport.csdn.net/account/login?from=https://blog.csdn.net/c406495762/article/details/78072313"
+        var blogUrl = "https://blog.csdn.net/";
+        //页面皮肤样式
+        var curSkin = "skin-blackboard";
+        // 第四范式所需数据
+        var articleTitles = "Python3《机器学习实战》学习笔记（八）：支持向量机原理篇之手撕线性SVM - Jack-Cui";
+        var articleID = "78072313";
+        
+        var nickName = "Jack-Cui";
+        var isCorporate = false;
+        var subDomainBlogUrl = "https://blog.csdn.net/"
+    </script>
+    <script type="text/javascript">
+        // Traffic Stats of the entire Web site By baidu
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?6bcd52f51e9b3dce32bec4a3997715ac";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+        // Traffic Stats of the entire Web site By baidu end
+    </script>
+    <script src="https://csdnimg.cn/public/common/libs/jquery/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="https://csdnimg.cn/rabbit/exposure-click/main-1.0.6.js"></script>
+    <script src="//g.csdnimg.cn/fixed-sidebar/1.1.3/fixed-sidebar.js" type="text/javascript"></script>
+    <!-- 新版上报 -->
+    <script src="//g.csdnimg.cn/track/1.2.4/track.js" type="text/javascript"></script>
+    <!-- 新版上报end -->
+            <link rel="stylesheet" href="https://csdnimg.cn/public/sandalstrap/1.4/css/sandalstrap.min.css">
+    <style>
+        .MathJax, .MathJax_Message, .MathJax_Preview{
+            display: none
+        }
+    </style>
+</head>
+<!-- nodata 第三栏接口无数据时样式不变 -->
+<body class="nodata " > 
+    <link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+    <script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+<script type="text/javascript">
+	// 容错处理
+	var NEWS_FEED = function(){}
+</script>
+<script type="text/javascript" src="//static.mediav.com/js/mvf_news_feed.js"></script>
+<script type="text/javascript" src="//g.csdnimg.cn/copyright/1.0.3/copyright.js"></script>
+<div style="display:none;">
+	<img src="" onerror='setTimeout(function(){if(!/(csdn.net|iteye.com|baiducontent.com|googleusercontent.com|360webcache.com|sogoucdn.com|bingj.com|baidu.com)$/.test(window.location.hostname)){window.location.href="\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x63\x73\x64\x6e\x2e\x6e\x65\x74"}},3000);'>
+</div>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/chart-3456820cac.css" />
+<script src="https://dup.baidustatic.com/js/ds.js"></script>
+<div class="container clearfix" id="mainBox">
+			<div class="recommend-right">
+  <ul class="recommend-fixed-box">
+    
+  </ul>
+</div>	
+    <main>
+        <div class="blog-content-box">
+	<div class="article-header-box">
+		<div class="article-header">
+			<div class="article-title-box">
+				<span class="article-type type-1 float-left">原</span>				<h1 class="title-article">Python3《机器学习实战》学习笔记（八）：支持向量机原理篇之手撕线性SVM</h1>
+			</div>
+			<div class="article-info-box">
+				<div class="article-bar-top">
+											<span class="c-gray">置顶</span>
+																				<span class="time">2017年09月23日 17:50:18</span>
+					<a class="follow-nickName" href="https://me.csdn.net/c406495762" target="_blank">Jack-Cui</a>
+						<span class="read-count">阅读数：19812</span>
+						
+																												<div class="tags-box space">
+								<span class="label">所属专栏：</span>
+																<a class="tag-link" href="https://blog.csdn.net/column/details/16415.html" target="_blank">Python3机器学习</a>
+																</a>
+							</div>
+																	</div>
+				<div class="operating">
+									</div>
+			</div>
+		</div>
+	</div>
+	<article class="baidu_pl">
+		<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog"  data-mod=popu_307  data-dsm = "post" >
+								<div class="article-copyright">
+                  					<svg class="icon" title="CSDN认证原创" aria-hidden="true" style="width:53px; height: 18px; vertical-align: -4px;">
+							<use xlink:href="#CSDN_Cert"></use>
+					</svg>
+                  					
+					版权声明：本文为博主原创文章，未经博主允许不得转载。个人网站：http://cuijiahua.com。					https://blog.csdn.net/c406495762/article/details/78072313				</div>
+								            <div id="content_views" class="markdown_views prism-atom-one-dark">
+							<!-- flowchart 箭头图标 勿删 -->
+							<svg xmlns="http://www.w3.org/2000/svg" style="display: none;"><path stroke-linecap="round" d="M5,0 0,2.5 5,5z" id="raphael-marker-block" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path></svg>
+							<p>转载请注明作者和出处： <a href="https://zhuanlan.zhihu.com/ml-jack" rel="nofollow" target="_blank">https://zhuanlan.zhihu.com/ml-jack</a> <br>
+机器学习知乎专栏：<a href="https://zhuanlan.zhihu.com/ml-jack" rel="nofollow" target="_blank">https://zhuanlan.zhihu.com/ml-jack</a> <br>
+CSDN博客专栏：<a href="http://blog.csdn.net/column/details/16415.html" rel="nofollow" target="_blank">http://blog.csdn.net/column/details/16415.html</a> <br>
+Github代码获取：<a href="https://github.com/Jack-Cherish/Machine-Learning/" rel="nofollow" target="_blank">https://github.com/Jack-Cherish/Machine-Learning/</a> <br>
+Python版本： Python3.x <br>
+运行平台： Windows <br>
+IDE： Sublime text3</p>
+
+<p><div class="toc"><div class="toc">
+<ul>
+<li><a href="#一-前言" rel="nofollow">一 前言</a></li>
+<li><a href="#二-什么是svm" rel="nofollow">二 什么是SVM</a></li>
+<li><a href="#三-线性svm" rel="nofollow">三 线性SVM</a><ul>
+<li><a href="#1-数学建模" rel="nofollow">数学建模</a><ul>
+<li><a href="#1决策面方程" rel="nofollow">1决策面方程</a></li>
+<li><a href="#2分类间隔方程" rel="nofollow">2分类间隔方程</a></li>
+<li><a href="#3约束条件" rel="nofollow">3约束条件</a></li>
+<li><a href="#4线性svm优化问题基本描述" rel="nofollow">4线性SVM优化问题基本描述</a></li>
+<li><a href="#5求解准备" rel="nofollow">5求解准备</a></li>
+<li><a href="#6拉格朗日函数" rel="nofollow">6拉格朗日函数</a></li>
+<li><a href="#7kkt条件" rel="nofollow">7KKT条件</a></li>
+<li><a href="#8对偶问题求解" rel="nofollow">8对偶问题求解</a></li>
+</ul>
+</li>
+<li><a href="#2-smo算法" rel="nofollow">SMO算法</a><ul>
+<li><a href="#1platt的smo算法" rel="nofollow">1Platt的SMO算法</a></li>
+<li><a href="#2smo算法的解法" rel="nofollow">2SMO算法的解法</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#四-编程求解线性svm" rel="nofollow">四 编程求解线性SVM</a><ul>
+<li><a href="#1可视化数据集" rel="nofollow">1可视化数据集</a></li>
+<li><a href="#2简化版smo算法" rel="nofollow">2简化版SMO算法</a></li>
+</ul>
+</li>
+<li><a href="#五-总结" rel="nofollow">五 总结</a></li>
+</ul>
+</div>
+</div>
+</p>
+
+
+
+<h1 id="一-前言">一 前言</h1>
+
+<p>说来惭愧，断更快半个月了，本打算是一周一篇的。感觉SVM瞬间难了不少，推导耗费了很多时间，同时身边的事情也不少，忙了许久。本篇文章参考了诸多大牛的文章写成的，对于什么是SVM做出了生动的阐述，同时也进行了线性SVM的理论推导，以及最后的编程实践，公式较多，还需静下心来一点一点推导。</p>
+
+<p>本文出现的所有代码，均可在我的github上下载，欢迎Follow、Star：<a href="https://github.com/Jack-Cherish/Machine-Learning" rel="nofollow" target="_blank">https://github.com/Jack-Cherish/Machine-Learning</a></p>
+
+<h1 id="二-什么是svm">二 什么是SVM？</h1>
+
+<p>SVM的英文全称是Support Vector Machines，我们叫它支持向量机。支持向量机是我们用于分类的一种算法。让我们以一个小故事的形式，开启我们的SVM之旅吧。</p>
+
+<p>在很久以前的情人节，一位大侠要去救他的爱人，但天空中的魔鬼和他玩了一个游戏。</p>
+
+<p>魔鬼在桌子上似乎有规律放了两种颜色的球，说：”你用一根棍分开它们？要求：尽量在放更多球之后，仍然适用。”</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923165027315?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>于是大侠这样放，干的不错？</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923165115473?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>然后魔鬼，又在桌上放了更多的球，似乎有一个球站错了阵营。显然，大侠需要对棍做出调整。</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923165142381?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p><strong>SVM就是试图把棍放在最佳位置，好让在棍的两边有尽可能大的间隙。这个间隙就是球到棍的距离。</strong></p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923170200381?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>现在好了，即使魔鬼放了更多的球，棍仍然是一个好的分界线。</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923170228849?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>魔鬼看到大侠已经学会了一个trick(方法、招式)，于是魔鬼给了大侠一个新的挑战。</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923170253159?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>现在，大侠没有棍可以很好帮他分开两种球了，现在怎么办呢？当然像所有武侠片中一样大侠桌子一拍，球飞到空中。然后，凭借大侠的轻功，大侠抓起一张纸，插到了两种球的中间。</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923170319898?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>现在，从空中的魔鬼的角度看这些球，这些球看起来像是被一条曲线分开了。</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923170416057?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>再之后，无聊的大人们，把这些球叫做<strong>data</strong>，把棍子叫做<strong>classifier</strong>, 找到最大间隙的<strong>trick</strong>叫做<strong>optimization</strong>，拍桌子叫做<strong>kernelling</strong>, 那张纸叫做<strong>hyperplane</strong>。</p>
+
+<p>更为直观地感受一下吧(需要翻墙)：<a href="https://www.youtube.com/watch?v=3liCbRZPrZA" rel="nofollow" target="_blank">https://www.youtube.com/watch?v=3liCbRZPrZA</a></p>
+
+<p><strong>概述一下：</strong></p>
+
+<p>当一个分类问题，数据是线性可分的，也就是用一根棍就可以将两种小球分开的时候，我们只要将棍的位置放在让小球距离棍的距离最大化的位置即可，寻找这个最大间隔的过程，就叫做最优化。但是，现实往往是很残酷的，一般的数据是线性不可分的，也就是找不到一个棍将两种小球很好的分类。这个时候，我们就需要像大侠一样，将小球拍起，用一张纸代替小棍将小球进行分类。想要让数据飞起，我们需要的东西就是核函数(kernel)，用于切分小球的纸，就是超平面。</p>
+
+<p>也许这个时候，你还是似懂非懂，没关系。根据刚才的描述，可以看出，问题是从线性可分延伸到线性不可分的。那么，我们就按照这个思路，进行原理性的剖析。</p>
+
+<h1 id="三-线性svm">三 线性SVM</h1>
+
+<p>先看下线性可分的二分类问题。</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923170544874?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>上图中的(a)是已有的数据，红色和蓝色分别代表两个不同的类别。数据显然是线性可分的，但是将两类数据点分开的直线显然不止一条。上图的(b)和(c)分别给出了B、C两种不同的分类方案，其中黑色实线为分界线，术语称为“决策面”。每个决策面对应了一个线性分类器。虽然从分类结果上看，分类器A和分类器B的效果是相同的。但是他们的性能是有差距的，看下图：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923170619352?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>在”决策面”不变的情况下，我又添加了一个红点。可以看到，分类器B依然能很好的分类结果，而分类器C则出现了分类错误。显然分类器B的”决策面”放置的位置优于分类器C的”决策面”放置的位置，SVM算法也是这么认为的，它的依据就是分类器B的分类间隔比分类器C的分类间隔大。这里涉及到第一个SVM独有的概念”分类间隔”。在保证决策面方向不变且不会出现错分样本的情况下移动决策面，会在原来的决策面两侧找到两个极限位置（越过该位置就会产生错分现象），如虚线所示。虚线的位置由决策面的方向和距离原决策面最近的几个样本的位置决定。而这两条平行虚线正中间的分界线就是在保持当前决策面方向不变的前提下的最优决策面。两条虚线之间的垂直距离就是这个最优决策面对应的分类间隔。显然每一个可能把数据集正确分开的方向都有一个最优决策面（有些方向无论如何移动决策面的位置也不可能将两类样本完全分开），而不同方向的最优决策面的分类间隔通常是不同的，那个具有“最大间隔”的决策面就是SVM要寻找的最优解。而这个真正的最优解对应的两侧虚线所穿过的样本点，就是SVM中的支持样本点，称为”支持向量”。</p>
+
+<h2 id="1-数学建模">1 数学建模</h2>
+
+<p>求解这个”决策面”的过程，就是最优化。一个最优化问题通常有两个基本的因素：1）目标函数，也就是你希望什么东西的什么指标达到最好；2）优化对象，你期望通过改变哪些因素来使你的目标函数达到最优。在线性SVM算法中，目标函数显然就是那个”分类间隔”，而优化对象则是决策面。所以要对SVM问题进行数学建模，首先要对上述两个对象（”分类间隔”和”决策面”）进行数学描述。按照一般的思维习惯，我们先描述决策面。</p>
+
+<p>数学建模的时候，先在二维空间建模，然后再推广到多维。</p>
+
+<h3 id="1决策面方程">（1）”决策面”方程</h3>
+
+<p>我们都知道二维空间下一条直线的方式如下所示：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923170727730?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>现在我们做个小小的改变，让原来的x轴变成x1，y轴变成x2。</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923170755765?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>移项得：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923170822756?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>将公式向量化得：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923170855067?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>进一步向量化，用w列向量和x列向量和标量γ进一步向量化：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923170921357?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>其中，向量w和x分别为：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923170949079?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>这里w1=a，w2=-1。我们都知道，最初的那个直线方程a和b的几何意义，a表示直线的斜率，b表示截距，a决定了直线与x轴正方向的夹角，b决定了直线与y轴交点位置。那么向量化后的直线的w和r的几何意义是什么呢？</p>
+
+<p>现在假设：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20171009144156759?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>可得：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923171248966?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>在坐标轴上画出直线和向量w：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170925193308065?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>蓝色的线代表向量w，红色的先代表直线y。我们可以看到向量w和直线的关系为垂直关系。这说明了向量w也控制这直线的方向，只不过是与这个直线的方向是垂直的。标量γ的作用也没有变，依然决定了直线的截距。此时，我们称w为直线的法向量。</p>
+
+<p>二维空间的直线方程已经推导完成，将其推广到n为空间，就变成了超平面方程。(一个超平面，在二维空间的例子就是一个直线)但是它的公式没变，依然是：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923171351900?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>不同之处在于：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923171420742?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>我们已经顺利推导出了”决策面”方程，它就是我们的超平面方程，之后，我们统称其为超平面方程。</p>
+
+<h3 id="2分类间隔方程">（2）”分类间隔”方程</h3>
+
+<p>现在，我们依然对于一个二维平面的简单例子进行推导。</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923171540791?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>我们已经知道间隔的大小实际上就是支持向量对应的样本点到决策面的距离的二倍。那么图中的距离d我们怎么求？我们高中都学过，点到直线的距离距离公式如下：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923171610356?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>公式中的直线方程为Ax0+By0+C=0，点P的坐标为(x0,y0)。</p>
+
+<p>现在，将直线方程扩展到多维，求得我们现在的超平面方程，对公式进行如下变形：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923171637926?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>这个d就是”分类间隔”。其中||w||表示w的二范数，求所有元素的平方和，然后再开方。比如对于二维平面：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923171706926?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>那么，</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923171733417?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>我们目的是为了找出一个分类效果好的超平面作为分类器。分类器的好坏的评定依据是分类间隔W=2d的大小，即分类间隔W越大，我们认为这个超平面的分类效果越好。此时，求解超平面的问题就变成了求解分类间隔W最大化的为题。W的最大化也就是d最大化的。</p>
+
+<h3 id="3约束条件">（3）约束条件</h3>
+
+<p>看起来，我们已经顺利获得了目标函数的数学形式。但是为了求解w的最大值。我们不得不面对如下问题：</p>
+
+<ul>
+<li>我们如何判断超平面是否将样本点正确分类？</li>
+<li>我们知道相求距离d的最大值，我们首先需要找到支持向量上的点，怎么在众多的点中选出支持向量上的点呢？</li>
+</ul>
+
+<p>上述我们需要面对的问题就是约束条件，也就是说我们优化的变量d的取值范围受到了限制和约束。事实上约束条件一直是最优化问题里最让人头疼的东西。但既然我们已经知道了这些约束条件确实存在，就不得不用数学语言对他们进行描述。但SVM算法通过一些巧妙的小技巧，将这些约束条件融合到一个不等式里面。</p>
+
+<p>这个二维平面上有两种点，我们分别对它们进行标记：</p>
+
+<ul>
+<li>红颜色的圆点标记为1，我们人为规定其为正样本；</li>
+<li>蓝颜色的五角星标记为-1，我们人为规定其为负样本。</li>
+</ul>
+
+<p>对每个样本点xi加上一个类别标签yi：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923171905897?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>如果我们的超平面方程能够完全正确地对上图的样本点进行分类，就会满足下面的方程：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923171933138?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>如果我们要求再高一点，假设决策面正好处于间隔区域的中轴线上，并且相应的支持向量对应的样本点到决策面的距离为d，那么公式进一步写成：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923172000544?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>上述公式的解释就是，对于所有分类标签为1的样本点，它们到直线的距离都大于等于d(支持向量上的样本点到超平面的距离)。对于所有分类标签为-1的样本点，它们到直线的距离都小于等于d。公式两边都除以d，就可以得到：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923172027169?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>其中，</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923172051319?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>因为||w||和d都是标量。所上述公式的两个矢量，依然描述一条直线的法向量和截距。</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923172119166?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>上述两个公式，都是描述一条直线，数学模型代表的意义是一样的。现在，让我们对wd和γd重新起个名字，就叫它们w和γ。因此，我们就可以说：”对于存在分类间隔的两类样本点，我们一定可以找到一些超平面面，使其对于所有的样本点均满足下面的条件：”</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20171030230804176?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>上述方程即给出了SVM最优化问题的约束条件。这时候，可能有人会问了，为什么标记为1和-1呢？因为这样标记方便我们将上述方程变成如下形式：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923172259072?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>正是因为标签为1和-1，才方便我们将约束条件变成一个约束方程，从而方便我们的计算。</p>
+
+<h3 id="4线性svm优化问题基本描述">（4）线性SVM优化问题基本描述</h3>
+
+<p>现在整合一下思路，我们已经得到我们的目标函数：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923172358421?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>我们的优化目标是是d最大化。我们已经说过，我们是用支持向量上的样本点求解d的最大化的问题的。那么支持向量上的样本点有什么特点呢？</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923172456094?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>你赞同这个观点吗？所有支持向量上的样本点，都满足如上公式。如果不赞同，请重看”分类间隔”方程推导过程。</p>
+
+<p>现在我们就可以将我们的目标函数进一步化简：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923172524509?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>因为，我们只关心支持向量上的点。随后我们求解d的最大化问题变成了||w||的最小化问题。进而||w||的最小化问题等效于</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923172617826?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>为什么要做这样的等效呢？这是为了在进行最优化的过程中对目标函数求导时比较方便，但这绝对不影响最优化问题最后的求解。我们将最终的目标函数和约束条件放在一起进行描述：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923172648006?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>这里n是样本点的总个数，缩写s.t.表示”Subject to”，是”服从某某条件”的意思。上述公式描述的是一个典型的不等式约束条件下的二次型函数优化问题，同时也是支持向量机的基本数学模型。</p>
+
+<h3 id="5求解准备">（5）求解准备</h3>
+
+<p>我们已经得到支持向量机的基本数学模型，接下来的问题就是如何根据数学模型，求得我们想要的最优解。在学习求解方法之前，我们得知道一点，想用我下面讲述的求解方法有一个前提，就是我们的目标函数必须是凸函数。理解凸函数，我们还要先明确另一个概念，凸集。在凸几何中，凸集(convex set)是在)凸组合下闭合的放射空间的子集。看一幅图可能更容易理解：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923172757190?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>左右量图都是一个集合。<strong>如果集合中任意2个元素连线上的点也在集合中，那么这个集合就是凸集。</strong>显然，上图中的左图是一个凸集，上图中的右图是一个非凸集。</p>
+
+<p>凸函数的定义也是如此，其几何意义表示为函数任意两点连线上的值大于对应自变量处的函数值。若这里凸集C即某个区间L，那么，设函数f为定义在区间L上的函数，若对L上的任意两点x1，x2和任意的实数λ，λ属于(0,1)，总有：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923172830397?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>则函数f称为L上的凸函数，当且仅当其上镜图（在函数图像上方的点集）为一个凸集。再看一幅图，也许更容易理解：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923172859911?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>像上图这样的函数，它整体就是一个非凸函数，我们无法获得全局最优解的，只能获得局部最优解。比如红框内的部分，如果单独拿出来，它就是一个凸函数。对于我们的目标函数：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923172944919?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>很显然，它是一个凸函数。所以，可以使用我接下来讲述的方法求取最优解。</p>
+
+<p>通常我们需要求解的最优化问题有如下几类：</p>
+
+<ul>
+<li>无约束优化问题，可以写为：</li>
+</ul>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923173020282?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<ul>
+<li>有等式约束的优化问题，可以写为：</li>
+</ul>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923173050761?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<ul>
+<li>有不等式约束的优化问题，可以写为：</li>
+</ul>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923173128075?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>对于第(a)类的优化问题，尝尝使用的方法就是费马大定理(Fermat)，即使用求取函数f(x)的导数，然后令其为零，可以求得候选最优值，再在这些候选值中验证；如果是凸函数，可以保证是最优解。这也就是我们高中经常使用的求函数的极值的方法。</p>
+
+<p>对于第(b)类的优化问题，常常使用的方法就是拉格朗日乘子法（Lagrange Multiplier) ，即把等式约束h_i(x)用一个系数与f(x)写为一个式子，称为拉格朗日函数，而系数称为拉格朗日乘子。通过拉格朗日函数对各个变量求导，令其为零，可以求得候选值集合，然后验证求得最优值。</p>
+
+<p>对于第(c)类的优化问题，常常使用的方法就是KKT条件。同样地，我们把所有的等式、不等式约束与f(x)写为一个式子，也叫拉格朗日函数，系数也称拉格朗日乘子，通过一些条件，可以求出最优值的<strong>必要条件</strong>，这个条件称为KKT条件。</p>
+
+<p>必要条件和充要条件如果不理解，可以看下面这句话：</p>
+
+<ul>
+<li>A的<strong>必要条件</strong>就是A可以推出的<strong>结论</strong></li>
+<li>A的<strong>充分条件</strong>就是可以推出A的<strong>前提</strong></li>
+</ul>
+
+<p>了解到这些，现在让我们再看一下我们的最优化问题：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923173238470?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>现在，我们的这个对优化问题属于哪一类？很显然，它属于第(c)类问题。因为，在学习求解最优化问题之前，我们还要学习两个东西：拉格朗日函数和KKT条件。</p>
+
+<h3 id="6拉格朗日函数">（6）拉格朗日函数</h3>
+
+<p>首先，我们先要从宏观的视野上了解一下<strong>拉格朗日对偶问题出现的原因和背景。</strong></p>
+
+<p>我们知道我们要求解的是最小化问题，所以一个直观的想法是如果我能够构造一个函数，使得该函数在可行解区域内与原目标函数完全一致，而在可行解区域外的数值非常大，甚至是无穷大，那么这个<strong>没有约束条件的新目标函数的优化问题就</strong>与原来<strong>有约束条件的原始目标函数的优化问题</strong>是等价的问题。这就是使用拉格朗日方程的目的，它将约束条件放到目标函数中，<strong>从而将有约束优化问题转换为无约束优化问题。</strong></p>
+
+<p>随后，人们又发现，使用拉格朗日获得的函数，使用求导的方法求解依然困难。进而，需要对问题再进行一次转换，即使用一个数学技巧：<strong>拉格朗日对偶。</strong></p>
+
+<p>所以，显而易见的是，我们在拉格朗日优化我们的问题这个道路上，<strong>需要进行下面二个步骤：</strong></p>
+
+<ul>
+<li>将有约束的原始目标函数转换为无约束的新构造的拉格朗日目标函数</li>
+<li>使用拉格朗日对偶性，将不易求解的优化问题转化为易求解的优化</li>
+</ul>
+
+<p>下面，进行第一步：<strong>将有约束的原始目标函数转换为无约束的新构造的拉格朗日目标函数</strong></p>
+
+<p>公式变形如下：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923173537336?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>其中αi是拉格朗日乘子，αi大于等于0，是我们构造新目标函数时引入的系数变量(我们自己设置)。现在我们令：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923173612138?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>当样本点不满足约束条件时，即<strong>在可行解区域外</strong>：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923173641347?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>此时，我们将αi设置为正无穷，此时θ(w)显然也是正无穷。</p>
+
+<p>当样本点满足约束条件时，即<strong>在可行解区域内：</strong></p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923173710505?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>此时，显然θ(w)为原目标函数本身。我们将上述两种情况结合一下，就得到了新的目标函数：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923173733435?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>此时，再看我们的初衷，就是为了建立一个在可行解区域内与原目标函数相同，在可行解区域外函数值趋近于无穷大的新函数，现在我们做到了。</p>
+
+<p>现在，我们的问题变成了求新目标函数的最小值，即：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923173800720?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>这里用p*表示这个问题的最优值，且和最初的问题是等价的。</p>
+
+<p>接下来，我们进行第二步：<strong>将不易求解的优化问题转化为易求解的优化</strong></p>
+
+<p>我们看一下我们的新目标函数，先求最大值，再求最小值。这样的话，我们首先就要面对带有需要求解的参数w和b的方程，而αi又是不等式约束，这个求解过程不好做。所以，我们需要使用拉格朗日函数对偶性，将最小和最大的位置交换一下，这样就变成了：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923173832514?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>交换以后的新问题是原始问题的对偶问题，这个新问题的最优值用d*来表示。而且d*&lt;=p*。我们关心的是d=p的时候，这才是我们要的解。需要什么条件才能让d=p呢？</p>
+
+<ul>
+<li>首先必须满足这个优化问题是凸优化问题。</li>
+<li>其次，需要满足KKT条件。</li>
+</ul>
+
+<p>凸优化问题的定义是：<strong>求取最小值的目标函数为凸函数的一类优化问题。</strong>目标函数是凸函数我们已经知道，这个优化问题又是求最小值。所以我们的最优化问题就是凸优化问题。</p>
+
+<p>接下里，就是探讨是否满足KKT条件了。</p>
+
+<h3 id="7kkt条件">（7）KKT条件</h3>
+
+<p>我们已经使用拉格朗日函数对我们的目标函数进行了处理，生成了一个新的目标函数。通过一些条件，可以求出最优值的必要条件，这个条件就是接下来要说的KKT条件。一个最优化模型能够表示成下列标准形式：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923174024269?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>KKT条件的全称是Karush-Kuhn-Tucker条件，KKT条件是说最优值条件必须满足以下条件：</p>
+
+<ul>
+<li>条件一：经过拉格朗日函数处理之后的新目标函数L(w,b,α)对α求导为零：</li>
+<li>条件二：h(x) = 0；</li>
+<li>条件三：α*g(x) = 0；</li>
+</ul>
+
+<p>对于我们的优化问题：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923174108494?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>显然，条件二已经满足了。另外两个条件为啥也满足呢？</p>
+
+<p>这里原谅我省略一系列证明步骤，感兴趣的可以移步这里：<a href="http://blog.csdn.net/xianlingmao/article/details/7919597" rel="nofollow" target="_blank">http://blog.csdn.net/xianlingmao/article/details/7919597</a></p>
+
+<p>这里已经给出了很好的解释。现在，凸优化问题和KKT都满足了，问题转换成了对偶问题。而求解这个对偶学习问题，可以分为三个步骤：首先要让L(w,b,α)关于w和b最小化，然后求对α的极大，最后利用SMO算法求解对偶问题中的拉格朗日乘子。</p>
+
+<h3 id="8对偶问题求解">（8）对偶问题求解</h3>
+
+<p><strong>第一步：</strong></p>
+
+<p>根据上述推导已知：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923174148322?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>首先固定α，要让L(w,b,α)关于w和b最小化，我们分别对w和b偏导数，令其等于0，即：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923174216260?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>将上述结果带回L(w,b,α)得到：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923174244541?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>从上面的最后一个式子，我们可以看出，此时的L(w,b,α)函数只含有一个变量，即αi。</p>
+
+<p><strong>第二步：</strong></p>
+
+<p>现在内侧的最小值求解完成，我们求解外侧的最大值，从上面的式子得到</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923174321119?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>现在我们的优化问题变成了如上的形式。对于这个问题，我们有更高效的优化算法，即序列最小优化（SMO）算法。我们通过这个优化算法能得到α，再根据α，我们就可以求解出w和b，进而求得我们最初的目的：找到超平面，即”决策平面”。</p>
+
+<p><strong>总结一句话：我们为啥使出吃奶的劲儿进行推导？因为我们要将最初的原始问题，转换到可以使用SMO算法求解的问题，这是一种最流行的求解方法。为啥用这种求解方法？因为它牛逼啊！</strong></p>
+
+<h2 id="2-smo算法">2 SMO算法</h2>
+
+<p>现在，我们已经得到了可以用SMO算法求解的目标函数，但是对于怎么编程实现SMO算法还是感觉无从下手。那么现在就聊聊如何使用SMO算法进行求解。</p>
+
+
+
+<h3 id="1platt的smo算法">（1）Platt的SMO算法</h3>
+
+<p>1996年，John Platt发布了一个称为SMO的强大算法，用于训练SVM。SM表示序列最小化(Sequential Minimal Optimizaion)。Platt的SMO算法是将大优化问题分解为多个小优化问题来求解的。这些小优化问题往往很容易求解，并且对它们进行顺序求解的结果与将它们作为整体来求解的结果完全一致的。在结果完全相同的同时，SMO算法的求解时间短很多。</p>
+
+<p>SMO算法的目标是求出一系列alpha和b，一旦求出了这些alpha，就很容易计算出权重向量w并得到分隔超平面。</p>
+
+<p>SMO算法的工作原理是：每次循环中选择两个alpha进行优化处理。一旦找到了一对合适的alpha，那么就增大其中一个同时减小另一个。这里所谓的”合适”就是指两个alpha必须符合以下两个条件，条件之一就是两个alpha必须要在间隔边界之外，而且第二个条件则是这两个alpha还没有进进行过区间化处理或者不在边界上。</p>
+
+
+
+<h3 id="2smo算法的解法">（2）SMO算法的解法</h3>
+
+<p>先来定义特征到结果的输出函数为：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923174435490?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>接着，我们回忆一下原始优化问题，如下：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923174502951?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>求导得：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923174532667?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>将上述公式带入输出函数中：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923174619049?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>与此同时，拉格朗日对偶后得到最终的目标化函数：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923174646051?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>将目标函数变形，在前面增加一个符号，将最大值问题转换成最小值问题：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923174714198?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>实际上，对于上述目标函数，是存在一个假设的，即数据100%线性可分。但是，目前为止，我们知道几乎所有数据都不那么”干净”。这时我们就可以通过引入所谓的<strong>松弛变量</strong>(slack variable)，来允许有些数据点可以处于超平面的错误的一侧。这样我们的优化目标就能保持仍然不变，但是此时我们的约束条件有所改变：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923174748612?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>根据KKT条件可以得出其中αi取值的意义为：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923174820376?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<ul>
+<li>对于第1种情况，表明αi是正常分类，在边界内部；</li>
+<li>对于第2种情况，表明αi是支持向量，在边界上；</li>
+<li>对于第3种情况，表明αi是在两条边界之间。</li>
+</ul>
+
+<p>而最优解需要满足KKT条件，即上述3个条件都得满足，以下几种情况出现将会不满足：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923174904018?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>也就是说，如果存在不能满足KKT条件的αi，那么需要更新这些αi，这是第一个约束条件。此外，更新的同时还要受到第二个约束条件的限制，即：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923174937060?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>因为这个条件，我们同时更新两个α值，因为只有成对更新，才能保证更新之后的值仍然满足和为0的约束，假设我们选择的两个乘子为α1和α2：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923175004358?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>其中， ksi为常数。因为两个因子不好同时求解，所以可以先求第二个乘子α2的解（α2 new），得到α2的解（α2 new）之后，再用α2的解（α2 new）表示α1的解（α1 new ）。为了求解α2 new ，得先确定α2 new的取值范围。假设它的上下边界分别为H和L，那么有：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923180329083?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>接下来，综合下面两个条件：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923180545160?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>当y1不等于y2时，即一个为正1，一个为负1的时候，可以得到：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923180611966?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>所以有：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923180638514?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>此时，取值范围如下图所示：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923180705668?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>当y1等于y2时，即两个都为正1或者都为负1，可以得到：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923180937925?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>所以有：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181001882?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>此时，取值范围如下图所示：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181027756?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>如此，根据y1和y2异号或同号，可以得出α2 new的上下界分别为：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181049977?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>这个界限就是编程的时候需要用到的。已经确定了边界，接下来，就是推导迭代式，用于更新 α值。</p>
+
+<p>我们已经知道，更新α的边界，接下来就是讨论如何更新α值。我们依然假设选择的两个乘子为α1和α2。固定这两个乘子，进行推导。于是目标函数变成了：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181141690?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"> <br>
+<a href="https://img-blog.csdn.net/20170923181141690?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" rel="nofollow" target="_blank">点击放大图片</a></div><p></p>
+
+<p></p>
+
+<p>为了描述方便，我们定义如下符号：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181215838?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>最终目标函数变为：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181246552?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>我们不关心constant的部分，因为对于α1和α2来说，它们都是常数项，在求导的时候，直接变为0。对于这个目标函数，如果对其求导，还有个未知数α1，所以要推导出α1和α2的关系，然后用α2代替α1，这样目标函数就剩一个未知数了，我们就可以求导了，推导出迭代公式。所以现在继续推导α1和α2的关系。注意第一个约束条件：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181313611?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>我们在求α1和α2的时候，可以将α3,α4,…,αn和y3,y4,…,yn看作常数项。因此有：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181341828?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>我们不必关心常数B的大小，现在将上述等式两边同时乘以y1，得到(y1y1=1)：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181411815?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>其中γ为常数By1，我们不关心这个值，s=y1y2。接下来，我们将得到的α1带入W(α2)公式得：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181439699?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>这样目标函数中就只剩下α2了，我们对其求偏导（注意：s=y1y2，所以s的平方为1，y1的平方和y2的平方均为1）：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181503702?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>继续化简，将s=y1y2带入方程。</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181529352?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>我们令：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181558953?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>Ei为误差项，η为学习速率。</p>
+
+<p>再根据我们已知的公式：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181623658?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>将α2 new继续化简得：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181649464?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>这样，我们就得到了最终需要的迭代公式。这个是没有经过剪辑是的解，需要考虑约束：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181716481?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>根据之前推导的α取值范围，我们得到最终的解析解为：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181742751?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>又因为：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181810852?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>消去γ得：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181835098?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>这样，我们就知道了怎样计算α1和α2了，也就是如何对选择的α进行更新。</p>
+
+<p>当我们更新了α1和α2之后，需要重新计算阈值b，因为b关系到了我们f(x)的计算，也就关系到了误差Ei的计算。</p>
+
+<p>我们要根据α的取值范围，去更正b的值，使间隔最大化。当α1 new在0和C之间的时候，根据KKT条件可知，这个点是支持向量上的点。因此，满足下列公式：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181859506?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>公式两边同时乘以y1得(y1y1=1)：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923181936489?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>因为我们是根据α1和α2的值去更新b，所以单独提出i=1和i=2的时候，整理可得：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923182308642?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>其中前两项为：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923182336636?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>将上述两个公式，整理得：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923182416056?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>同理可得b2 new为：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923182445864?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>当b1和b2都有效的时候，它们是相等的，即：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923182508724?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>当两个乘子都在边界上，则b阈值和KKT条件一致。当不满足的时候，SMO算法选择他们的中点作为新的阈值：</p>
+
+<p></p>
+
+<p></p><div align="center"><img src="https://img-blog.csdn.net/20170923182533723?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div><p></p>
+
+<p></p>
+
+<p>最后，更新所有的α和b，这样模型就出来了，从而即可求出我们的分类函数。</p>
+
+<p><strong>现在，让我们梳理下SMO算法的步骤：</strong></p>
+
+<ul>
+<li>步骤1：计算误差： <br>
+<p></p> <br>
+<div align="center"><img src="https://img-blog.csdn.net/20170923182612798?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div></li>
+</ul>
+
+<p></p>
+
+<ul>
+<li>步骤2：计算上下界L和H： <br>
+<p></p> <br>
+<div align="center"><img src="https://img-blog.csdn.net/20170923182647508?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div></li>
+</ul>
+
+<p></p>
+
+<ul>
+<li>步骤3：计算η： <br>
+<p></p> <br>
+<div align="center"><img src="https://img-blog.csdn.net/20170923182713063?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div></li>
+</ul>
+
+<p></p>
+
+<ul>
+<li>步骤4：更新αj： <br>
+<p></p> <br>
+<div align="center"><img src="https://img-blog.csdn.net/20170923182754964?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div></li>
+</ul>
+
+<p></p>
+
+<ul>
+<li>步骤5：根据取值范围修剪αj： <br>
+<p></p> <br>
+<div align="center"><img src="https://img-blog.csdn.net/20170923182819257?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div></li>
+</ul>
+
+<p></p>
+
+<ul>
+<li>步骤6：更新αi： <br>
+<p></p> <br>
+<div align="center"><img src="https://img-blog.csdn.net/20170923182850407?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div></li>
+</ul>
+
+<p></p>
+
+<ul>
+<li>步骤7：更新b1和b2： <br>
+<p></p> <br>
+<div align="center"><img src="https://img-blog.csdn.net/20170923182918560?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div></li>
+</ul>
+
+<p></p>
+
+<ul>
+<li>步骤8：根据b1和b2更新b： <br>
+<p></p> <br>
+<div align="center"><img src="https://img-blog.csdn.net/20170923182938819?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast"></div></li>
+</ul>
+
+<p></p>
+
+<h1 id="四-编程求解线性svm">四 编程求解线性SVM</h1>
+
+<p>已经梳理完了SMO算法实现步骤，接下来按照这个思路编写代码，进行实战练习。</p>
+
+
+
+<h2 id="1可视化数据集">（1）可视化数据集</h2>
+
+<p>我们先使用简单的数据集进行测试，数据集下载地址：<a href="https://github.com/Jack-Cherish/Machine-Learning/blob/master/SVM/testSet.txt" rel="nofollow" target="_blank">https://github.com/Jack-Cherish/Machine-Learning/blob/master/SVM/testSet.txt</a></p>
+
+<p>编写程序可视化数据集，看下它是长什么样的：</p>
+
+
+
+<pre class="prettyprint"><code class="language-python hljs "><span class="hljs-comment"># -*- coding:UTF-8 -*-</span>
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+
+<span class="hljs-string">"""
+函数说明:读取数据
+
+Parameters:
+    fileName - 文件名
+Returns:
+    dataMat - 数据矩阵
+    labelMat - 数据标签
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-09-21
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">loadDataSet</span><span class="hljs-params">(fileName)</span>:</span>
+    dataMat = []; labelMat = []
+    fr = open(fileName)
+    <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> fr.readlines():                                     <span class="hljs-comment">#逐行读取，滤除空格等</span>
+        lineArr = line.strip().split(<span class="hljs-string">'\t'</span>)
+        dataMat.append([float(lineArr[<span class="hljs-number">0</span>]), float(lineArr[<span class="hljs-number">1</span>])])      <span class="hljs-comment">#添加数据</span>
+        labelMat.append(float(lineArr[<span class="hljs-number">2</span>]))                          <span class="hljs-comment">#添加标签</span>
+    <span class="hljs-keyword">return</span> dataMat,labelMat
+
+<span class="hljs-string">"""
+函数说明:数据可视化
+
+Parameters:
+    dataMat - 数据矩阵
+    labelMat - 数据标签
+Returns:
+    无
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-09-21
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">showDataSet</span><span class="hljs-params">(dataMat, labelMat)</span>:</span>
+    data_plus = []                                  <span class="hljs-comment">#正样本</span>
+    data_minus = []                                 <span class="hljs-comment">#负样本</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(len(dataMat)):
+        <span class="hljs-keyword">if</span> labelMat[i] &gt; <span class="hljs-number">0</span>:
+            data_plus.append(dataMat[i])
+        <span class="hljs-keyword">else</span>:
+            data_minus.append(dataMat[i])
+    data_plus_np = np.array(data_plus)              <span class="hljs-comment">#转换为numpy矩阵</span>
+    data_minus_np = np.array(data_minus)            <span class="hljs-comment">#转换为numpy矩阵</span>
+    plt.scatter(np.transpose(data_plus_np)[<span class="hljs-number">0</span>], np.transpose(data_plus_np)[<span class="hljs-number">1</span>])   <span class="hljs-comment">#正样本散点图</span>
+    plt.scatter(np.transpose(data_minus_np)[<span class="hljs-number">0</span>], np.transpose(data_minus_np)[<span class="hljs-number">1</span>]) <span class="hljs-comment">#负样本散点图</span>
+    plt.show()
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>:
+    dataMat, labelMat = loadDataSet(<span class="hljs-string">'testSet.txt'</span>)
+    showDataSet(dataMat, labelMat)</code></pre>
+
+<p>运行程序，查看结果：</p>
+
+<p></p><p></p>
+
+<div><img src="https://img-blog.csdn.net/20170923183052127?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+
+这就是我们使用的二维数据集，显然线性可分。现在我们使用简化版的SMO算法进行求解。
+
+
+
+
+
+</div>
+
+<h2 id="2简化版smo算法">（2）简化版SMO算法</h2>
+
+<p>按照上述已经推导的步骤编写代码：</p>
+
+
+
+<pre class="prettyprint"><code class="language-python hljs "><span class="hljs-comment"># -*- coding:UTF-8 -*-</span>
+<span class="hljs-keyword">from</span> time <span class="hljs-keyword">import</span> sleep
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">import</span> random
+<span class="hljs-keyword">import</span> types
+
+<span class="hljs-string">"""
+函数说明:读取数据
+
+Parameters:
+    fileName - 文件名
+Returns:
+    dataMat - 数据矩阵
+    labelMat - 数据标签
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-09-21
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">loadDataSet</span><span class="hljs-params">(fileName)</span>:</span>
+    dataMat = []; labelMat = []
+    fr = open(fileName)
+    <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> fr.readlines():                                     <span class="hljs-comment">#逐行读取，滤除空格等</span>
+        lineArr = line.strip().split(<span class="hljs-string">'\t'</span>)
+        dataMat.append([float(lineArr[<span class="hljs-number">0</span>]), float(lineArr[<span class="hljs-number">1</span>])])      <span class="hljs-comment">#添加数据</span>
+        labelMat.append(float(lineArr[<span class="hljs-number">2</span>]))                          <span class="hljs-comment">#添加标签</span>
+    <span class="hljs-keyword">return</span> dataMat,labelMat
+
+
+<span class="hljs-string">"""
+函数说明:随机选择alpha
+
+Parameters:
+    i - alpha
+    m - alpha参数个数
+Returns:
+    j -
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-09-21
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">selectJrand</span><span class="hljs-params">(i, m)</span>:</span>
+    j = i                                 <span class="hljs-comment">#选择一个不等于i的j</span>
+    <span class="hljs-keyword">while</span> (j == i):
+        j = int(random.uniform(<span class="hljs-number">0</span>, m))
+    <span class="hljs-keyword">return</span> j
+
+<span class="hljs-string">"""
+函数说明:修剪alpha
+
+Parameters:
+    aj - alpha值
+    H - alpha上限
+    L - alpha下限
+Returns:
+    aj - alpah值
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-09-21
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">clipAlpha</span><span class="hljs-params">(aj,H,L)</span>:</span>
+    <span class="hljs-keyword">if</span> aj &gt; H:
+        aj = H
+    <span class="hljs-keyword">if</span> L &gt; aj:
+        aj = L
+    <span class="hljs-keyword">return</span> aj
+
+<span class="hljs-string">"""
+函数说明:简化版SMO算法
+
+Parameters:
+    dataMatIn - 数据矩阵
+    classLabels - 数据标签
+    C - 松弛变量
+    toler - 容错率
+    maxIter - 最大迭代次数
+Returns:
+    无
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-09-23
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">smoSimple</span><span class="hljs-params">(dataMatIn, classLabels, C, toler, maxIter)</span>:</span>
+    <span class="hljs-comment">#转换为numpy的mat存储</span>
+    dataMatrix = np.mat(dataMatIn); labelMat = np.mat(classLabels).transpose()
+    <span class="hljs-comment">#初始化b参数，统计dataMatrix的维度</span>
+    b = <span class="hljs-number">0</span>; m,n = np.shape(dataMatrix)
+    <span class="hljs-comment">#初始化alpha参数，设为0</span>
+    alphas = np.mat(np.zeros((m,<span class="hljs-number">1</span>)))
+    <span class="hljs-comment">#初始化迭代次数</span>
+    iter_num = <span class="hljs-number">0</span>
+    <span class="hljs-comment">#最多迭代matIter次</span>
+    <span class="hljs-keyword">while</span> (iter_num &lt; maxIter):
+        alphaPairsChanged = <span class="hljs-number">0</span>
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(m):
+            <span class="hljs-comment">#步骤1：计算误差Ei</span>
+            fXi = float(np.multiply(alphas,labelMat).T*(dataMatrix*dataMatrix[i,:].T)) + b
+            Ei = fXi - float(labelMat[i])
+            <span class="hljs-comment">#优化alpha，更设定一定的容错率。</span>
+            <span class="hljs-keyword">if</span> ((labelMat[i]*Ei &lt; -toler) <span class="hljs-keyword">and</span> (alphas[i] &lt; C)) <span class="hljs-keyword">or</span> ((labelMat[i]*Ei &gt; toler) <span class="hljs-keyword">and</span> (alphas[i] &gt; <span class="hljs-number">0</span>)):
+                <span class="hljs-comment">#随机选择另一个与alpha_i成对优化的alpha_j</span>
+                j = selectJrand(i,m)
+                <span class="hljs-comment">#步骤1：计算误差Ej</span>
+                fXj = float(np.multiply(alphas,labelMat).T*(dataMatrix*dataMatrix[j,:].T)) + b
+                Ej = fXj - float(labelMat[j])
+                <span class="hljs-comment">#保存更新前的aplpha值，使用深拷贝</span>
+                alphaIold = alphas[i].copy(); alphaJold = alphas[j].copy();
+                <span class="hljs-comment">#步骤2：计算上下界L和H</span>
+                <span class="hljs-keyword">if</span> (labelMat[i] != labelMat[j]):
+                    L = max(<span class="hljs-number">0</span>, alphas[j] - alphas[i])
+                    H = min(C, C + alphas[j] - alphas[i])
+                <span class="hljs-keyword">else</span>:
+                    L = max(<span class="hljs-number">0</span>, alphas[j] + alphas[i] - C)
+                    H = min(C, alphas[j] + alphas[i])
+                <span class="hljs-keyword">if</span> L==H: print(<span class="hljs-string">"L==H"</span>); <span class="hljs-keyword">continue</span>
+                <span class="hljs-comment">#步骤3：计算eta</span>
+                eta = <span class="hljs-number">2.0</span> * dataMatrix[i,:]*dataMatrix[j,:].T - dataMatrix[i,:]*dataMatrix[i,:].T - dataMatrix[j,:]*dataMatrix[j,:].T
+                <span class="hljs-keyword">if</span> eta &gt;= <span class="hljs-number">0</span>: print(<span class="hljs-string">"eta&gt;=0"</span>); <span class="hljs-keyword">continue</span>
+                <span class="hljs-comment">#步骤4：更新alpha_j</span>
+                alphas[j] -= labelMat[j]*(Ei - Ej)/eta
+                <span class="hljs-comment">#步骤5：修剪alpha_j</span>
+                alphas[j] = clipAlpha(alphas[j],H,L)
+                <span class="hljs-keyword">if</span> (abs(alphas[j] - alphaJold) &lt; <span class="hljs-number">0.00001</span>): print(<span class="hljs-string">"alpha_j变化太小"</span>); <span class="hljs-keyword">continue</span>
+                <span class="hljs-comment">#步骤6：更新alpha_i</span>
+                alphas[i] += labelMat[j]*labelMat[i]*(alphaJold - alphas[j])
+                <span class="hljs-comment">#步骤7：更新b_1和b_2</span>
+                b1 = b - Ei- labelMat[i]*(alphas[i]-alphaIold)*dataMatrix[i,:]*dataMatrix[i,:].T - labelMat[j]*(alphas[j]-alphaJold)*dataMatrix[i,:]*dataMatrix[j,:].T
+                b2 = b - Ej- labelMat[i]*(alphas[i]-alphaIold)*dataMatrix[i,:]*dataMatrix[j,:].T - labelMat[j]*(alphas[j]-alphaJold)*dataMatrix[j,:]*dataMatrix[j,:].T
+                <span class="hljs-comment">#步骤8：根据b_1和b_2更新b</span>
+                <span class="hljs-keyword">if</span> (<span class="hljs-number">0</span> &lt; alphas[i]) <span class="hljs-keyword">and</span> (C &gt; alphas[i]): b = b1
+                <span class="hljs-keyword">elif</span> (<span class="hljs-number">0</span> &lt; alphas[j]) <span class="hljs-keyword">and</span> (C &gt; alphas[j]): b = b2
+                <span class="hljs-keyword">else</span>: b = (b1 + b2)/<span class="hljs-number">2.0</span>
+                <span class="hljs-comment">#统计优化次数</span>
+                alphaPairsChanged += <span class="hljs-number">1</span>
+                <span class="hljs-comment">#打印统计信息</span>
+                print(<span class="hljs-string">"第%d次迭代 样本:%d, alpha优化次数:%d"</span> % (iter_num,i,alphaPairsChanged))
+        <span class="hljs-comment">#更新迭代次数</span>
+        <span class="hljs-keyword">if</span> (alphaPairsChanged == <span class="hljs-number">0</span>): iter_num += <span class="hljs-number">1</span>
+        <span class="hljs-keyword">else</span>: iter_num = <span class="hljs-number">0</span>
+        print(<span class="hljs-string">"迭代次数: %d"</span> % iter_num)
+    <span class="hljs-keyword">return</span> b,alphas
+
+<span class="hljs-string">"""
+函数说明:分类结果可视化
+
+Parameters:
+    dataMat - 数据矩阵
+    w - 直线法向量
+    b - 直线解决
+Returns:
+    无
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-09-23
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">showClassifer</span><span class="hljs-params">(dataMat, w, b)</span>:</span>
+    <span class="hljs-comment">#绘制样本点</span>
+    data_plus = []                                  <span class="hljs-comment">#正样本</span>
+    data_minus = []                                 <span class="hljs-comment">#负样本</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(len(dataMat)):
+        <span class="hljs-keyword">if</span> labelMat[i] &gt; <span class="hljs-number">0</span>:
+            data_plus.append(dataMat[i])
+        <span class="hljs-keyword">else</span>:
+            data_minus.append(dataMat[i])
+    data_plus_np = np.array(data_plus)              <span class="hljs-comment">#转换为numpy矩阵</span>
+    data_minus_np = np.array(data_minus)            <span class="hljs-comment">#转换为numpy矩阵</span>
+    plt.scatter(np.transpose(data_plus_np)[<span class="hljs-number">0</span>], np.transpose(data_plus_np)[<span class="hljs-number">1</span>], s=<span class="hljs-number">30</span>, alpha=<span class="hljs-number">0.7</span>)   <span class="hljs-comment">#正样本散点图</span>
+    plt.scatter(np.transpose(data_minus_np)[<span class="hljs-number">0</span>], np.transpose(data_minus_np)[<span class="hljs-number">1</span>], s=<span class="hljs-number">30</span>, alpha=<span class="hljs-number">0.7</span>) <span class="hljs-comment">#负样本散点图</span>
+    <span class="hljs-comment">#绘制直线</span>
+    x1 = max(dataMat)[<span class="hljs-number">0</span>]
+    x2 = min(dataMat)[<span class="hljs-number">0</span>]
+    a1, a2 = w
+    b = float(b)
+    a1 = float(a1[<span class="hljs-number">0</span>])
+    a2 = float(a2[<span class="hljs-number">0</span>])
+    y1, y2 = (-b- a1*x1)/a2, (-b - a1*x2)/a2
+    plt.plot([x1, x2], [y1, y2])
+    <span class="hljs-comment">#找出支持向量点</span>
+    <span class="hljs-keyword">for</span> i, alpha <span class="hljs-keyword">in</span> enumerate(alphas):
+        <span class="hljs-keyword">if</span> abs(alpha) &gt; <span class="hljs-number">0</span>:
+            x, y = dataMat[i]
+            plt.scatter([x], [y], s=<span class="hljs-number">150</span>, c=<span class="hljs-string">'none'</span>, alpha=<span class="hljs-number">0.7</span>, linewidth=<span class="hljs-number">1.5</span>, edgecolor=<span class="hljs-string">'red'</span>)
+    plt.show()
+
+
+<span class="hljs-string">"""
+函数说明:计算w
+
+Parameters:
+    dataMat - 数据矩阵
+    labelMat - 数据标签
+    alphas - alphas值
+Returns:
+    无
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Zhihu:
+    https://www.zhihu.com/people/Jack--Cui/
+Modify:
+    2017-09-23
+"""</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_w</span><span class="hljs-params">(dataMat, labelMat, alphas)</span>:</span>
+    alphas, dataMat, labelMat = np.array(alphas), np.array(dataMat), np.array(labelMat)
+    w = np.dot((np.tile(labelMat.reshape(<span class="hljs-number">1</span>, -<span class="hljs-number">1</span>).T, (<span class="hljs-number">1</span>, <span class="hljs-number">2</span>)) * dataMat).T, alphas)
+    <span class="hljs-keyword">return</span> w.tolist()
+
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>:
+    dataMat, labelMat = loadDataSet(<span class="hljs-string">'testSet.txt'</span>)
+    b,alphas = smoSimple(dataMat, labelMat, <span class="hljs-number">0.6</span>, <span class="hljs-number">0.001</span>, <span class="hljs-number">40</span>)
+    w = get_w(dataMat, labelMat, alphas)
+    showClassifer(dataMat, w, b)</code></pre>
+
+<p>程序运行结果：</p>
+
+<p></p><p></p>
+
+<div><img src="https://img-blog.csdn.net/20170923183337571?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+
+其中，中间的蓝线为求出来的分类器，用红圈圈出的点为支持向量点。
+
+
+
+
+
+</div>
+
+<h1 id="五-总结">五 总结</h1>
+
+<ul>
+<li>本文主要进行了线性SVM的推导，并通过编程实现一个简化版SMO算法；</li>
+<li>本文的简化版SMO算法在选取α的时候，没有选择启发式的选择方法，并且没有两个乘子的计算没有进行优化，所以算法比较耗时，下一篇文章会讲解相应的优化方法；</li>
+<li>本文讨论的是线性SVM，没有使用核函数，下一篇文章将会讲解如何应用核函数，将SVM应用于非线性数据集；</li>
+<li>如有问题，请留言。如有错误，还望指正，谢谢！</li>
+</ul>
+
+<p><strong>PS： 如果觉得本篇本章对您有所帮助，欢迎关注、评论、赞！</strong></p>
+
+<p><strong>参考资料：</strong></p>
+
+<ul>
+<li>[1] 五岁小孩也能看懂的SVM：<a href="https://www.zhihu.com/question/21094489/answer/8627319" rel="nofollow" target="_blank">https://www.zhihu.com/question/21094489/answer/8627319</a></li>
+<li>[2] 五岁小孩也能看懂的SVM ：<a href="https://www.reddit.com/r/MachineLearning/comments/15zrpp/please_explain_support_vector_machines_svm_like_i/" rel="nofollow" target="_blank">https://www.reddit.com/r/MachineLearning/comments/15zrpp/please_explain_support_vector_machines_svm_like_i/</a></li>
+<li>[3] pluskid大牛博客：<a href="http://blog.pluskid.org/?page_id=683" rel="nofollow" target="_blank">http://blog.pluskid.org/?page_id=683</a></li>
+<li>[4] 陈东岳老师文章：<a href="https://zhuanlan.zhihu.com/p/24638007" rel="nofollow" target="_blank">https://zhuanlan.zhihu.com/p/24638007</a></li>
+<li>[5] 深入理解拉格朗日乘子法和KKT条件：<a href="http://blog.csdn.net/xianlingmao/article/details/7919597" rel="nofollow" target="_blank">http://blog.csdn.net/xianlingmao/article/details/7919597</a></li>
+<li>[6] 充分条件和必要条件：<a href="https://www.zhihu.com/question/30469121" rel="nofollow" target="_blank">https://www.zhihu.com/question/30469121</a></li>
+<li>[7] 凸函数：<a href="https://zh.wikipedia.org/wiki/%E5%87%B8%E5%87%BD%E6%95%B0" rel="nofollow" target="_blank">https://zh.wikipedia.org/wiki/%E5%87%B8%E5%87%BD%E6%95%B0</a></li>
+<li>[8]《机器学习实战》第6章内容。</li>
+<li>[9] SVM之SMO算法：<a href="http://www.cnblogs.com/zangrunqiang/p/5515872.html" rel="nofollow" target="_blank">http://www.cnblogs.com/zangrunqiang/p/5515872.html</a></li>
+</ul>            </div>
+						<link href="https://csdnimg.cn/release/phoenix/mdeditor/markdown_views-7b4cdcb592.css" rel="stylesheet">
+                </div>
+	</article>
+</div>
+  <div class="hide-article-box hide-article-pos text-center">
+    <div class="border"></div>
+        <a class="btn article-footer-btn" id="btn-readmore" data-track-view='{"mod":"popu_376","con":",https://blog.csdn.net/c406495762/article/details/78072313,"}' data-track-click='{"mod":"popu_376","con":",https://blog.csdn.net/c406495762/article/details/78072313,"}'>阅读更多</a>
+        <a class="btn article-footer-btn article-footer-bookmark-btn" >
+      <svg class="icon no-active hover-hide" aria-hidden="true">
+        <use xlink:href="#csdnc-bookmark"></use>
+      </svg>
+      <span>收藏</span>
+    </a>
+    <div class="btn article-footer-btn  bds_weixin article-footer-share-btn" data-cmd="weixin" title="分享">
+      <svg class="icon no-active hover-hide" aria-hidden="true">
+        <use xlink:href="#csdnc-share"></use>
+      </svg>
+      <span>分享</span>
+      <div class="bdsharebuttonbox">
+        <a href="#"class="bds_weixin clear-share-style-article-footer" data-cmd="weixin" title="分享"></a>
+      </div>
+    </div>
+    
+  </div>
+  <script>
+  (function(){
+    function collection(){
+      if (currentUserName) {
+        if (!$(this).hasClass("liked")) {
+          $.ajax({
+            url: 'https://my.csdn.net/my/favorite/do_add/2',
+            dataType: 'json',
+            type: 'POST',
+            xhrFields: {
+              withCredentials: true
+            },
+            data: {
+              title: articleTit,
+              url: curentUrl,
+              share: 1,
+              map_name: ''
+            },
+            success: function(data) {
+              if (data.succ == 1) {
+                $('.btn-bookmark').addClass("liked");
+                $('.article-footer-bookmark-btn').addClass("liked").children('span').text('已收藏');
+                
+                alert('收藏成功,可以在个人中心查看我的收藏');
+              } else {
+                if (data.msg === "您已经收藏过") {
+                  $('.btn-bookmark').addClass("liked");
+                  $('.article-footer-bookmark-btn').addClass("liked").children('span').text('已收藏');
+                }
+                alert(data.msg);
+              }
+            }
+          });
+        } else {
+          alert('您已经收藏过');
+        }
+      } else {
+        window.csdn.loginBox.show();
+      }
+    }
+    window.csdn = window.csdn ? window.csdn : {};
+    window.csdn.articleCollection = collection;
+    function setArticleH(btnReadmore,posi){
+      var winH = $(window).height();
+      var articleBox = $("div.article_content");
+      var artH = articleBox.height();
+      if(artH > winH*posi){
+        articleBox.css({
+          'height':winH*posi+'px',
+          'overflow':'hidden'
+        })
+        btnReadmore.click(function(){
+          articleBox.removeAttr("style");
+          $(this).parent().remove()
+        })
+      }else{
+        btnReadmore.parent().remove()
+      }
+    }
+    var btnReadmore = $("#btn-readmore");
+    $('.article-footer-bookmark-btn').click(window.csdn.articleCollection)
+    if(btnReadmore.length>0){
+      if(currentUserName){
+        setArticleH(btnReadmore,3);
+      }else{
+        setArticleH(btnReadmore,1.2);
+      }
+    }else{
+      $('.hide-article-box').addClass('hide-article-style');
+    }
+  })()
+</script>
+<script>
+		$(".MathJax").remove();
+		if($('div.markdown_views pre.prettyprint code.hljs').length > 0 ){
+				$('div.markdown_views')[0].className = 'markdown_views';
+		}
+</script>
+                <a id="commentBox"></a>
+<div class="comment-box">
+	
+	<div class="comment-edit-box d-flex">
+		<a id="commentsedit"></a>
+		<div class="user-img">
+			<a href="//me.csdn.net/qq_37507975" target="_blank">
+				<img class="" src="https://avatar.csdn.net/1/6/8/3_qq_37507975.jpg">
+			</a>
+		</div>
+		<form id="commentform">
+			<input type="hidden" id="comment_replyId">
+			<textarea class="comment-content" name="comment_content" id="comment_content" placeholder="想对作者说点什么"></textarea>
+			<div class="opt-box"> <!-- d-flex -->
+				<div id="ubbtools" class="add_code">
+					<a href="#insertcode" code="code" target="_self"><i class="icon iconfont icon-daima"></i></a>
+				</div>
+				<input type="hidden" id="comment_replyId" name="comment_replyId">
+				<input type="hidden" id="article_id" name="article_id" value="78072313">
+				<input type="hidden" id="comment_userId" name="comment_userId" value="">
+				<input type="hidden" id="commentId" name="commentId" value="">
+				<div style="display: none;" class="csdn-tracking-statistics tracking-click" data-mod="popu_384"><a href="#" target="_blank" class="comment_area_btn">发表评论</a></div>
+				<div class="dropdown" id="myDrap">
+					<a class="dropdown-face d-flex align-items-center" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					<div class="txt-selected text-truncate">添加代码片</div>
+					<svg class="icon d-block" aria-hidden="true">
+						<use xlink:href="#csdnc-triangledown"></use>
+					</svg>
+					</a>
+					<ul class="dropdown-menu" id="commentCode" aria-labelledby="drop4">
+						<li><a data-code="html">HTML/XML</a></li>
+						<li><a data-code="objc">objective-c</a></li>
+						<li><a data-code="ruby">Ruby</a></li>
+						<li><a data-code="php">PHP</a></li>
+						<li><a data-code="csharp">C</a></li>
+						<li><a data-code="cpp">C++</a></li>
+						<li><a data-code="javascript">JavaScript</a></li>
+						<li><a data-code="python">Python</a></li>
+						<li><a data-code="java">Java</a></li>
+						<li><a data-code="css">CSS</a></li>
+						<li><a data-code="sql">SQL</a></li>
+						<li><a data-code="plain">其它</a></li>
+					</ul>
+				</div>  
+				<div class="right-box">
+					<span id="tip_comment" class="tip">还能输入<em>1000</em>个字符</span>
+					<input type="submit" class="btn btn-sm btn-red btn-comment" value="发表评论">
+				</div>
+			</div>
+		</form>
+	</div>
+
+		<div class="comment-list-container">
+		<a id="comments"></a>
+		<div class="comment-list-box">
+		</div>
+		<div id="commentPage" class="pagination-box d-none"></div>
+		<div class="opt-box text-center">
+			<button class="btn btn-sm btn-link-blue" id="btnMoreComment"></button>
+		</div>
+	</div>
+</div>
+        <div class="recommend-box">
+            		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/Dominic_S/article/details/83002153,BlogCommendFromBaidu_0"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/Dominic_S/article/details/83002153,BlogCommendFromBaidu_0"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Dominic_S/article/details/83002153" target="_blank" title="手撕SVM公式——硬间隔、软间隔、核技巧">
+				<h4 class="text-truncate oneline">
+						手撕<em>SVM</em>公式——硬间隔、软间隔、核技巧				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-20</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							366</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Dominic_S/article/details/83002153" target="_blank" title="手撕SVM公式——硬间隔、软间隔、核技巧">
+							<span class="desc oneline">1.SVM作用对于给定的训练样本集D={(x1,y1),(x2,y2),…(xn,yn)}，yi属于{-1，+1}，希望能找出一个超平面，把不同类别的数据集分开，对于线性可分的数据集来说，这样的超平面...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Dominic_S">来自：	<span class="blog_title"> Dominic_S的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/qingyang666/article/details/81663456,BlogCommendFromBaidu_1"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qingyang666/article/details/81663456,BlogCommendFromBaidu_1"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qingyang666/article/details/81663456" target="_blank" title="手撕SVM">
+				<h4 class="text-truncate oneline">
+						手撕<em>SVM</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-14</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							157</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qingyang666/article/details/81663456" target="_blank" title="手撕SVM">
+							<span class="desc oneline">支撑向量机SVM1.支撑向量机SVM1.什么是SVMSupportVectorMachine解决的是线性可分问题	HardMarginSVM	SoftMarginSVM2.SVM背后的最优化问题点到直...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qingyang666">来自：	<span class="blog_title"> 鲨鱼大哥的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/qq_39503189/article/details/82497560,BlogCommendFromBaidu_2"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_39503189/article/details/82497560,BlogCommendFromBaidu_2"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_39503189/article/details/82497560" target="_blank" title="机器学习（六）------手撕SVM">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>（六）------手撕<em>SVM</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-07</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							217</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_39503189/article/details/82497560" target="_blank" title="机器学习（六）------手撕SVM">
+							<span class="desc oneline">一.支持向量机简介：   支持向量机是一种二分类模型。   他的基本模型是定义在特征空间上的间隔最大化的分类器，间隔最大化有别于感知机。   支持向量机还有核技巧，使他成为实质上的非线性分类器。   ...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_39503189">来自：	<span class="blog_title"> 努力成为Al风口的猪</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/tiankong_/article/details/80952154,BlogCommendFromBaidu_3"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/tiankong_/article/details/80952154,BlogCommendFromBaidu_3"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/tiankong_/article/details/80952154" target="_blank" title="支持向量机原理篇之手撕线性SVM">
+				<h4 class="text-truncate oneline">
+						<em>支持向量机</em><em>原理篇</em><em>之手</em>撕<em>线性</em><em>SVM</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-07</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							373</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/tiankong_/article/details/80952154" target="_blank" title="支持向量机原理篇之手撕线性SVM">
+							<span class="desc oneline">转载自：https://blog.csdn.net/c406495762/article/details/78072313转载请注明作者和出处： https://zhuanlan.zhihu.com/...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/tiankong_">来自：	<span class="blog_title"> tiankong_的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/weixin_42127577/article/details/80924932,BlogCommendFromBaidu_4"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/weixin_42127577/article/details/80924932,BlogCommendFromBaidu_4"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/weixin_42127577/article/details/80924932" target="_blank" title="手撕SVM不错的文章">
+				<h4 class="text-truncate oneline">
+						手撕<em>SVM</em>不错的文章				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-05</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							144</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/weixin_42127577/article/details/80924932" target="_blank" title="手撕SVM不错的文章">
+							<span class="desc oneline">http://cuijiahua.com/blog/2017/11/ml_8_svm_1.html</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/weixin_42127577">来自：	<span class="blog_title"> weixin_42127577的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/sinat_22594309/article/details/61615946,BlogCommendFromBaidu_5"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/sinat_22594309/article/details/61615946,BlogCommendFromBaidu_5"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/sinat_22594309/article/details/61615946" target="_blank" title="机器学习笔记（八）震惊！支持向量机（SVM）居然是这种机">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>笔记（八）震惊！<em>支持向量机</em>（<em>SVM</em>）居然是这种机				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-12</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							7671</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/sinat_22594309/article/details/61615946" target="_blank" title="机器学习笔记（八）震惊！支持向量机（SVM）居然是这种机">
+							<span class="desc oneline">支持向量机（SVM）算法最人性、最白话的解释以及在Python中的调用。</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/sinat_22594309">来自：	<span class="blog_title"> 王大宝的CD</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/u014433413/article/details/78427574,BlogCommendFromBaidu_6"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u014433413/article/details/78427574,BlogCommendFromBaidu_6"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u014433413/article/details/78427574" target="_blank" title="【机器学习】支持向量机SVM原理及推导">
+				<h4 class="text-truncate oneline">
+						【<em>机器学习</em>】<em>支持向量机</em><em>SVM</em>原理及推导				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-02</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2.4万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u014433413/article/details/78427574" target="_blank" title="【机器学习】支持向量机SVM原理及推导">
+							<span class="desc oneline">SVM的原理和推导</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u014433413">来自：	<span class="blog_title"> Chester-py的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/u011775523/article/details/52759452,BlogCommendFromBaidu_7"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u011775523/article/details/52759452,BlogCommendFromBaidu_7"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u011775523/article/details/52759452" target="_blank" title="机器学习算法之七：5分钟上手SVM">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>算法之七：5分钟上手<em>SVM</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-08</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1204</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u011775523/article/details/52759452" target="_blank" title="机器学习算法之七：5分钟上手SVM">
+							<span class="desc oneline">案例：承袭DecisionTree的案例数据，同样用身高和体重来界定胖瘦。如下文字档(7.SVM.txt)，三个栏位各代表身高(m)、体重(kg)与胖瘦(thin/fat)。问题：现在有两人，其中一位...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u011775523">来自：	<span class="blog_title"> Owen's Blog</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/u010859707/article/details/70629051,BlogCommendFromBaidu_8"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u010859707/article/details/70629051,BlogCommendFromBaidu_8"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u010859707/article/details/70629051" target="_blank" title="【机器学习实战】第6章 支持向量机">
+				<h4 class="text-truncate oneline">
+						【<em>机器学习</em><em>实战</em>】第6章 <em>支持向量机</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-24</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1340</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u010859707/article/details/70629051" target="_blank" title="【机器学习实战】第6章 支持向量机">
+							<span class="desc oneline">第6章支持向量机http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default&quot;&gt;&gt;支持向量机概述支持向量机(SupportVector...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u010859707">来自：	<span class="blog_title"> 片刻 - ApacheCN</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/jiaoyangwm/article/details/79579784,BlogCommendFromBaidu_9"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/jiaoyangwm/article/details/79579784,BlogCommendFromBaidu_9"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/jiaoyangwm/article/details/79579784" target="_blank" title="机器学习实战（六）——支持向量机">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>（六）——<em>支持向量机</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-19</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							5109</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/jiaoyangwm/article/details/79579784" target="_blank" title="机器学习实战（六）——支持向量机">
+							<span class="desc oneline">第六章支持向量机6.1什么是支持向量机6.1.1线性SVM6.1.2函数间隔和几何间隔6.1.3最大间隔分离超平面6.1.4支持向量和间隔边界6.1.4学习的对偶算法6.2线性支持向量机与软间隔最大化...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/jiaoyangwm">来自：	<span class="blog_title"> 呆呆的猫的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+          <div class="recommend-item-box blog-expert-recommend-box">
+				<div class="d-flex">
+					<div class="blog-expert-recommend">
+						<div class="blog-expert">
+							<div class="blog-expert-flexbox"></div>
+						</div>
+					</div>
+				</div>
+      </div>
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/sinat_20177327/article/details/79729551,BlogCommendClickRateRank_10"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/sinat_20177327/article/details/79729551,BlogCommendClickRateRank_10"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/sinat_20177327/article/details/79729551" target="_blank" title="支持向量机（SVM）入门理解与推导">
+				<h4 class="text-truncate oneline">
+						<em>支持向量机</em>（<em>SVM</em>）入门理解与推导				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-28</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							4.8万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/sinat_20177327/article/details/79729551" target="_blank" title="支持向量机（SVM）入门理解与推导">
+							<span class="desc oneline">一、简介支持向量机（supportvectormachines）是一种二分类模型，它的目的是寻找一个超平面来对样本进行分割，分割的原则是间隔最大化，最终转化为一个凸二次规划问题来求解。由简至繁的模型包...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/sinat_20177327">来自：	<span class="blog_title"> CongliYin的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/kwame211/article/details/85007008,BlogCommendClickRateRank_11"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/kwame211/article/details/85007008,BlogCommendClickRateRank_11"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/kwame211/article/details/85007008" target="_blank" title="[SVM系列之一]白话支持向量机（SVM）">
+				<h4 class="text-truncate oneline">
+						[<em>SVM</em>系列之一]白话<em>支持向量机</em>（<em>SVM</em>）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-14</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							66</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/kwame211/article/details/85007008" target="_blank" title="[SVM系列之一]白话支持向量机（SVM）">
+							<span class="desc oneline">初识支持向量机（SVM）我们来玩一个游戏：首先在桌子上放两种颜色的球，它们似乎存在某种关系，那你能不能用一根木棒将两种颜色分开呢？要求：尽可能在桌面上放置更多的小球后仍然适用。 你大概会这么放吧： 为...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/kwame211">来自：	<span class="blog_title"> kwame211的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/u013043346/article/details/72147756,BlogCommendClickRateRank_12"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u013043346/article/details/72147756,BlogCommendClickRateRank_12"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u013043346/article/details/72147756" target="_blank" title="支持向量机（SVM）">
+				<h4 class="text-truncate oneline">
+						<em>支持向量机</em>（<em>SVM</em>）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-15</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							503</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u013043346/article/details/72147756" target="_blank" title="支持向量机（SVM）">
+							<span class="desc oneline">什么是支持向量机模型？支持向量机（SVM）是一种有监督学习的算法，它可以用来处理分类和回归的问题。然而，实际应用中，SVM主要用来处理分类问题。在这个算法中，首先我们将所有点画在一个n维空间中（其中n...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u013043346">来自：	<span class="blog_title"> 黎荣恒的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/qq_35992440/article/details/80987664,BlogCommendClickRateRank_13"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_35992440/article/details/80987664,BlogCommendClickRateRank_13"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_35992440/article/details/80987664" target="_blank" title="SVM支持向量机入门及数学原理">
+				<h4 class="text-truncate oneline">
+						<em>SVM</em><em>支持向量机</em>入门及数学原理				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-10</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							4475</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_35992440/article/details/80987664" target="_blank" title="SVM支持向量机入门及数学原理">
+							<span class="desc oneline">SVM支持向量机一、简介支持向量机（supportvectormachines）是一种二分类模型，它的目的是寻找一个超平面来对样本进行分割，分割的原则是间隔最大化，最终转化为一个凸二次规划问题来求解。...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_35992440">来自：	<span class="blog_title"> luckmia的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/mercury2050/article/details/73477933,BlogCommendClickRateRank_14"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/mercury2050/article/details/73477933,BlogCommendClickRateRank_14"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/mercury2050/article/details/73477933" target="_blank" title="支持向量机实例讲解">
+				<h4 class="text-truncate oneline">
+						<em>支持向量机</em>实例讲解				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-19</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							4071</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/mercury2050/article/details/73477933" target="_blank" title="支持向量机实例讲解">
+							<span class="desc oneline">简介掌握机器学习算法不再是天方夜谭的事情。大多数初学者都是从回归模型学起。虽然回归模型简单易学易上手，但是它能解决我们的需求吗？当然不行！因为除了回归模型外我们还可以构建许多模型。我们可以把机器学习算...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/mercury2050">来自：	<span class="blog_title"> mercury2050的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/NYS001/article/details/12637201,BlogCommendESEnWordWeight_15"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/NYS001/article/details/12637201,BlogCommendESEnWordWeight_15"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/NYS001/article/details/12637201" target="_blank" title="蜂窝小区最短距离的坐标系解法">
+				<h4 class="text-truncate oneline">
+						蜂窝小区最短距离的坐标系解法				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-14</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1.8万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/NYS001/article/details/12637201" target="_blank" title="蜂窝小区最短距离的坐标系解法">
+							<span class="desc oneline">如下图所示，蜂窝小区，以1为中心，顺时针编号，编号最大限定为100000。求任意两编号之间的最短距离。两个相邻小区的距离为1示例：19到30的最短距离为5实现如下三个接口：/*************...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/NYS001">来自：	<span class="blog_title"> NYS001的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/weixin_39605679/article/details/81170300,BlogCommendESEnWordWeight_16"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/weixin_39605679/article/details/81170300,BlogCommendESEnWordWeight_16"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/weixin_39605679/article/details/81170300" target="_blank" title="SVM原理篇之手撕SVM">
+				<h4 class="text-truncate oneline">
+						<em>SVM</em><em>原理篇</em><em>之手</em>撕<em>SVM</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-23</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							511</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/weixin_39605679/article/details/81170300" target="_blank" title="SVM原理篇之手撕SVM">
+							<span class="desc oneline">转载请注明作者和出处：https://zhuanlan.zhihu.com/ml-jack机器学习知乎专栏：https://zhuanlan.zhihu.com/ml-jackCSDN博客专栏：htt...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/weixin_39605679">来自：	<span class="blog_title"> chenchenchenchenying的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/xiaxzhou/article/details/71738533,BlogCommendFromBaidu_17"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/xiaxzhou/article/details/71738533,BlogCommendFromBaidu_17"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/xiaxzhou/article/details/71738533" target="_blank" title="【读书笔记】机器学习实战 6.3节 SVM-简化版SMO算法">
+				<h4 class="text-truncate oneline">
+						【读书笔记】<em>机器学习</em><em>实战</em> 6.3节 <em>SVM</em>-简化版SMO算法				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-12</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1831</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/xiaxzhou/article/details/71738533" target="_blank" title="【读书笔记】机器学习实战 6.3节 SVM-简化版SMO算法">
+							<span class="desc oneline">机器学习实战6.3节支持向量机SVM简化版SMO算法</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/xiaxzhou">来自：	<span class="blog_title"> xiaxzhou的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/quryktcs/article/details/71331778,BlogCommendFromBaidu_18"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/quryktcs/article/details/71331778,BlogCommendFromBaidu_18"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/quryktcs/article/details/71331778" target="_blank" title="Python中如何使用支持向量机(SVM)算法">
+				<h4 class="text-truncate oneline">
+						Python中如何使用<em>支持向量机</em>(<em>SVM</em>)算法				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-07</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							8332</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/quryktcs/article/details/71331778" target="_blank" title="Python中如何使用支持向量机(SVM)算法">
+							<span class="desc oneline">(简单介绍一下支持向量机，详细介绍尤其是算法过程可以查阅其他资)  在机器学习领域，支持向量机SVM(SupportVectorMachine)是一个有监督的学习模型，通常用来进行模式识别、分类(异常...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/quryktcs">来自：	<span class="blog_title"> quryktcs的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/sileixinhua/article/details/70477612,BlogCommendFromBaidu_19"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/sileixinhua/article/details/70477612,BlogCommendFromBaidu_19"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/sileixinhua/article/details/70477612" target="_blank" title="机器学习-实战-入门-linearSVC和SVC,身高体重与胖瘦关系的分类与预测">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>-<em>实战</em>-入门-linearSVC和SVC,身高体重与胖瘦关系的分类与预测				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-22</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							9482</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/sileixinhua/article/details/70477612" target="_blank" title="机器学习-实战-入门-linearSVC和SVC,身高体重与胖瘦关系的分类与预测">
+							<span class="desc oneline">作者：橘子派声明：版权所有，转载请注明出处，谢谢。源码地址：https://github.com/sileixinhua/Python_sklearn_svm_linearSVC_SVC实验环境：Wi...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/sileixinhua">来自：	<span class="blog_title"> 橘子派</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/shitaixiaoniu/article/details/35268575,BlogCommendFromBaidu_20"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/shitaixiaoniu/article/details/35268575,BlogCommendFromBaidu_20"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/shitaixiaoniu/article/details/35268575" target="_blank" title="对linear classifier 的整体理解">
+				<h4 class="text-truncate oneline">
+						对linear classifier 的整体理解				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-27</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							487</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/shitaixiaoniu/article/details/35268575" target="_blank" title="对linear classifier 的整体理解">
+							<span class="desc oneline">文本分类将</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/shitaixiaoniu">来自：	<span class="blog_title"> shitaixiaoniu的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/csqazwsxedc/article/details/71513197,BlogCommendFromBaidu_21"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/csqazwsxedc/article/details/71513197,BlogCommendFromBaidu_21"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/csqazwsxedc/article/details/71513197" target="_blank" title="支持向量机SVM通俗理解（python代码实现）">
+				<h4 class="text-truncate oneline">
+						<em>支持向量机</em><em>SVM</em>通俗理解（python代码实现）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-11</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/csqazwsxedc/article/details/71513197" target="_blank" title="支持向量机SVM通俗理解（python代码实现）">
+							<span class="desc oneline">这是第三次来“复习”SVM了，第一次是使用SVM包，调用包并尝试调节参数。听闻了“流弊”SVM的算法。第二次学习理论，看了李航的《统计学习方法》以及网上的博客。看完后感觉，满满的公式。。。记不住啊。第...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/csqazwsxedc">来自：	<span class="blog_title"> 程松</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/u011475210/article/details/78179096,BlogCommendFromGuangxin_22"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u011475210/article/details/78179096,BlogCommendFromGuangxin_22"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u011475210/article/details/78179096" target="_blank" title="Python3：《机器学习实战》之支持向量机（1）算法概述">
+				<h4 class="text-truncate oneline">
+						<em>Python3</em>：《<em>机器学习</em><em>实战</em>》之<em>支持向量机</em>（1）算法概述				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-09</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2306</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u011475210/article/details/78179096" target="_blank" title="Python3：《机器学习实战》之支持向量机（1）算法概述">
+							<span class="desc oneline">Python3：《机器学习实战》之支持向量机（1）算法概述转载请注明作者和出处：http://blog.csdn.net/u011475210代码地址：https://github.com/WordZ...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u011475210">来自：	<span class="blog_title"> WordZzzz</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/zwqjoy/article/details/81003848,BlogCommendFromGuangxin_23"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/zwqjoy/article/details/81003848,BlogCommendFromGuangxin_23"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/zwqjoy/article/details/81003848" target="_blank" title="[机器学习]  分类 --- Support Vector Machine (SVM)">
+				<h4 class="text-truncate oneline">
+						[<em>机器学习</em>]  分类 --- Support Vector Machine (<em>SVM</em>)				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-11</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							794</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/zwqjoy/article/details/81003848" target="_blank" title="[机器学习]  分类 --- Support Vector Machine (SVM)">
+							<span class="desc oneline">1.基本概念支持向量机（SupportVectorMachine,SVM）的基本模型是在特征空间上找到最佳的分离超平面使得训练集上正负样本间隔最大。SVM是用来解决二分类问题的有监督学习算法，在引入了...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/zwqjoy">来自：	<span class="blog_title"> 努力奋斗的小墨鱼专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/sinat_37965706/article/details/70666682,BlogCommendFromGuangxin_24"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/sinat_37965706/article/details/70666682,BlogCommendFromGuangxin_24"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/sinat_37965706/article/details/70666682" target="_blank" title="支持向量机（SVM）——斯坦福CS229机器学习个人总结（三）">
+				<h4 class="text-truncate oneline">
+						<em>支持向量机</em>（<em>SVM</em>）——斯坦福CS229<em>机器学习</em>个人总结（三）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-24</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							4924</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/sinat_37965706/article/details/70666682" target="_blank" title="支持向量机（SVM）——斯坦福CS229机器学习个人总结（三）">
+							<span class="desc oneline">鉴于我刚开始学习支持向量机（Supportvectormachines，简称SVM）时的一脸懵逼，我认为有必要先给出一些SVM的定义。下面是一个最简单的SVM：图一分类算法：支持向量机（SVM）是一个...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/sinat_37965706">来自：	<span class="blog_title"> Jiahe的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/lisi1129/article/details/70209945,BlogCommendFromGuangxin_25"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/lisi1129/article/details/70209945,BlogCommendFromGuangxin_25"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/lisi1129/article/details/70209945" target="_blank" title="svm算法 最通俗易懂讲解">
+				<h4 class="text-truncate oneline">
+						<em>svm</em>算法 最通俗易懂讲解				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-21</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							7万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/lisi1129/article/details/70209945" target="_blank" title="svm算法 最通俗易懂讲解">
+							<span class="desc oneline">最近在学习svm算法，借此文章记录自己的学习过程，在学习很多处借鉴了z老师的讲义和李航的统计，若有不足的地方，请海涵；svm算法通俗的理解在二维上，就是找一分割线把两类分开，问题是如下图三条颜色都可以...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/lisi1129">来自：	<span class="blog_title"> 追赶者的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/SIGAI_CSDN/article/details/80751208,BlogCommendFromGuangxin_26"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/SIGAI_CSDN/article/details/80751208,BlogCommendFromGuangxin_26"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/SIGAI_CSDN/article/details/80751208" target="_blank" title="用一张图理解SVM的脉络">
+				<h4 class="text-truncate oneline">
+						用一张图理解<em>SVM</em>的脉络				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-20</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							341</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/SIGAI_CSDN/article/details/80751208" target="_blank" title="用一张图理解SVM的脉络">
+							<span class="desc oneline">导言SVM在之前的很长一段时间内是性能最好的分类器，它有严密而优美的数学基础作为支撑。在各种机器学习算法中，它是最不易理解的算法之一，要真正掌握它的原理有一定的难度。在本文中，SIGAI将带领大家通过...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/SIGAI_CSDN">来自：	<span class="blog_title"> SIGAI_CSDN的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/Eathen_Zheng/article/details/53765358,BlogCommendFromQuerySearch_27"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/Eathen_Zheng/article/details/53765358,BlogCommendFromQuerySearch_27"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Eathen_Zheng/article/details/53765358" target="_blank" title="[机器学习 - 周志华] - 第六章 支持向量机">
+				<h4 class="text-truncate oneline">
+						[<em>机器学习</em> - 周志华] - 第六章 <em>支持向量机</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-20</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							5792</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Eathen_Zheng/article/details/53765358" target="_blank" title="[机器学习 - 周志华] - 第六章 支持向量机">
+							<span class="desc oneline">间隔与支持间隔分类学习的最基本想法就是基于训练集D在样本空间中找到一个划分超平面，将不同类别的样本分开。能将训练样本划分开的平面可能有很多个，选择位于两类训练样本正中间的划分超平面，原因是这个超平面的...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Eathen_Zheng">来自：	<span class="blog_title"> Eathen的练级之路</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/weixin_41090915/article/details/79177267,BlogCommendFromQuerySearch_28"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/weixin_41090915/article/details/79177267,BlogCommendFromQuerySearch_28"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/weixin_41090915/article/details/79177267" target="_blank" title="机器学习-支持向量机(python3代码实现)">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>-<em>支持向量机</em>(<em>python3</em>代码实现)				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-27</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							589</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/weixin_41090915/article/details/79177267" target="_blank" title="机器学习-支持向量机(python3代码实现)">
+							<span class="desc oneline">支持向量机哈尔滨工程大学-537算法原理：一、寻找最大间隔如下图所示，用一条分割线将两类点分割开来(二维的是一条分割线，多维的就是分隔面)，显然三条线都能将两类点分割开来，然而，从直观来看，红色的分割...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/weixin_41090915">来自：	<span class="blog_title"> 537云起云落</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/geng333abc/article/details/76084940,BlogCommendFromQuerySearch_29"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/geng333abc/article/details/76084940,BlogCommendFromQuerySearch_29"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/geng333abc/article/details/76084940" target="_blank" title="&lt;机器学习&gt;(周志华)读书笔记 -- 第六章 支持向量机">
+				<h4 class="text-truncate oneline">
+						&lt;<em>机器学习</em>&gt;(周志华)读书笔记 -- 第六章 <em>支持向量机</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-25</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1352</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/geng333abc/article/details/76084940" target="_blank" title="&lt;机器学习&gt;(周志华)读书笔记 -- 第六章 支持向量机">
+							<span class="desc oneline">支持向量机是当下比较经典的一个算法，其中台湾大学林智仁教授还开发了一个简单快速的svm库--libsvm这个svm的程序在目前各个机器学习包中都有广泛的嵌入式用。但是我们仍然需要对SVM的原理进一步了...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/geng333abc">来自：	<span class="blog_title"> ANONYMOUSLYCN的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/sun_shengyun/article/details/55657875,BlogCommendFromQuerySearch_30"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/sun_shengyun/article/details/55657875,BlogCommendFromQuerySearch_30"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/sun_shengyun/article/details/55657875" target="_blank" title="SVM支持向量机原理(一) 线性支持向量机">
+				<h4 class="text-truncate oneline">
+						<em>SVM</em><em>支持向量机</em>原理(一) <em>线性</em><em>支持向量机</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">02-18</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1277</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/sun_shengyun/article/details/55657875" target="_blank" title="SVM支持向量机原理(一) 线性支持向量机">
+							<span class="desc oneline">此篇文章并非完全原创，参考了下篇博客，如果大家觉得稳重的1、2、3部分不好理解，可以看下图中我的手写版。http://www.cnblogs.com/pinard/p/6097604.html支持向量...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/sun_shengyun">来自：	<span class="blog_title"> sun_shengyun的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/u011826404/article/details/54647611,BlogCommendFromQuerySearch_31"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u011826404/article/details/54647611,BlogCommendFromQuerySearch_31"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u011826404/article/details/54647611" target="_blank" title="周志华《Machine Learning》学习笔记（7）--支持向量机">
+				<h4 class="text-truncate oneline">
+						周志华《Machine Learning》<em>学习笔记</em>（7）--<em>支持向量机</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-21</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							3696</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u011826404/article/details/54647611" target="_blank" title="周志华《Machine Learning》学习笔记（7）--支持向量机">
+							<span class="desc oneline">上篇主要介绍了神经网络。首先从生物学神经元出发，引出了它的数学抽象模型–MP神经元以及由两层神经元组成的感知机模型，并基于梯度下降的方法描述了感知机模型的权值调整规则。由于简单的感知机不能处理线性不可...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u011826404">来自：	<span class="blog_title"> VAY-长跑</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/qq_29846039/article/details/77620601,BlogCommendFromBaidu_32"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_29846039/article/details/77620601,BlogCommendFromBaidu_32"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_29846039/article/details/77620601" target="_blank" title="机器学习实战【5】（SVM-支持向量机）">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>【5】（<em>SVM</em>-<em>支持向量机</em>）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-27</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							918</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_29846039/article/details/77620601" target="_blank" title="机器学习实战【5】（SVM-支持向量机）">
+							<span class="desc oneline">本博客记录《机器学习实战》（MachineLearningInAction）的学习过程，包括算法介绍和python实现。SVM（支持向量机）SVM是一种分类算法，通过对训练集数据的分析找到最好的分隔平...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_29846039">来自：	<span class="blog_title"> Rimble</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/galina940217/article/details/68147868,BlogCommendFromBaidu_33"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/galina940217/article/details/68147868,BlogCommendFromBaidu_33"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/galina940217/article/details/68147868" target="_blank" title="《机器学习实战》SVM支持向量机详细笔记">
+				<h4 class="text-truncate oneline">
+						《<em>机器学习</em><em>实战</em>》<em>SVM</em><em>支持向量机</em>详细笔记				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-29</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1229</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/galina940217/article/details/68147868" target="_blank" title="《机器学习实战》SVM支持向量机详细笔记">
+							<span class="desc oneline">最近在研读《机器学习实战》这本书，发现支持向量机这一章理论部分比较少，不太好理解。针对SVM，虽然有很多Python的库可以调用，但是在理论方面还是需要好好研究一下的。基本概念超平面：分类的决策边界支...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/galina940217">来自：	<span class="blog_title"> galina博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/Felaim/article/details/71402882,BlogCommendFromBaidu_34"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/Felaim/article/details/71402882,BlogCommendFromBaidu_34"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Felaim/article/details/71402882" target="_blank" title="python机器学习实战5：支持向量机">
+				<h4 class="text-truncate oneline">
+						python<em>机器学习</em><em>实战</em>5：<em>支持向量机</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-08</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1166</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Felaim/article/details/71402882" target="_blank" title="python机器学习实战5：支持向量机">
+							<span class="desc oneline">1.支持向量机简介支持向量机总的特点：泛化错误率低，计算开销不大，结果易解释，缺点：对参数调节和核函数的选择敏感，原始分类器不加修改仅适用二类问题。适用数据类型：数值型和标称型数据。什么叫支持向量？什...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Felaim">来自：	<span class="blog_title"> Felaim的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/da_da007/article/details/68153567,BlogCommendFromBaidu_35"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/da_da007/article/details/68153567,BlogCommendFromBaidu_35"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/da_da007/article/details/68153567" target="_blank" title="代码注释：机器学习实战第6章 支持向量机">
+				<h4 class="text-truncate oneline">
+						代码注释：<em>机器学习</em><em>实战</em>第6章 <em>支持向量机</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-29</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1643</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/da_da007/article/details/68153567" target="_blank" title="代码注释：机器学习实战第6章 支持向量机">
+							<span class="desc oneline">在学习的过程中发现书中很多代码并没有注释，这对新入门的同学是一个挑战，特此贴出我对代码做出的注释，仅供参考，欢迎指正。...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/da_da007">来自：	<span class="blog_title"> da_da007的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/sinat_17451213/article/details/51114958,BlogCommendFromBaidu_36"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/sinat_17451213/article/details/51114958,BlogCommendFromBaidu_36"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/sinat_17451213/article/details/51114958" target="_blank" title="机器学习实战之支持向量机">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>之<em>支持向量机</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-10</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							974</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/sinat_17451213/article/details/51114958" target="_blank" title="机器学习实战之支持向量机">
+							<span class="desc oneline">1.基本定义(1)分隔超平面:分类的决策边界,分布在超平面一侧的所有数据都属于某个类别,分布在另一测的所有数据则属于另一个类别.(2)间隔:样本点到分割面的距离;在训练过程中,希望间隔尽可能大,因为如...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/sinat_17451213">来自：	<span class="blog_title"> 小猪真的真的真的要减肥了</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/baimafujinji/article/details/49885643,BlogCommendClickRateRank_37"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/baimafujinji/article/details/49885643,BlogCommendClickRateRank_37"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/baimafujinji/article/details/49885643" target="_blank" title="在R中使用支持向量机（SVM）进行数据挖掘（下）">
+				<h4 class="text-truncate oneline">
+						在R中使用<em>支持向量机</em>（<em>SVM</em>）进行数据挖掘（下）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-17</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							3.1万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/baimafujinji/article/details/49885643" target="_blank" title="在R中使用支持向量机（SVM）进行数据挖掘（下）">
+							<span class="desc oneline">本文介绍在R语言中，利用支持向量机SVM对数据进行分类的方法。并对模型以及分类结果进行分析和图形化展示...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/baimafujinji">来自：	<span class="blog_title"> 白马负金羁</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/weixin_41048094/article/details/82586032,BlogCommendClickRateRank_38"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/weixin_41048094/article/details/82586032,BlogCommendClickRateRank_38"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/weixin_41048094/article/details/82586032" target="_blank" title="支持向量机">
+				<h4 class="text-truncate oneline">
+						<em>支持向量机</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-20</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							362</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/weixin_41048094/article/details/82586032" target="_blank" title="支持向量机">
+							<span class="desc oneline"> 1.线性可分支持向量机与硬间隔最大化线性支持向量机是一个二分类模型，实际上是想求一个分离超平面：                                                   ...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/weixin_41048094">来自：	<span class="blog_title"> 小王的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/qq_34840129/article/details/81231852,BlogCommendClickRateRank_39"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_34840129/article/details/81231852,BlogCommendClickRateRank_39"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_34840129/article/details/81231852" target="_blank" title="支持向量机用于多分类">
+				<h4 class="text-truncate oneline">
+						<em>支持向量机</em>用于多分类				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-27</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							243</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_34840129/article/details/81231852" target="_blank" title="支持向量机用于多分类">
+							<span class="desc oneline">&amp;amp;nbsp;&amp;amp;nbsp;从SVM的那几张图可以看出来，SVM是一种典型的两类分类器，即它只回答属于正类还是负类的问题。而现实中要解决的问题，往往是多类的问题（少部分例外，例如垃圾邮件过...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_34840129">来自：	<span class="blog_title"> Bebr的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/zx10212029/article/details/50198547,BlogCommendClickRateRank_40"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/zx10212029/article/details/50198547,BlogCommendClickRateRank_40"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/zx10212029/article/details/50198547" target="_blank" title="机器学习（7）——支持向量机（二）：线性可分支持向量机到非线性支持向量机">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>（7）——<em>支持向量机</em>（二）：<em>线性</em>可分<em>支持向量机</em>到非<em>线性</em><em>支持向量机</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-08</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							3805</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/zx10212029/article/details/50198547" target="_blank" title="机器学习（7）——支持向量机（二）：线性可分支持向量机到非线性支持向量机">
+							<span class="desc oneline">线性可分支持向量机回顾前面总结了线性可分支持向量机，知道了支持向量机的最终目的就是通过“间隔最大化”得到最优分类器，能够使最难区分的样本点得到最大的分类确信度，而这些难区分的样本就是支持向量。还是如下...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/zx10212029">来自：	<span class="blog_title"> Lyndon_zheng的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix" data-track-view='{"mod":"popu_614","con":",https://download.csdn.net/download/yh_sk/10805704,BlogCommendClickRateRank_41"}' data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/yh_sk/10805704,BlogCommendClickRateRank_41"}'>
+			<a href="https://download.csdn.net/download/yh_sk/10805704" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							<em>支持向量机</em><em>SVM</em>						</h4>
+						<span class="data float-right">11-25</span>
+					</div>
+					<div class="desc oneline">
+							最近在研究人工智能，收集了一些好的资料，分享出来……也挣点积分，方便下次使用.					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/SoundSlow/article/details/78631951,BlogCommendFromBaidu_42"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/SoundSlow/article/details/78631951,BlogCommendFromBaidu_42"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/SoundSlow/article/details/78631951" target="_blank" title="机器学习实战-8预测数值型数据-回归">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>-8预测数值型数据-回归				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-25</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1753</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/SoundSlow/article/details/78631951" target="_blank" title="机器学习实战-8预测数值型数据-回归">
+							<span class="desc oneline">回归和分类是机器学习两个主要的类别，通常会在面试的时候，被询问这两者之间的区别。对于我，有时候我也无法说清，虽然我感觉我已经弄懂了，但是这里还是说一说自己的理解。首先，我们学过一本书《随机过程》，这里...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/SoundSlow">来自：	<span class="blog_title"> SoundSlow的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/cqulun123/article/details/80557150,BlogCommendFromBaidu_43"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/cqulun123/article/details/80557150,BlogCommendFromBaidu_43"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/cqulun123/article/details/80557150" target="_blank" title="机器学习实战笔记（七）：支持向量机（SVM）（Python3 实现）">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>笔记（七）：<em>支持向量机</em>（<em>SVM</em>）（<em>Python3</em> 实现）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-03</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							437</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/cqulun123/article/details/80557150" target="_blank" title="机器学习实战笔记（七）：支持向量机（SVM）（Python3 实现）">
+							<span class="desc oneline">    关于支持向量机的文章挺多。这里记录下自己感觉不错的博文，供大家在阅读《机器学习实战》一书时，作为参考。  [1] Python3《机器学习实战》学习笔记（八）：支持向量机原理篇之手撕线性SVM...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/cqulun123">来自：	<span class="blog_title"> cqulun123的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/weixin_40029587/article/details/79797781,BlogCommendFromBaidu_44"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/weixin_40029587/article/details/79797781,BlogCommendFromBaidu_44"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/weixin_40029587/article/details/79797781" target="_blank" title="机器学习实战教程（八）：支持向量机原理篇之手撕线性SVM">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>教程（八）：<em>支持向量机</em><em>原理篇</em><em>之手</em>撕<em>线性</em><em>SVM</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-03</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							181</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/weixin_40029587/article/details/79797781" target="_blank" title="机器学习实战教程（八）：支持向量机原理篇之手撕线性SVM">
+							<span class="desc oneline">一、前言说来惭愧，断更快半个月了，本打算是一周一篇的。感觉SVM瞬间难了不少，推导耗费了很多时间，同时身边的事情也不少，忙了许久。本篇文章参考了诸多大牛的文章写成的，对于什么是SVM做出了生动的阐述，...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/weixin_40029587">来自：	<span class="blog_title"> weixin_40029587的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/m0_37269455/article/details/74201689,BlogCommendFromBaidu_45"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/m0_37269455/article/details/74201689,BlogCommendFromBaidu_45"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/m0_37269455/article/details/74201689" target="_blank" title="python实现svm">
+				<h4 class="text-truncate oneline">
+						python实现<em>svm</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-03</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2529</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/m0_37269455/article/details/74201689" target="_blank" title="python实现svm">
+							<span class="desc oneline">Python实现支持向量机（SVM） 转载：http://blog.csdn.net/zouxy09    机器学习算法与python实践这个系列主要是参考《机器学习实战》这本书。因为自己想学习Pyt...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/m0_37269455">来自：	<span class="blog_title"> 海鱼专属博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/Lu597203933/article/details/39155055,BlogCommendFromBaidu_46"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/Lu597203933/article/details/39155055,BlogCommendFromBaidu_46"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Lu597203933/article/details/39155055" target="_blank" title="机器学习实战笔记8(kmeans)">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>笔记8(kmeans)				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-09</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							6446</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Lu597203933/article/details/39155055" target="_blank" title="机器学习实战笔记8(kmeans)">
+							<span class="desc oneline">前面的7次笔记介绍的都是分类问题，本次开始介绍聚类问题。分类和聚类的区别在于前者属于监督学习算法，已知样本的标签；后者属于无监督的学习，不知道样本的标签。下面我们来讲解最常用的kmeans算法。1：k...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Lu597203933">来自：	<span class="blog_title"> 小村长技术blog</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/robin_Xu_shuai/article/details/76652311,BlogCommendFromQuerySearch_47"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/robin_Xu_shuai/article/details/76652311,BlogCommendFromQuerySearch_47"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/robin_Xu_shuai/article/details/76652311" target="_blank" title="SVM学习笔记-线性支撑向量机">
+				<h4 class="text-truncate oneline">
+						<em>SVM</em><em>学习笔记</em>-<em>线性</em>支撑向量机				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-12</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							5388</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/robin_Xu_shuai/article/details/76652311" target="_blank" title="SVM学习笔记-线性支撑向量机">
+							<span class="desc oneline">LinearSupportVectorMachineLinearClassificationRevisited当数据是线性可分的时候，PLA算法可以帮助我们找到那个hyperplane。WhichLi...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/robin_Xu_shuai">来自：	<span class="blog_title"> XuShuai</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/u012313437/article/details/80757118,BlogCommendFromQuerySearch_48"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u012313437/article/details/80757118,BlogCommendFromQuerySearch_48"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u012313437/article/details/80757118" target="_blank" title="吴恩达机器学习笔记第七周 SVM支持向量机">
+				<h4 class="text-truncate oneline">
+						吴恩达<em>机器学习</em>笔记第七周 <em>SVM</em><em>支持向量机</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-03</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							296</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u012313437/article/details/80757118" target="_blank" title="吴恩达机器学习笔记第七周 SVM支持向量机">
+							<span class="desc oneline">支持向量机或者简称SVM 在学习复杂的非线性方程时 提供了一种更为清晰 更加强大的方式 ，我们在逻辑回归中所用的假设函数h(x)的曲线如图：当y=1时，我们希望假设函数能趋向于1，即z&amp;amp;gt;...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u012313437">来自：	<span class="blog_title"> u012313437的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/u012679707/article/details/80501358,BlogCommendFromQuerySearch_49"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u012679707/article/details/80501358,BlogCommendFromQuerySearch_49"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u012679707/article/details/80501358" target="_blank" title="【机器学习】支持向量机SVM及实例应用">
+				<h4 class="text-truncate oneline">
+						【<em>机器学习</em>】<em>支持向量机</em><em>SVM</em>及实例应用				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-29</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2545</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u012679707/article/details/80501358" target="_blank" title="【机器学习】支持向量机SVM及实例应用">
+							<span class="desc oneline">【机器学习】支持向量机1.分类超平面与最大间隔      上图是一个关于机器学习算法的时间线来自于ErenGolge。可以看出SVM旺盛的生命力。实际上，即使是深度学习非常火热的今天，SVM依然盛行。...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u012679707">来自：	<span class="blog_title"> gogo小Sa的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/wuchengzeng/article/details/50037611,BlogCommendHotData_0"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/wuchengzeng/article/details/50037611,BlogCommendHotData_0"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/wuchengzeng/article/details/50037611" target="_blank" title="jquery/js实现一个网页同时调用多个倒计时(最新的)">
+				<h4 class="text-truncate oneline">
+						jquery/js实现一个网页同时调用多个倒计时(最新的)				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-25</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							62952</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/wuchengzeng/article/details/50037611" target="_blank" title="jquery/js实现一个网页同时调用多个倒计时(最新的)">
+							<span class="desc oneline">jquery/js实现一个网页同时调用多个倒计时(最新的)
+
+最近需要网页添加多个倒计时. 查阅网络,基本上都是千遍一律的不好用. 自己按需写了个.希望对大家有用. 有用请赞一个哦!
+
+
+
+//js
+...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/wuchengzeng">来自：	<span class="blog_title"> websites</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/roguesir/article/details/77104246,BlogCommendHotData_1"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/roguesir/article/details/77104246,BlogCommendHotData_1"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/roguesir/article/details/77104246" target="_blank" title="人脸检测工具face_recognition的安装与应用">
+				<h4 class="text-truncate oneline">
+						人脸检测工具face_recognition的安装与应用				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-11</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							20086</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/roguesir/article/details/77104246" target="_blank" title="人脸检测工具face_recognition的安装与应用">
+							<span class="desc oneline">人脸检测工具face_recognition的安装与应用</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/roguesir">来自：	<span class="blog_title"> roguesir的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/gefangshuai/article/details/50328451,BlogCommendHotData_2"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/gefangshuai/article/details/50328451,BlogCommendHotData_2"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/gefangshuai/article/details/50328451" target="_blank" title="关于SpringBoot bean无法注入的问题（与文件包位置有关）">
+				<h4 class="text-truncate oneline">
+						关于SpringBoot bean无法注入的问题（与文件包位置有关）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-16</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							70068</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/gefangshuai/article/details/50328451" target="_blank" title="关于SpringBoot bean无法注入的问题（与文件包位置有关）">
+							<span class="desc oneline">问题场景描述整个项目通过Maven构建，大致结构如下：
+核心Spring框架一个module spring-boot-base
+service和dao一个module server-core
+提供系统...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/gefangshuai">来自：	<span class="blog_title"> 开发随笔</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/Tiaaaaa/article/details/58116346,BlogCommendHotData_3"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/Tiaaaaa/article/details/58116346,BlogCommendHotData_3"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Tiaaaaa/article/details/58116346" target="_blank" title="R语言逻辑回归、ROC曲线和十折交叉验证">
+				<h4 class="text-truncate oneline">
+						R语言逻辑回归、ROC曲线和十折交叉验证				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">02-27</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							20060</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Tiaaaaa/article/details/58116346" target="_blank" title="R语言逻辑回归、ROC曲线和十折交叉验证">
+							<span class="desc oneline">自己整理编写的逻辑回归模板，作为学习笔记记录分享。数据集用的是14个自变量Xi，一个因变量Y的australian数据集。
+
+
+1. 测试集和训练集3、7分组
+australian ...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Tiaaaaa">来自：	<span class="blog_title"> Tiaaaaa的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/qq574857122/article/details/16361033,BlogCommendHotData_4"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq574857122/article/details/16361033,BlogCommendHotData_4"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq574857122/article/details/16361033" target="_blank" title="强连通分量及缩点tarjan算法解析">
+				<h4 class="text-truncate oneline">
+						强连通分量及缩点tarjan算法解析				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-16</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							184795</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq574857122/article/details/16361033" target="_blank" title="强连通分量及缩点tarjan算法解析">
+							<span class="desc oneline">强连通分量：
+简言之 就是找环（每条边只走一次，两两可达）
+孤立的一个点也是一个连通分量 
+ 
+使用tarjan算法 在嵌套的多个环中优先得到最大环( 最小环就是每个孤立点）
+ 
+定义：
+int Ti...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq574857122">来自：	<span class="blog_title"> 九野的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+        <div class="recommend-item-box type_hot_word">
+            <div class="content clearfix">
+        <div class="word float-left">
+                          <span>
+            <a href="https://edu.csdn.net/course/play/3904/121358 " target="_blank">
+            支持向量机SVM求解实例          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/course/play/8562/176222 " target="_blank">
+            SVM          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/course/play/3904/121359 " target="_blank">
+            支持向量机的应用          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/courses/o5329_s5330_k " target="_blank">
+            机器学习          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/course/play/5599/109088 " target="_blank">
+            特征点线性求解          </a></span>
+                        </div>
+      </div>
+                  <div class="content clearfix">
+        <div class="float-left">
+                  <span>
+            <a href="https://www.csdn.net/gather_2a/MtTaUg1sODItYmxvZwO0O0OO0O0O.html" target="_blank">
+            c#机器学习实战</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_24/NtzaUg0sMzk3LWJsb2cO0O0O.html" target="_blank">
+            bootstrap4学习笔记</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_29/MtzaAg0sMzQtYmxvZwO0O0OO0O0O.html" target="_blank">
+            c++八爪树</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_26/NtzaQg2sMDA5LWJsb2cO0O0O.html" target="_blank">
+            bootstrap 学习笔记</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_20/MtTaAgwsMzAtYmxvZwO0O0OO0O0O.html" target="_blank">
+            c#分段线性变化</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_4a/NtTacgysMi1lZHUO0O0O.html" target="_blank">
+            机器学习实战python实现</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_4a/MtTagg3sNC1lZHUO0O0O.html" target="_blank">
+            python3机器学习教程</a>
+          </span>
+                </div>
+      </div>
+          </div>
+
+
+            <div class="recommend-loading-box">
+                <img src='https://csdnimg.cn/release/phoenix/images/feedLoading.gif'>
+            </div>
+            <div class="recommend-end-box">
+                <p class="text-center">没有更多推荐了，<a href="https://blog.csdn.net/" class="c-blue c-blue-hover c-blue-focus">返回首页</a></p>
+            </div>
+        </div>
+    </main>
+
+    <aside>
+		    <div id="asideProfile" class="aside-box">
+    <!-- <h3 class="aside-title">个人资料</h3> -->
+    <div class="profile-intro d-flex">
+        <div class="avatar-box d-flex justify-content-center flex-column">
+            <a href="https://blog.csdn.net/c406495762">
+                <img src="https://avatar.csdn.net/F/1/C/3_c406495762.jpg" class="avatar_pic">
+            </a>
+              <div style="position: absolute;width: 48px;height: 63px;top: -17px;overflow: hidden;box-sizing: content-box;">
+                <div class="rotate-memberhead" style="position: absolute;top: 0;width: 48px;height: 81px;transition: transform .5s ease-out;/* transform: rotate(-180deg); */z-index: 1;">
+                  <img class="memberhead" style="display:none;top: 62px;transform: rotate(-180deg);" src="https://csdnimg.cn/release/phoenix/static_blog/images/pig.png" alt="">
+                                    <svg id="csdnc-memberhead" style="top: -1px;" viewBox="0 0 1303 1024"><path d="M1129.770822 419.281455A93.090909 93.090909 0 1 1 1210.201367 465.454545h-2.141091l-56.971636 478.952728c-5.399273 45.242182-46.731636 79.592727-95.790545 79.592727H249.875549c-48.965818 0-90.112-34.164364-95.697454-79.406545L95.34464 465.454545H93.110458a93.090909 93.090909 0 1 1 80.337455-46.08l229.189818 142.056728 187.485091-398.429091A93.184 93.184 0 0 1 651.655913 0a93.090909 93.090909 0 0 1 61.160727 163.281455l187.485091 398.149818 229.469091-142.149818z" fill="#FDD840"></path><path d="M1117.110458 372.363636a93.090909 93.090909 0 1 1 93.090909 93.090909h-2.141091l-56.971636 478.952728c-5.399273 45.242182-46.731636 79.592727-95.790545 79.592727H652.586822C651.935185 845.451636 651.655913 504.087273 651.655913 0a93.090909 93.090909 0 0 1 61.160727 163.281455l187.485091 398.149818 229.469091-142.149818A93.090909 93.090909 0 0 1 1117.110458 372.363636z" fill="#FFBE00"></path></svg>
+                                  </div>
+                <script type="text/javascript">
+                  $(function(){
+                    if($('#csdnc-memberhead').length){
+                      $(document).on('click','.memberhead, #csdnc-memberhead',function(){
+                        if($(this).hasClass('memberhead')){
+                          $('.rotate-memberhead').css({'transform': 'rotate(0deg)'})
+                          $('.memberhead').fadeOut()
+                        }else{
+                          $('.rotate-memberhead').css({'transform': 'rotate(-180deg)'})
+                          $('.memberhead').fadeIn()
+                        }
+                      })
+                    }else{
+                      $('.rotate-memberhead').css({'transform': 'rotate(-180deg)'})
+                      $('.memberhead').fadeIn()
+                    }
+                  })
+                </script>
+              </div>
+        </div>
+        <div class="user-info d-flex justify-content-center flex-column">
+            <p class="name csdn-tracking-statistics tracking-click" data-mod="popu_379">
+                <a href="https://blog.csdn.net/c406495762" target="_blank" class="" id="uid">Jack-Cui</a>
+            </p>
+                          <p class="flag expert">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#csdnc-blogexpert"></use>
+                </svg>
+                博客专家
+              </p>
+                    </div>
+                <div class="opt-box d-flex justify-content-center flex-column">
+            <span  class="csdn-tracking-statistics tracking-click" data-mod="popu_379">
+                <a class="btn btn-sm btn-red-hollow attention" id="btnAttent">关注</a>
+            </span>
+        </div>
+            </div>
+    <div class="data-info d-flex item-tiling">
+                <dl class="text-center" title="107">
+                        <dt><a href="https://blog.csdn.net/c406495762?t=1">原创</a></dt>
+            <dd><a href="https://blog.csdn.net/c406495762?t=1"><span class="count">107</span></a></dd>
+                    </dl>
+        <dl class="text-center" id="fanBox" title="6001">
+            <dt>粉丝</dt>
+            <dd><span class="count" id="fan">6001</span></dd>
+        </dl>
+        <dl class="text-center" title="1688">
+            <dt>喜欢</dt>
+            <dd><span class="count">1688</span></dd>
+        </dl>
+        <dl class="text-center" title="1979">
+            <dt>评论</dt>
+            <dd><span class="count">1979</span></dd>
+        </dl>
+    </div>
+    <div class="grade-box clearfix">
+        <dl>
+            <dt>等级：</dt>
+            <dd>
+                <a href="https://blog.csdn.net/home/help.html#level" title="6级,点击查看等级说明" target="_blank">
+                    <svg class="icon icon-level" aria-hidden="true">
+                        <use xlink:href="#csdnc-bloglevel-6"></use>
+                    </svg>
+                </a>
+            </dd>
+        </dl>
+        <dl>
+            <dt>访问：</dt>
+            <dd title="1266297">
+                126万+            </dd>
+        </dl>
+        <dl>
+            <dt>积分：</dt>
+            <dd title="8761">
+                8761            </dd>
+        </dl>
+        <dl title="3481">
+            <dt>排名：</dt>
+            <dd>3481</dd>
+        </dl>
+    </div>
+        <div class="badge-box d-flex">
+        <span>勋章：</span>
+                <div class="icon-badge" title="专栏达人">
+            <div class="mouse-box">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#csdnc-m-columns"></use>
+                </svg>
+                <div class="icon-arrow"></div>
+            </div>
+            <div class="grade-detail-box">
+                <div class="pos-box">
+                    <div class="left-box d-flex justify-content-center align-items-center flex-column">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#csdnc-m-columns"></use>
+                        </svg>
+                        <p>专栏达人</p>
+                    </div>
+                    <div class="right-box d-flex justify-content-center align-items-center">
+                        授予成功创建个人博客专栏的用户。专栏中添加五篇以上博文即可点亮！撰写博客专栏浓缩技术精华，专栏达人就是你！
+                    </div>
+                </div>
+            </div>
+        </div>
+                        <div class="icon-badge" title="持之以恒">
+            <div class="mouse-box">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#csdnc-m-lasting"></use>
+                </svg>
+                <div class="icon-arrow"></div>
+            </div>
+            <div class="grade-detail-box">
+                <div class="pos-box">
+                    <div class="left-box d-flex justify-content-center align-items-center flex-column">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#csdnc-m-lasting"></use>
+                        </svg>
+                        <p>持之以恒</p>
+                    </div>
+                    <div class="right-box d-flex justify-content-center align-items-center">
+                        授予每个自然月内发布4篇或4篇以上原创或翻译IT博文的用户。不积跬步无以至千里，不积小流无以成江海，程序人生的精彩需要坚持不懈地积累！
+                    </div>
+                </div>
+            </div>
+        </div>
+                                                <script>
+            (function ($) {
+                setTimeout(function(){
+                    $('div.icon-badge.show-moment').removeClass('show-moment');
+                }, 5000);
+            })(window.jQuery)
+        </script>
+    </div>
+    </div>
+		    		    <!--自定义模块-->
+<div id="asideCustom60787210" class="aside-box custom-box">
+    <h3 class="aside-title">关于</h3>
+    <div class="aside-content clearfix">
+        <strong>微信公众号</strong>
+<img src="https://ww2.sinaimg.cn/large/0072Lfvtly1fxuhd2t2jqj309k09kglk.jpg" width="250" height="250">
+<strong>QQ交流群</strong>
+<div>Coder：328127489（满）</div>
+<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=f7f3508b9c23f6bc7d117ea2f9dc088d166b1053c4bc786fe4badec36b0df8ea"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="Coder" title="Coder"></a>
+<div>Coder2：868084847</div>
+<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=c720c839143ce211b656f9a810e4a6ed04d1332a430da993df1734e67c0db73d"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="Coder-2" title="Coder-2"></a>
+</ul>
+<ul xss=removed>
+<strong>其他</strong>
+<div>个人网站(<font color="red">文章首发</font>) : </div>
+<div><a href="https://cuijiahua.com/" rel="me follow" target="_black">https://cuijiahua.com</a>
+</div>
+<div>Github : </div>
+<div><a href="https://github.com/Jack-Cherish" target="_black">https://github.com/Jack-Cheris</a>
+</div>
+<div>知乎： </div>
+<div><a href="https://www.zhihu.com/people/Jack--Cui/" target="_black">https://www.zhihu.com/people/Jack--Cui/</a>
+</div>
+</ul>
+    </div>
+</div>
+		    <div id="asideNewArticle" class="aside-box">
+    <h3 class="aside-title">最新文章</h3>
+    <div class="aside-content">
+        <ul class="inf_list clearfix csdn-tracking-statistics tracking-click" data-mod="popu_382">
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/82967529" target="_blank">Python3《机器学习实战》学习笔记（十二）：线性回归提高篇之乐高玩具套件二手价预测</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/79984221" target="_blank">2018年春招实习面试经验总结</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/79247243" target="_blank">剑指Offer系列刷题笔记汇总</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/78979946" target="_blank">程序员内功：八大排序算法</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/78760239" target="_blank">Python3《机器学习实战》学习笔记（十一）：线性回归基础篇之预测鲍鱼年龄</a>
+            </li>
+                    </ul>
+    </div>
+</div>
+		    <div id="asideColumn" class="aside-box">
+    <h3 class="aside-title">博主专栏</h3>
+    <div class="aside-content">
+        <ul class="column-box csdn-tracking-statistics tracking-click" data-mod="popu_520" >
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/15321">
+                            <img src="https://img-blog.csdn.net/20170421162245548?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/15321">Python3网络爬虫入门</a></p>
+                        <div class="data">文章数：<span class="count">15 篇</span> 访问量：<span>706243</span></div>
+                    </div>
+                </li>
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/15390">
+                            <img src="https://img-blog.csdn.net/20170510181713373?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/15390">Caffe入门教程</a></p>
+                        <div class="data">文章数：<span class="count">8 篇</span> 访问量：<span>63288</span></div>
+                    </div>
+                </li>
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/15522">
+                            <img src="https://img-blog.csdn.net/20170510095831800?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/15522">Jeston TX1入门教程</a></p>
+                        <div class="data">文章数：<span class="count">6 篇</span> 访问量：<span>63169</span></div>
+                    </div>
+                </li>
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/15523">
+                            <img src="https://img-blog.csdn.net/20170510181945953?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/15523">LeetCode</a></p>
+                        <div class="data">文章数：<span class="count">23 篇</span> 访问量：<span>25954</span></div>
+                    </div>
+                </li>
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/16415">
+                            <img src="https://img-blog.csdn.net/20170717161641862?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/16415">Python3机器学习</a></p>
+                        <div class="data">文章数：<span class="count">12 篇</span> 访问量：<span>212030</span></div>
+                    </div>
+                </li>
+                    </ul>
+    </div>
+    </div>
+		    <div id="asideCategory" class="aside-box flexible-box">
+    <h3 class="aside-title">个人分类</h3>
+    <div class="aside-content">
+        <ul>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/7029976">
+                    <span class="title oneline">机器学习</span>
+                    <span class="count float-right">12篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6144934">
+                    <span class="title oneline">Python</span>
+                    <span class="count float-right">27篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6816210">
+                    <span class="title oneline">Caffe</span>
+                    <span class="count float-right">9篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6134244">
+                    <span class="title oneline">嵌入式</span>
+                    <span class="count float-right">12篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6133011">
+                    <span class="title oneline">C/C++</span>
+                    <span class="count float-right">18篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6718576">
+                    <span class="title oneline">LeetCode</span>
+                    <span class="count float-right">23篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6541830">
+                    <span class="title oneline">STM32</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6391075">
+                    <span class="title oneline">Java</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6796780">
+                    <span class="title oneline">OpenCV</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6964968">
+                    <span class="title oneline">程序人生</span>
+                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/7383243">
+                    <span class="title oneline">算法</span>
+                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                    </ul>
+    </div>
+        <p class="text-center">
+        <a class="btn btn-link-blue flexible-btn" data-fbox="aside-archive">展开</a>
+    </p>
+    </div>
+		    <div id="asideArchive" class="aside-box flexible-box">
+    <h3 class="aside-title">归档</h3>
+    <div class="aside-content">
+        <ul class="archive-list">
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2018/10">
+                    2018年10月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2018/04">
+                    2018年4月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2018/02">
+                    2018年2月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2018/01">
+                    2018年1月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/12">
+                    2017年12月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/10">
+                    2017年10月                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/09">
+                    2017年9月                    <span class="count float-right">5篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/08">
+                    2017年8月                    <span class="count float-right">4篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/07">
+                    2017年7月                    <span class="count float-right">7篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/06">
+                    2017年6月                    <span class="count float-right">4篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/05">
+                    2017年5月                    <span class="count float-right">10篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/04">
+                    2017年4月                    <span class="count float-right">16篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/03">
+                    2017年3月                    <span class="count float-right">14篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/02">
+                    2017年2月                    <span class="count float-right">5篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/12">
+                    2016年12月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/11">
+                    2016年11月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/08">
+                    2016年8月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/07">
+                    2016年7月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/04">
+                    2016年4月                    <span class="count float-right">12篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/03">
+                    2016年3月                    <span class="count float-right">19篇</span>
+                </a>
+            </li>
+                    </ul>
+    </div>
+        <p class="text-center">
+        <a class="btn btn-link-blue flexible-btn" data-fbox="aside-archive">展开</a>
+    </p>
+    </div>
+		    <div id="asideHotArticle" class="aside-box">
+	<h3 class="aside-title">热门文章</h3>
+	<div class="aside-content">
+		<ul class="hotArticle-list csdn-tracking-statistics tracking-click" data-mod="popu_521">
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/58716886">Python3网络爬虫(一)：利用urllib进行简单的网页抓取</a>
+					<p class="read">阅读数 <span>150910</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/60137956">Python3网络爬虫(四)：使用User Agent和代理IP隐藏身份</a>
+					<p class="read">阅读数 <span>73717</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/75172850">Python3《机器学习实战》学习笔记（一）：k-近邻算法(史诗级干货长文)</a>
+					<p class="read">阅读数 <span>69350</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/69817490">Python3网络爬虫(六)：Python3使用Cookie-模拟登陆获取妹子联系方式</a>
+					<p class="read">阅读数 <span>68621</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/71334633">Python3网络爬虫(八)：爱奇艺等主流视频网站的VIP视频破解(在线观看+视频下载)</a>
+					<p class="read">阅读数 <span>65659</span></p>
+				</li>
+					</ul>
+	</div>
+</div>
+		    <div id="asideNewComments" class="aside-box">
+    <h3 class="aside-title">最新评论</h3>
+    <div class="aside-content">
+        <ul class="newcomment-list">
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/77723333#comments">Python3《机器学习实战》学习...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/weixin_41792829" class="user-name" target="_blank">weixin_41792829</a>：[reply]m0_37723350[/reply]
+weights=ones((n,1))  w...                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/77723333#comments">Python3《机器学习实战》学习...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/weixin_41792829" class="user-name" target="_blank">weixin_41792829</a>：[reply]weixin_43179017[/reply]
+b站和网易云课堂都有                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/77723333#comments">Python3《机器学习实战》学习...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/weixin_41792829" class="user-name" target="_blank">weixin_41792829</a>：为什么计算y=(-weights[0]-weights[1]*x)/weights[2]的时候要除...                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/78123502#comments">Python3网络爬虫快速入门实战...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/qq_41531835" class="user-name" target="_blank">qq_41531835</a>：[reply]Elucidator[/reply]
+需要用encoding将他改成utf-8的格式                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/71158264#comments">Python3网络爬虫(七)：使用...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/qq_37016255" class="user-name" target="_blank">qq_37016255</a>：[code=python]
+ #找到《一念永恒》正文卷,使能标志位
+            if ...                </p>
+            </li>
+                    </ul>
+    </div>
+</div>
+		<div id="asideFooter">
+				<div class="aside-box">
+			<div class="persion_article">
+			</div>
+		</div>
+	</div>
+</aside>
+<script src="https://csdnimg.cn/pubfooter/js/publib_footer-1.0.3.js" data-isfootertrack="false" type="text/javascript"></script>
+<script>
+	$("a.flexible-btn").click(function(){
+		$(this).parents('div.aside-box').removeClass('flexible-box');
+		$(this).remove();
+	})
+</script>
+</div>
+<div class="mask-dark"></div>
+<div class="tool-box">
+	<ul class="meau-list">
+		<li class="btn-like-box long-width">
+			<button class=" long-height hover-box btn-like " title="点赞">
+				<svg class="icon active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-thumbsup-ok"></use>
+				</svg>
+				<svg class="icon no-active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-thumbsup"></use>
+				</svg>
+				<span class="hover-show text-box text">
+					<span class="no-active">点赞</span>
+					<span class="active">取消点赞</span>
+				</span>
+				<p>74</p>
+			</button>
+		</li>
+		<li class="">
+						<a class="btn-comments long-height hover-box" title="写评论" href="#commentBox">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-comments"></use>
+				</svg>
+				<span class="hover-show text">评论</span>
+				<p class="">
+						84				</p>
+			</a>
+		</li>
+		<li class="toc-container-box" id="liTocBox">
+			<button class="btn-toc low-height hover-box" title="目录">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-contents"></use>
+				</svg>
+				<span class="hover-show text">目录</span>
+			</button>
+			<div class="toc-container">
+				<div class="pos-box">
+					<div class="icon-arrow"></div>
+					<div class="scroll-box">
+						<div class="toc-box"></div>
+					</div>
+				</div>
+				<div class="opt-box">
+					<button class="btn-opt prev nomore" title="向上">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#csdnc-chevronup"></use>
+						</svg>
+					</button>
+					<button class="btn-opt next">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#csdnc-chevrondown"></use>
+						</svg>
+					</button>
+				</div>
+			</div>
+		</li>
+		<li>
+			<button class="btn-bookmark low-height hover-box" title="收藏">
+				<svg class="icon active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-bookmark-ok"></use>
+				</svg>
+				<svg class="icon no-active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-bookmark"></use>
+				</svg>
+					<span class="hover-show text">收藏</span>
+				<!-- <span class="hover-show text-box text">
+					<span class="no-active">收藏</span>
+					<span class="active">取消收藏</span>
+				</span> -->
+			</button>
+		</li>
+		<li class="bdsharebuttonbox">
+			<div class="weixin-qr btn-comments low-height hover-box" >
+        <a href="#" class="bds_weixin clear-share-style" data-cmd="weixin" title="手机看"></a>
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-usephone"></use>
+				</svg>
+				<span class="hover-show text text3">
+					手机看
+				</span>
+			</div>
+		</li>
+							<li class="widescreen-hide">
+				<a class="btn-comments low-height hover-box" href="https://blog.csdn.net/c406495762/article/details/77983984" title="Sublime Text3 3143 注册码，亲测可用！">
+					<svg class="icon hover-hide" aria-hidden="true">
+						<use xlink:href="#csdnc-chevronleft"></use>
+					</svg>
+					<span class="hover-show text text3">上一篇</span>
+				</a>
+			</li>
+								<li class="widescreen-hide">
+			<a class="btn-comments hover-box low-height" href="https://blog.csdn.net/c406495762/article/details/78123502" title="Python3网络爬虫快速入门实战解析">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-chevronright"></use>
+				</svg>
+				<span class="hover-show text text3">下一篇</span>
+			</a>
+		</li>
+						<!-- 宽屏更多按钮 -->
+		<li class="widescreen-more">
+			<a class="btn-comments chat-ask-button low-height hover-box" title="快问" href="#chatqa">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-more"></use>
+				</svg>
+				<span class="hover-show text">更多</span>
+				
+			</a>
+			<ul class="widescreen-more-box">
+													<li class="widescreen-more">
+						<a class="btn-comments low-height hover-box" href="https://blog.csdn.net/c406495762/article/details/77983984" title="Sublime Text3 3143 注册码，亲测可用！">
+							<svg class="icon hover-hide" aria-hidden="true">
+								<use xlink:href="#csdnc-chevronleft"></use>
+							</svg>
+							<span class="hover-show text text3">上一篇</span>
+						</a>
+					</li>
+																<li class="widescreen-more">
+					<a class="btn-comments hover-box low-height" href="https://blog.csdn.net/c406495762/article/details/78123502" title="Python3网络爬虫快速入门实战解析">
+						<svg class="icon hover-hide" aria-hidden="true">
+							<use xlink:href="#csdnc-chevronright"></use>
+						</svg>
+						<span class="hover-show text text3">下一篇</span>
+					</a>
+				</li>
+							</ul>
+		</li>
+	</ul>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'https://csdnimg.cn/static/api/js/share.js?v=89860594'];</script>
+<script>
+    var recommendCount = 55;
+    recommendCount = recommendCount > 1 ? (recommendCount + (recommendCount>6 ? 2 : 1)) : recommendCount;
+    var articleTit = articleTitles;
+    var ChannelId = 28;
+    var articleId = "78072313";
+    var commentscount = 84;
+    var islock = false;
+    var curentUrl = "https://blog.csdn.net/c406495762/article/details/78072313";
+    var myUrl = "https://my.csdn.net/";
+    //1禁止评论，2正常
+    var commentAuth = 2;
+    //百度搜索
+    var baiduKey = "Python3《机器学习实战》学习笔记（八）：支持向量机原理篇之手撕线性SVM - Jack-Cui";
+    var needInsertBaidu = true;
+    // 代码段样式
+    var codeStyle = 'atom-one-dark';
+		var highlight = ["python3","\u673a\u5668\u5b66\u4e60","\u5b9e\u6218","\u5b66\u4e60\u7b14\u8bb0","\u652f\u6301\u5411\u91cf\u673a","\u539f\u7406\u7bc7","\u4e4b\u624b","\u7ebf\u6027","svm"];//高亮数组
+		// 相关推荐博主数据
+    var RecommendBlogExpertList = [{"user_name":"Eathen_Zheng","nick_name":"Eathen_Zheng","avatar":"https:\/\/avatar.csdn.net\/C\/A\/7\/3_eathen_zheng.jpg","is_expert":false,"article_count":86,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"weixin_41090915","nick_name":"weixin_41090915","avatar":"https:\/\/avatar.csdn.net\/3\/2\/8\/3_weixin_41090915.jpg","is_expert":false,"article_count":9,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"geng333abc","nick_name":"ANONYMOUSLYCN","avatar":"https:\/\/avatar.csdn.net\/9\/3\/1\/3_geng333abc.jpg","is_expert":false,"article_count":32,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"sun_shengyun","nick_name":"sun_shengyun","avatar":"https:\/\/avatar.csdn.net\/0\/8\/0\/3_sun_shengyun.jpg","is_expert":false,"article_count":35,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"u011826404","nick_name":"\u52aa\u529b\u8fdb\u884c\u5149\u5408\u4f5c\u7528","avatar":"https:\/\/avatar.csdn.net\/7\/1\/A\/3_u011826404.jpg","is_expert":false,"article_count":39,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"robin_Xu_shuai","nick_name":"_\u5e2d\u8fbe_","avatar":"https:\/\/avatar.csdn.net\/0\/3\/0\/3_robin_xu_shuai.jpg","is_expert":false,"article_count":112,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"u012313437","nick_name":"Raven_shhy","avatar":"https:\/\/avatar.csdn.net\/9\/E\/6\/3_u012313437.jpg","is_expert":false,"article_count":81,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"u012679707","nick_name":"gogo\u5c0fSa","avatar":"https:\/\/avatar.csdn.net\/7\/F\/5\/3_u012679707.jpg","is_expert":false,"article_count":129,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"wenyusuran","nick_name":"\u6587\u5b87\u8083\u7136","avatar":"https:\/\/avatar.csdn.net\/B\/F\/3\/3_wenyusuran.jpg","is_expert":false,"article_count":655,"rank":"1000+"},{"user_name":"lyn5284767","nick_name":"lyn5284767","avatar":"https:\/\/avatar.csdn.net\/A\/C\/9\/3_lyn5284767.jpg","is_expert":false,"article_count":95,"rank":"\u5343\u91cc\u4e4b\u5916"}];
+	var articleType = 1;
+	var CopyrightContent = '本文为博主原创文章，未经博主允许不得转载。个人网站：http://cuijiahua.com。';
+</script>
+<script src="https://csdnimg.cn/public/sandalstrap/1.4/js/sandalstrap.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.js"></script>
+<script src='https://csdnimg.cn/public/common/gotop/js/goTop-v1.0.min.js?v201811201455'></script>
+<script>
+    GoTop({
+        right: 8,
+        hasReport: true,
+        reportFun: function() {
+            showReport(false,articleTit);
+        }
+    })
+</script>
+
+<script src="//g.csdnimg.cn/baidu-search/1.0.0/baidu-search.js"  type="text/javascript"></script>
+
+</body>
+
+<!-- 高亮未与 markdown兼容  -->
+	<link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.3.7/ckeditor/plugins/codesnippet/lib/highlight/styles/atom-one-dark.css">
+	<script type="text/javascript" src="https://csdnimg.cn/release/phoenix/production/pc_wap_common-98040b5dc6.js" /></script>
+	
+	<!-- <script type="text/javascript" src="https://csdnimg.cn/release/phoenix/production/markdownCopy-718168246b.js" /></script> -->
+
+
+<script src="https://g.csdnimg.cn/login-box/1.0.4/??login-box.js,login-auto.js?t=20190103145159"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/js/common-2dfea49d18.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/js/detail-bb53a9b64c.min.js"></script>
+	<script src="https://csdnimg.cn/release/phoenix/themes/skin-yellow/skin-yellow-fc7383b956.min.js"></script>
+
+
+<!-- <script type="text/javascript" src="//g.csdnimg.cn/check-adb/1.0.2/check-adb.js"></script> -->
+
+<script type="text/javascript" src="https://csdnimg.cn/release/blog_mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            "HTML-CSS": {
+                    linebreaks: { automatic: true, width: "94%container" },
+                    imageFont: null
+            },
+            tex2jax: {
+                preview: "none"
+            },
+            mml2jax: {
+                preview: 'none'
+            }
+    });
+</script>
+<script type="text/javascript">
+    </script>
+<script src="https://gh.bdstatic.com/static/gh/js/sdk/bword.min.js"></script>
+</html>

@@ -1,0 +1,3172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="canonical" href="https://blog.csdn.net/c406495762/article/details/77341116"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="referrer" content="always">
+    <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+    <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848">
+        <meta name="csdn-baidu-search"  content='{"autorun":true,"install":true,"keyword":"Python3《机器学习实战》学习笔记（四）：朴素贝叶斯基础篇之言论过滤器 - Jack-Cui"}'>
+    
+    <link href="https://csdnimg.cn/public/favicon.ico" rel="SHORTCUT ICON">
+    <title>Python3《机器学习实战》学习笔记（四）：朴素贝叶斯基础篇之言论过滤器 - Jack-Cui - CSDN博客</title>
+
+        
+                    <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/detail-d59e2413cb.min.css">
+            
+            <script type="application/ld+json">{"@context":"https:\/\/ziyuan.baidu.com\/contexts\/cambrian.jsonld","@id":"https:\/\/blog.csdn.net\/c406495762\/article\/details\/77341116","appid":"1563894916825412","title":"Python3\u300a\u673a\u5668\u5b66\u4e60\u5b9e\u6218\u300b\u5b66\u4e60\u7b14\u8bb0\uff08\u56db\uff09\uff1a\u6734\u7d20\u8d1d\u53f6\u65af\u57fa\u7840\u7bc7\u4e4b\u8a00\u8bba\u8fc7\u6ee4\u5668 - Jack-Cui","images":["https:\/\/img-blog.csdn.net\/20170817202900118?watermark\/2\/text\/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==\/font\/5a6L5L2T\/fontsize\/400\/fill\/I0JBQkFCMA==\/dissolve\/70\/gravity\/SouthEast","https:\/\/img-blog.csdn.net\/20170817202948492?watermark\/2\/text\/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==\/font\/5a6L5L2T\/fontsize\/400\/fill\/I0JBQkFCMA==\/dissolve\/70\/gravity\/SouthEast","https:\/\/img-blog.csdn.net\/20170817203040523?watermark\/2\/text\/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==\/font\/5a6L5L2T\/fontsize\/400\/fill\/I0JBQkFCMA==\/dissolve\/70\/gravity\/SouthEast"],"pubDate":"2019-02-09T19:39:35"}</script>
+        
+          <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/themes/skin-blackboard/skin-blackboard-1340d63bd5.min.css">
+        <script type="text/javascript">
+        var username = "c406495762";
+        var blog_address = "https://blog.csdn.net/c406495762";
+        var static_host = "https://csdnimg.cn/release/phoenix/";
+        var currentUserName = "qq_37507975";
+        var isShowAds = false;
+        var isOwner = false;
+        var loginUrl = "http://passport.csdn.net/account/login?from=https://blog.csdn.net/c406495762/article/details/77341116"
+        var blogUrl = "https://blog.csdn.net/";
+        //页面皮肤样式
+        var curSkin = "skin-blackboard";
+        // 第四范式所需数据
+        var articleTitles = "Python3《机器学习实战》学习笔记（四）：朴素贝叶斯基础篇之言论过滤器 - Jack-Cui";
+        var articleID = "77341116";
+        
+        var nickName = "Jack-Cui";
+        var isCorporate = false;
+        var subDomainBlogUrl = "https://blog.csdn.net/"
+    </script>
+    <script type="text/javascript">
+        // Traffic Stats of the entire Web site By baidu
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?6bcd52f51e9b3dce32bec4a3997715ac";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+        // Traffic Stats of the entire Web site By baidu end
+    </script>
+    <script src="https://csdnimg.cn/public/common/libs/jquery/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="https://csdnimg.cn/rabbit/exposure-click/main-1.0.6.js"></script>
+    <script src="//g.csdnimg.cn/fixed-sidebar/1.1.3/fixed-sidebar.js" type="text/javascript"></script>
+    <!-- 新版上报 -->
+    <script src="//g.csdnimg.cn/track/1.2.4/track.js" type="text/javascript"></script>
+    <!-- 新版上报end -->
+            <link rel="stylesheet" href="https://csdnimg.cn/public/sandalstrap/1.4/css/sandalstrap.min.css">
+    <style>
+        .MathJax, .MathJax_Message, .MathJax_Preview{
+            display: none
+        }
+    </style>
+</head>
+<!-- nodata 第三栏接口无数据时样式不变 -->
+<body class="nodata " > 
+    <link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+    <script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+<script type="text/javascript">
+	// 容错处理
+	var NEWS_FEED = function(){}
+</script>
+<script type="text/javascript" src="//static.mediav.com/js/mvf_news_feed.js"></script>
+<script type="text/javascript" src="//g.csdnimg.cn/copyright/1.0.3/copyright.js"></script>
+<div style="display:none;">
+	<img src="" onerror='setTimeout(function(){if(!/(csdn.net|iteye.com|baiducontent.com|googleusercontent.com|360webcache.com|sogoucdn.com|bingj.com|baidu.com)$/.test(window.location.hostname)){window.location.href="\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x63\x73\x64\x6e\x2e\x6e\x65\x74"}},3000);'>
+</div>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/chart-3456820cac.css" />
+<script src="https://dup.baidustatic.com/js/ds.js"></script>
+<div class="container clearfix" id="mainBox">
+			<div class="recommend-right">
+  <ul class="recommend-fixed-box">
+    
+  </ul>
+</div>	
+    <main>
+        <div class="blog-content-box">
+	<div class="article-header-box">
+		<div class="article-header">
+			<div class="article-title-box">
+				<span class="article-type type-1 float-left">原</span>				<h1 class="title-article">Python3《机器学习实战》学习笔记（四）：朴素贝叶斯基础篇之言论过滤器</h1>
+			</div>
+			<div class="article-info-box">
+				<div class="article-bar-top">
+																				<span class="time">2017年08月17日 20:57:59</span>
+					<a class="follow-nickName" href="https://me.csdn.net/c406495762" target="_blank">Jack-Cui</a>
+						<span class="read-count">阅读数：15710</span>
+						
+																												<div class="tags-box space">
+								<span class="label">所属专栏：</span>
+																<a class="tag-link" href="https://blog.csdn.net/column/details/16415.html" target="_blank">Python3机器学习</a>
+																</a>
+							</div>
+																	</div>
+				<div class="operating">
+									</div>
+			</div>
+		</div>
+	</div>
+	<article class="baidu_pl">
+		<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog"  data-mod=popu_307  data-dsm = "post" >
+								<div class="article-copyright">
+                  					<svg class="icon" title="CSDN认证原创" aria-hidden="true" style="width:53px; height: 18px; vertical-align: -4px;">
+							<use xlink:href="#CSDN_Cert"></use>
+					</svg>
+                  					
+					版权声明：本文为博主原创文章，未经博主允许不得转载。个人网站：http://cuijiahua.com。					https://blog.csdn.net/c406495762/article/details/77341116				</div>
+								            <div id="content_views" class="markdown_views prism-atom-one-dark">
+							<!-- flowchart 箭头图标 勿删 -->
+							<svg xmlns="http://www.w3.org/2000/svg" style="display: none;"><path stroke-linecap="round" d="M5,0 0,2.5 5,5z" id="raphael-marker-block" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path></svg>
+							<p><strong>转载请注明作者和出处：</strong> <a href="http://blog.csdn.net/c406495762" rel="nofollow">http://blog.csdn.net/c406495762</a><br>
+<strong>运行平台：</strong> Windows<br>
+<strong>Python版本：</strong> Python3.x<br>
+<strong>IDE：</strong> Sublime text3</p>
+<p></p><div class="toc"><h3>文章目录</h3><ul><li><a href="#__6" rel="nofollow">一 前言</a></li><li><a href="#__20" rel="nofollow">二 朴素贝叶斯理论</a></li><ul><li><a href="#1__24" rel="nofollow">1 贝叶斯决策理论</a></li><li><a href="#2__39" rel="nofollow">2 条件概率</a></li><li><a href="#3__79" rel="nofollow">3 全概率公式</a></li><li><a href="#4__123" rel="nofollow">4 贝叶斯推断</a></li><li><a href="#5__187" rel="nofollow">5 朴素贝叶斯推断</a></li></ul><li><a href="#__250" rel="nofollow">三 动手实战</a></li><li><a href="#__708" rel="nofollow">四 总结</a></li></ul></div><p></p>
+<h1><a id="__6"></a>一 前言</h1>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;朴素贝叶斯算法是有监督的学习算法，解决的是分类问题，如客户是否流失、是否值得投资、信用等级评定等多分类问题。该算法的优点在于简单易懂、学习效率高、在某些领域的分类问题中能够与决策树、神经网络相媲美。但由于该算法以自变量之间的独立（条件特征独立）性和连续变量的正态性假设为前提，就会导致算法精度在某种程度上受影响。</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817202900118?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;本篇文章将从朴素贝叶斯推断原理开始讲起，通过实例进行辅助讲解。最后，使用Python3编程实现一个简单的言论过滤器。</p>
+<hr>
+<h1><a id="__20"></a>二 朴素贝叶斯理论</h1>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;朴素贝叶斯是贝叶斯决策理论的一部分，所以在讲述朴素贝叶斯之前有必要快速了解一下贝叶斯决策理论。</p>
+<h2><a id="1__24"></a>1 贝叶斯决策理论</h2>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;假设现在我们有一个数据集，它由两类数据组成，数据分布如下图所示：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817202948492?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;我们现在用p1(x,y)表示数据点(x,y)属于类别1(图中红色圆点表示的类别)的概率，用p2(x,y)表示数据点(x,y)属于类别2(图中蓝色三角形表示的类别)的概率，那么对于一个新数据点(x,y)，可以用下面的规则来判断它的类别：</p>
+<ul>
+<li>如果p1(x,y) &gt; p2(x,y)，那么类别为1</li>
+<li>如果p1(x,y) &lt; p2(x,y)，那么类别为2</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;也就是说，我们会选择高概率对应的类别。这就是贝叶斯决策理论的核心思想，即选择具有最高概率的决策。已经了解了贝叶斯决策理论的核心思想，那么接下来，就是学习如何计算p1和p2概率。</p>
+<h2><a id="2__39"></a>2 条件概率</h2>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;在学习计算p1和p2概率之前，我们需要了解什么是条件概率(Condittional probability)，就是指在事件B发生的情况下，事件A发生的概率，用P(A|B)来表示。</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817203040523?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;根据文氏图，可以很清楚地看到在事件B发生的情况下，事件A发生的概率就是P(A∩B)除以P(B)。</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817203109815?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;因此，</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817203135268?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;同理可得，</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817203202979?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;所以，</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817203231579?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;即</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817203257120?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;这就是条件概率的计算公式。</p>
+<h2><a id="3__79"></a>3 全概率公式</h2>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;除了条件概率以外，在计算p1和p2的时候，还要用到全概率公式，因此，这里继续推导全概率公式。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;假定样本空间S，是两个事件A与A’的和。</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817203602673?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;上图中，红色部分是事件A，绿色部分是事件A’，它们共同构成了样本空间S。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;在这种情况下，事件B可以划分成两个部分。</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817203627052?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;即</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817203955182?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;在上一节的推导当中，我们已知</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817204021584?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;所以，</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817204047993?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;这就是全概率公式。它的含义是，如果A和A’构成样本空间的一个划分，那么事件B的概率，就等于A和A’的概率分别乘以B对这两个事件的条件概率之和。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;将这个公式代入上一节的条件概率公式，就得到了条件概率的另一种写法：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817204118030?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><h2><a id="4__123"></a>4 贝叶斯推断</h2>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;对条件概率公式进行变形，可以得到如下形式：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817204150864?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;我们把P(A)称为"先验概率"（Prior probability），即在B事件发生之前，我们对A事件概率的一个判断。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;P(A|B)称为"后验概率"（Posterior probability），即在B事件发生之后，我们对A事件概率的重新评估。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;P(B|A)/P(B)称为"可能性函数"（Likelyhood），这是一个调整因子，使得预估概率更接近真实概率。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;所以，条件概率可以理解成下面的式子：</p>
+<pre><code>后验概率　＝　先验概率 ｘ 调整因子
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<strong>这就是贝叶斯推断的含义。我们先预估一个"先验概率"，然后加入实验结果，看这个实验到底是增强还是削弱了"先验概率"，由此得到更接近事实的"后验概率"。</strong></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;在这里，如果"可能性函数"P(B|A)/P(B)&gt;1，意味着"先验概率"被增强，事件A的发生的可能性变大；如果"可能性函数"=1，意味着B事件无助于判断事件A的可能性；如果"可能性函数"&lt;1，意味着"先验概率"被削弱，事件A的可能性变小。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;为了加深对贝叶斯推断的理解，我们一个例子。</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817204236693?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;两个一模一样的碗，一号碗有30颗水果糖和10颗巧克力糖，二号碗有水果糖和巧克力糖各20颗。现在随机选择一个碗，从中摸出一颗糖，发现是水果糖。请问这颗水果糖来自一号碗的概率有多大？</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;我们假定，H1表示一号碗，H2表示二号碗。由于这两个碗是一样的，所以P(H1)=P(H2)，也就是说，在取出水果糖之前，这两个碗被选中的概率相同。因此，P(H1)=0.5，我们把这个概率就叫做"先验概率"，即没有做实验之前，来自一号碗的概率是0.5。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;再假定，E表示水果糖，所以问题就变成了在已知E的情况下，来自一号碗的概率有多大，即求P(H1|E)。我们把这个概率叫做"后验概率"，即在E事件发生之后，对P(H1)的修正。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;根据条件概率公式，得到</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817204304575?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;已知，P(H1)等于0.5，P(E|H1)为一号碗中取出水果糖的概率，等于30÷(30+10)=0.75，那么求出P(E)就可以得到答案。根据全概率公式，</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817204331638?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;所以，</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817204353378?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;将数字代入原方程，得到</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817204418817?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;这表明，来自一号碗的概率是0.6。也就是说，取出水果糖之后，H1事件的可能性得到了增强。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;同时再思考一个问题，在使用该算法的时候，如果不需要知道具体的类别概率，即上面P(H1|E)=0.6，只需要知道所属类别，即来自一号碗，我们有必要计算P(E)这个全概率吗？要知道我们只需要比较 P(H1|E)和P(H2|E)的大小，找到那个最大的概率就可以。既然如此，两者的分母都是相同的，那我们只需要比较分子即可。即比较P(E|H1)P(H1)和P(E|H2)P(H2)的大小，所以为了减少计算量，全概率公式在实际编程中可以不使用。</p>
+<h2><a id="5__187"></a>5 朴素贝叶斯推断</h2>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;理解了贝叶斯推断，那么让我们继续看看朴素贝叶斯。贝叶斯和朴素贝叶斯的概念是不同的，区别就在于“朴素”二字，朴素贝叶斯对条件个概率分布做了条件独立性的假设。 比如下面的公式，假设有n个特征：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817204458620?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;由于每个特征都是独立的，我们可以进一步拆分公式</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171017163604596?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;这样我们就可以进行计算了。如果有些迷糊，让我们从一个例子开始讲起，你会看到贝叶斯分类器很好懂，一点都不难。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;某个医院早上来了六个门诊的病人，他们的情况如下表所示：</p>
+
+<table>
+<thead>
+<tr>
+<th align="center">症状</th>
+<th align="center">职业</th>
+<th align="center">疾病</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">打喷嚏</td>
+<td align="center">护士</td>
+<td align="center">感冒</td>
+</tr>
+<tr>
+<td align="center">打喷嚏</td>
+<td align="center">农夫</td>
+<td align="center">过敏</td>
+</tr>
+<tr>
+<td align="center">头痛</td>
+<td align="center">建筑工人</td>
+<td align="center">脑震荡</td>
+</tr>
+<tr>
+<td align="center">头痛</td>
+<td align="center">建筑工人</td>
+<td align="center">感冒</td>
+</tr>
+<tr>
+<td align="center">打喷嚏</td>
+<td align="center">教师</td>
+<td align="center">感冒</td>
+</tr>
+<tr>
+<td align="center">头痛</td>
+<td align="center">教师</td>
+<td align="center">脑震荡</td>
+</tr>
+</tbody>
+</table><p>&nbsp;&nbsp;&nbsp;&nbsp;现在又来了第七个病人，是一个打喷嚏的建筑工人。请问他患上感冒的概率有多大？</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;根据贝叶斯定理：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817204750272?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;可得：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817204812471?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;根据朴素贝叶斯条件独立性的假设可知，"打喷嚏"和"建筑工人"这两个特征是独立的，因此，上面的等式就变成了</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817204834377?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;这里可以计算：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817204857275?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;因此，这个打喷嚏的建筑工人，有66%的概率是得了感冒。同理，可以计算这个病人患上过敏或脑震荡的概率。比较这几个概率，就可以知道他最可能得什么病。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;这就是贝叶斯分类器的基本方法：在统计资料的基础上，依据某些特征，计算各个类别的概率，从而实现分类。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;同样，在编程的时候，如果不需要求出所属类别的具体概率，P(打喷嚏) = 0.5和P(建筑工人) = 0.33的概率是可以不用求的。</p>
+<hr>
+<h1><a id="__250"></a>三 动手实战</h1>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;说了这么多，没点实践编程怎么行？</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;以在线社区留言为例。为了不影响社区的发展，我们要屏蔽侮辱性的言论，所以要构建一个快速过滤器，如果某条留言使用了负面或者侮辱性的语言，那么就将该留言标志为内容不当。过滤这类内容是一个很常见的需求。对此问题建立两个类型：侮辱类和非侮辱类，使用1和0分别表示。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;我们把文本看成单词向量或者词条向量，也就是说将句子转换为向量。考虑出现所有文档中的单词，再决定将哪些单词纳入词汇表或者说所要的词汇集合，然后必须要将每一篇文档转换为词汇表上的向量。简单起见，我们先假设已经将本文切分完毕，存放到列表中，并对词汇向量进行分类标注。编写代码如下：</p>
+<pre><code class="prism language-Python"># -*- coding: UTF-8 -*-
+
+"""
+函数说明:创建实验样本
+
+Parameters:
+    无
+Returns:
+    postingList - 实验样本切分的词条
+    classVec - 类别标签向量
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Modify:
+    2017-08-11
+"""
+def loadDataSet():
+    postingList=[['my', 'dog', 'has', 'flea', 'problems', 'help', 'please'],                #切分的词条
+                 ['maybe', 'not', 'take', 'him', 'to', 'dog', 'park', 'stupid'],
+                 ['my', 'dalmation', 'is', 'so', 'cute', 'I', 'love', 'him'],
+                 ['stop', 'posting', 'stupid', 'worthless', 'garbage'],
+                 ['mr', 'licks', 'ate', 'my', 'steak', 'how', 'to', 'stop', 'him'],
+                 ['quit', 'buying', 'worthless', 'dog', 'food', 'stupid']]
+    classVec = [0,1,0,1,0,1]                                                                   #类别标签向量，1代表侮辱性词汇，0代表不是
+    return postingList,classVec
+
+if __name__ == '__main__':
+    postingLIst, classVec = loadDataSet()
+    for each in postingLIst:
+        print(each)
+    print(classVec)
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;从运行结果可以看出，我们已经将postingList是存放词条列表中，classVec是存放每个词条的所属类别，1代表侮辱类 ，0代表非侮辱类。</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817204950872?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;继续编写代码，前面我们已经说过我们要先创建一个词汇表，并将切分好的词条转换为词条向量。</p>
+<pre><code class="prism language-Python"># -*- coding: UTF-8 -*-
+
+"""
+函数说明:创建实验样本
+
+Parameters:
+    无
+Returns:
+    postingList - 实验样本切分的词条
+    classVec - 类别标签向量
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Modify:
+    2017-08-11
+"""
+def loadDataSet():
+    postingList=[['my', 'dog', 'has', 'flea', 'problems', 'help', 'please'],                #切分的词条
+                 ['maybe', 'not', 'take', 'him', 'to', 'dog', 'park', 'stupid'],
+                 ['my', 'dalmation', 'is', 'so', 'cute', 'I', 'love', 'him'],
+                 ['stop', 'posting', 'stupid', 'worthless', 'garbage'],
+                 ['mr', 'licks', 'ate', 'my', 'steak', 'how', 'to', 'stop', 'him'],
+                 ['quit', 'buying', 'worthless', 'dog', 'food', 'stupid']]
+    classVec = [0,1,0,1,0,1]                                                                   #类别标签向量，1代表侮辱性词汇，0代表不是
+    return postingList,classVec
+
+"""
+函数说明:根据vocabList词汇表，将inputSet向量化，向量的每个元素为1或0
+
+Parameters:
+    vocabList - createVocabList返回的列表
+    inputSet - 切分的词条列表
+Returns:
+    returnVec - 文档向量,词集模型
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Modify:
+    2017-08-11
+"""
+def setOfWords2Vec(vocabList, inputSet):
+    returnVec = [0] * len(vocabList)                                    #创建一个其中所含元素都为0的向量
+    for word in inputSet:                                                #遍历每个词条
+        if word in vocabList:                                            #如果词条存在于词汇表中，则置1
+            returnVec[vocabList.index(word)] = 1
+        else: print("the word: %s is not in my Vocabulary!" % word)
+    return returnVec                                                    #返回文档向量
+
+"""
+函数说明:将切分的实验样本词条整理成不重复的词条列表，也就是词汇表
+
+Parameters:
+    dataSet - 整理的样本数据集
+Returns:
+    vocabSet - 返回不重复的词条列表，也就是词汇表
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Modify:
+    2017-08-11
+"""
+def createVocabList(dataSet):
+    vocabSet = set([])                      #创建一个空的不重复列表
+    for document in dataSet:               
+        vocabSet = vocabSet | set(document) #取并集
+    return list(vocabSet)
+
+if __name__ == '__main__':
+    postingList, classVec = loadDataSet()
+    print('postingList:\n',postingList)
+    myVocabList = createVocabList(postingList)
+    print('myVocabList:\n',myVocabList)
+    trainMat = []
+    for postinDoc in postingList:
+        trainMat.append(setOfWords2Vec(myVocabList, postinDoc))
+    print('trainMat:\n', trainMat)
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;从运行结果可以看出，postingList是原始的词条列表，myVocabList是词汇表。myVocabList是所有单词出现的集合，没有重复的元素。词汇表是用来干什么的？没错，它是用来将词条向量化的，一个单词在词汇表中出现过一次，那么就在相应位置记作1，如果没有出现就在相应位置记作0。trainMat是所有的词条向量组成的列表。它里面存放的是根据myVocabList向量化的词条向量。</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817205041912?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+[点击放大图片](https://img-blog.csdn.net/20170817205041912?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;我们已经得到了词条向量。接下来，我们就可以通过词条向量训练朴素贝叶斯分类器。</p>
+<pre><code class="prism language-Python"># -*- coding: UTF-8 -*-
+import numpy as np
+
+"""
+函数说明:创建实验样本
+
+Parameters:
+    无
+Returns:
+    postingList - 实验样本切分的词条
+    classVec - 类别标签向量
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Modify:
+    2017-08-11
+"""
+def loadDataSet():
+    postingList=[['my', 'dog', 'has', 'flea', 'problems', 'help', 'please'],                #切分的词条
+                 ['maybe', 'not', 'take', 'him', 'to', 'dog', 'park', 'stupid'],
+                 ['my', 'dalmation', 'is', 'so', 'cute', 'I', 'love', 'him'],
+                 ['stop', 'posting', 'stupid', 'worthless', 'garbage'],
+                 ['mr', 'licks', 'ate', 'my', 'steak', 'how', 'to', 'stop', 'him'],
+                 ['quit', 'buying', 'worthless', 'dog', 'food', 'stupid']]
+    classVec = [0,1,0,1,0,1]                                                                   #类别标签向量，1代表侮辱性词汇，0代表不是
+    return postingList,classVec
+
+"""
+函数说明:根据vocabList词汇表，将inputSet向量化，向量的每个元素为1或0
+
+Parameters:
+    vocabList - createVocabList返回的列表
+    inputSet - 切分的词条列表
+Returns:
+    returnVec - 文档向量,词集模型
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Modify:
+    2017-08-11
+"""
+def setOfWords2Vec(vocabList, inputSet):
+    returnVec = [0] * len(vocabList)                                    #创建一个其中所含元素都为0的向量
+    for word in inputSet:                                                #遍历每个词条
+        if word in vocabList:                                            #如果词条存在于词汇表中，则置1
+            returnVec[vocabList.index(word)] = 1
+        else: print("the word: %s is not in my Vocabulary!" % word)
+    return returnVec                                                    #返回文档向量
+
+"""
+函数说明:将切分的实验样本词条整理成不重复的词条列表，也就是词汇表
+
+Parameters:
+    dataSet - 整理的样本数据集
+Returns:
+    vocabSet - 返回不重复的词条列表，也就是词汇表
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Modify:
+    2017-08-11
+"""
+def createVocabList(dataSet):
+    vocabSet = set([])                      #创建一个空的不重复列表
+    for document in dataSet:
+        vocabSet = vocabSet | set(document) #取并集
+    return list(vocabSet)
+
+"""
+函数说明:朴素贝叶斯分类器训练函数
+
+Parameters:
+    trainMatrix - 训练文档矩阵，即setOfWords2Vec返回的returnVec构成的矩阵
+    trainCategory - 训练类别标签向量，即loadDataSet返回的classVec
+Returns:
+    p0Vect - 侮辱类的条件概率数组
+    p1Vect - 非侮辱类的条件概率数组
+    pAbusive - 文档属于侮辱类的概率
+Author:
+    Jack Cui
+Blog:
+    http://blog.csdn.net/c406495762
+Modify:
+    2017-08-12
+"""
+def trainNB0(trainMatrix,trainCategory):
+    numTrainDocs = len(trainMatrix)                            #计算训练的文档数目
+    numWords = len(trainMatrix[0])                            #计算每篇文档的词条数
+    pAbusive = sum(trainCategory)/float(numTrainDocs)        #文档属于侮辱类的概率
+    p0Num = np.zeros(numWords); p1Num = np.zeros(numWords)    #创建numpy.zeros数组,词条出现数初始化为0
+    p0Denom = 0.0; p1Denom = 0.0                            #分母初始化为0
+    for i in range(numTrainDocs):
+        if trainCategory[i] == 1:                            #统计属于侮辱类的条件概率所需的数据，即P(w0|1),P(w1|1),P(w2|1)···
+            p1Num += trainMatrix[i]
+            p1Denom += sum(trainMatrix[i])
+        else:                                                #统计属于非侮辱类的条件概率所需的数据，即P(w0|0),P(w1|0),P(w2|0)···
+            p0Num += trainMatrix[i]
+            p0Denom += sum(trainMatrix[i])
+    p1Vect = p1Num/p1Denom                                      
+    p0Vect = p0Num/p0Denom         
+    return p0Vect,p1Vect,pAbusive                            #返回属于侮辱类的条件概率数组，属于非侮辱类的条件概率数组，文档属于侮辱类的概率
+
+if __name__ == '__main__':
+    postingList, classVec = loadDataSet()
+    myVocabList = createVocabList(postingList)
+    print('myVocabList:\n', myVocabList)
+    trainMat = []
+    for postinDoc in postingList:
+        trainMat.append(setOfWords2Vec(myVocabList, postinDoc))
+    p0V, p1V, pAb = trainNB0(trainMat, classVec)
+    print('p0V:\n', p0V)
+    print('p1V:\n', p1V)
+    print('classVec:\n', classVec)
+    print('pAb:\n', pAb)
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;运行结果如下，p0V存放的是每个单词属于类别0，也就是非侮辱类词汇的概率。比如p0V的倒数第6个概率，就是stupid这个单词属于非侮辱类的概率为0。同理，p1V的倒数第6个概率，就是stupid这个单词属于侮辱类的概率为0.15789474，也就是约等于15.79%的概率。我们知道stupid的中文意思是蠢货，难听点的叫法就是傻逼。显而易见，这个单词属于侮辱类。pAb是所有侮辱类的样本占所有样本的概率，从classVec中可以看出，一用有3个侮辱类，3个非侮辱类。所以侮辱类的概率是0.5。因此p0V存放的就是P(him|非侮辱类) = 0.0833、P(is|非侮辱类) = 0.0417，一直到P(dog|非侮辱类) = 0.0417，这些单词的条件概率。同理，p1V存放的就是各个单词属于侮辱类的条件概率。pAb就是先验概率。</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20170817205219196?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+[点击放大图片](https://img-blog.csdn.net/20170817205219196?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;已经训练好分类器，接下来，使用分类器进行分类。</p>
+<pre><code class="prism language-Python"># -*- coding: UTF-8 -*-
+import numpy as np
+from functools import reduce
+
+"""
+函数说明:创建实验样本
+
+Parameters:
+	无
+Returns:
+	postingList - 实验样本切分的词条
+	classVec - 类别标签向量
+Author:
+	Jack Cui
+Blog:
+	http://blog.csdn.net/c406495762
+Modify:
+	2017-08-11
+"""
+def loadDataSet():
+	postingList=[['my', 'dog', 'has', 'flea', 'problems', 'help', 'please'],				#切分的词条
+				['maybe', 'not', 'take', 'him', 'to', 'dog', 'park', 'stupid'],
+				['my', 'dalmation', 'is', 'so', 'cute', 'I', 'love', 'him'],
+				['stop', 'posting', 'stupid', 'worthless', 'garbage'],
+				['mr', 'licks', 'ate', 'my', 'steak', 'how', 'to', 'stop', 'him'],
+				['quit', 'buying', 'worthless', 'dog', 'food', 'stupid']]
+	classVec = [0,1,0,1,0,1]   																#类别标签向量，1代表侮辱性词汇，0代表不是
+	return postingList,classVec																#返回实验样本切分的词条和类别标签向量
+
+"""
+函数说明:将切分的实验样本词条整理成不重复的词条列表，也就是词汇表
+
+Parameters:
+	dataSet - 整理的样本数据集
+Returns:
+	vocabSet - 返回不重复的词条列表，也就是词汇表
+Author:
+	Jack Cui
+Blog:
+	http://blog.csdn.net/c406495762
+Modify:
+	2017-08-11
+"""
+def createVocabList(dataSet):
+	vocabSet = set([])  					#创建一个空的不重复列表
+	for document in dataSet:				
+		vocabSet = vocabSet | set(document) #取并集
+	return list(vocabSet)
+
+"""
+函数说明:根据vocabList词汇表，将inputSet向量化，向量的每个元素为1或0
+
+Parameters:
+	vocabList - createVocabList返回的列表
+	inputSet - 切分的词条列表
+Returns:
+	returnVec - 文档向量,词集模型
+Author:
+	Jack Cui
+Blog:
+	http://blog.csdn.net/c406495762
+Modify:
+	2017-08-11
+"""
+def setOfWords2Vec(vocabList, inputSet):
+	returnVec = [0] * len(vocabList)									#创建一个其中所含元素都为0的向量
+	for word in inputSet:												#遍历每个词条
+		if word in vocabList:											#如果词条存在于词汇表中，则置1
+			returnVec[vocabList.index(word)] = 1
+		else: print("the word: %s is not in my Vocabulary!" % word)
+	return returnVec													#返回文档向量
+
+
+"""
+函数说明:朴素贝叶斯分类器训练函数
+
+Parameters:
+	trainMatrix - 训练文档矩阵，即setOfWords2Vec返回的returnVec构成的矩阵
+	trainCategory - 训练类别标签向量，即loadDataSet返回的classVec
+Returns:
+	p0Vect - 侮辱类的条件概率数组
+	p1Vect - 非侮辱类的条件概率数组
+	pAbusive - 文档属于侮辱类的概率
+Author:
+	Jack Cui
+Blog:
+	http://blog.csdn.net/c406495762
+Modify:
+	2017-08-12
+"""
+def trainNB0(trainMatrix,trainCategory):
+	numTrainDocs = len(trainMatrix)							#计算训练的文档数目
+	numWords = len(trainMatrix[0])							#计算每篇文档的词条数
+	pAbusive = sum(trainCategory)/float(numTrainDocs)		#文档属于侮辱类的概率
+	p0Num = np.zeros(numWords); p1Num = np.zeros(numWords)	#创建numpy.zeros数组,
+	p0Denom = 0.0; p1Denom = 0.0                        	#分母初始化为0.0
+	for i in range(numTrainDocs):
+		if trainCategory[i] == 1:							#统计属于侮辱类的条件概率所需的数据，即P(w0|1),P(w1|1),P(w2|1)···
+			p1Num += trainMatrix[i]
+			p1Denom += sum(trainMatrix[i])
+		else:												#统计属于非侮辱类的条件概率所需的数据，即P(w0|0),P(w1|0),P(w2|0)···
+			p0Num += trainMatrix[i]
+			p0Denom += sum(trainMatrix[i])
+	p1Vect = p1Num/p1Denom									#相除        
+	p0Vect = p0Num/p0Denom          
+	return p0Vect,p1Vect,pAbusive							#返回属于侮辱类的条件概率数组，属于非侮辱类的条件概率数组，文档属于侮辱类的概率
+
+"""
+函数说明:朴素贝叶斯分类器分类函数
+
+Parameters:
+	vec2Classify - 待分类的词条数组
+	p0Vec - 侮辱类的条件概率数组
+	p1Vec -非侮辱类的条件概率数组
+	pClass1 - 文档属于侮辱类的概率
+Returns:
+	0 - 属于非侮辱类
+	1 - 属于侮辱类
+Author:
+	Jack Cui
+Blog:
+	http://blog.csdn.net/c406495762
+Modify:
+	2017-08-12
+"""
+def classifyNB(vec2Classify, p0Vec, p1Vec, pClass1):
+	p1 = reduce(lambda x,y:x*y, vec2Classify * p1Vec) * pClass1    			#对应元素相乘
+	p0 = reduce(lambda x,y:x*y, vec2Classify * p0Vec) * (1.0 - pClass1)
+	print('p0:',p0)
+	print('p1:',p1)
+	if p1 &gt; p0:
+		return 1
+	else: 
+		return 0
+
+"""
+函数说明:测试朴素贝叶斯分类器
+
+Parameters:
+	无
+Returns:
+	无
+Author:
+	Jack Cui
+Blog:
+	http://blog.csdn.net/c406495762
+Modify:
+	2017-08-12
+"""
+def testingNB():
+	listOPosts,listClasses = loadDataSet()									#创建实验样本
+	myVocabList = createVocabList(listOPosts)								#创建词汇表
+	trainMat=[]
+	for postinDoc in listOPosts:
+		trainMat.append(setOfWords2Vec(myVocabList, postinDoc))				#将实验样本向量化
+	p0V,p1V,pAb = trainNB0(np.array(trainMat),np.array(listClasses))		#训练朴素贝叶斯分类器
+	testEntry = ['love', 'my', 'dalmation']									#测试样本1
+	thisDoc = np.array(setOfWords2Vec(myVocabList, testEntry))				#测试样本向量化
+	if classifyNB(thisDoc,p0V,p1V,pAb):
+		print(testEntry,'属于侮辱类')										#执行分类并打印分类结果
+	else:
+		print(testEntry,'属于非侮辱类')										#执行分类并打印分类结果
+	testEntry = ['stupid', 'garbage']										#测试样本2
+
+	thisDoc = np.array(setOfWords2Vec(myVocabList, testEntry))				#测试样本向量化
+	if classifyNB(thisDoc,p0V,p1V,pAb):
+		print(testEntry,'属于侮辱类')										#执行分类并打印分类结果
+	else:
+		print(testEntry,'属于非侮辱类')										#执行分类并打印分类结果
+
+if __name__ == '__main__':
+	testingNB()
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;我们测试了两个词条，在使用分类器前，也需要对词条向量化，然后使用classifyNB()函数，用朴素贝叶斯公式，计算词条向量属于侮辱类和非侮辱类的概率。运行结果如下：</p>
+<p></p>
+<div align="center"><img src="https://img-blog.csdn.net/20171009101015084?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYzQwNjQ5NTc2Mg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<p></p>
+</div><p>&nbsp;&nbsp;&nbsp;&nbsp;你会发现，这样写的算法无法进行分类，p0和p1的计算结果都是0，这里显然存在问题。这是为什么呢？下一篇文章继续讲解~</p>
+<hr>
+<h1><a id="__708"></a>四 总结</h1>
+<p><strong>朴素贝叶斯推断的一些优点：</strong></p>
+<ul>
+<li>生成式模型，通过计算概率来进行分类，可以用来处理多分类问题。</li>
+<li>对小规模的数据表现很好，适合多分类任务，适合增量式训练，算法也比较简单。</li>
+</ul>
+<p><strong>朴素贝叶斯推断的一些缺点：</strong></p>
+<ul>
+<li>对输入数据的表达形式很敏感。</li>
+<li>由于朴素贝叶斯的“朴素”特点，所以会带来一些准确率上的损失。</li>
+<li>需要计算先验概率，分类决策存在错误率。</li>
+</ul>
+<p><strong>其它：</strong></p>
+<ul>
+<li>本文中的编程实例，只是简单的实例。存在一定的问题，需要进行改进，下篇文章会讲解改进方法；</li>
+<li>同时，本文中的编程实例，没有进行前期的文本切分，下一篇文章会讲解英文单词和中文单词的切分方法；</li>
+<li>下篇文章将使用sklearn进行中文实例练习；</li>
+<li><strong>朴素贝叶斯的准确率，其实是比较依赖于训练语料的，机器学习算法就和纯洁的小孩一样，取决于其成长（训练）条件，“吃的是草挤的是奶”，但"不是所有的牛奶，都叫特仑苏"。</strong></li>
+<li>如有问题，请留言。如有错误，还望指正，谢谢！</li>
+</ul>
+<p><strong>PS： 如果觉得本篇本章对您有所帮助，欢迎关注、评论、顶！</strong></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;本文出现的所有代码和数据集，均可在我的github上下载，欢迎Follow、Star：<a href="https://github.com/Jack-Cherish/Machine-Learning" rel="nofollow">https://github.com/Jack-Cherish/Machine-Learning</a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;参考文献：<a href="http://www.ruanyifeng.com/blog/2013/12/naive_bayes_classifier.html" rel="nofollow">http://www.ruanyifeng.com/blog/2013/12/naive_bayes_classifier.html</a></p>
+
+            </div>
+						<link href="https://csdnimg.cn/release/phoenix/mdeditor/markdown_views-7b4cdcb592.css" rel="stylesheet">
+                </div>
+	</article>
+</div>
+  <div class="hide-article-box hide-article-pos text-center">
+    <div class="border"></div>
+        <a class="btn article-footer-btn" id="btn-readmore" data-track-view='{"mod":"popu_376","con":",https://blog.csdn.net/c406495762/article/details/77341116,"}' data-track-click='{"mod":"popu_376","con":",https://blog.csdn.net/c406495762/article/details/77341116,"}'>阅读更多</a>
+        <a class="btn article-footer-btn article-footer-bookmark-btn" >
+      <svg class="icon no-active hover-hide" aria-hidden="true">
+        <use xlink:href="#csdnc-bookmark"></use>
+      </svg>
+      <span>收藏</span>
+    </a>
+    <div class="btn article-footer-btn  bds_weixin article-footer-share-btn" data-cmd="weixin" title="分享">
+      <svg class="icon no-active hover-hide" aria-hidden="true">
+        <use xlink:href="#csdnc-share"></use>
+      </svg>
+      <span>分享</span>
+      <div class="bdsharebuttonbox">
+        <a href="#"class="bds_weixin clear-share-style-article-footer" data-cmd="weixin" title="分享"></a>
+      </div>
+    </div>
+    
+  </div>
+  <script>
+  (function(){
+    function collection(){
+      if (currentUserName) {
+        if (!$(this).hasClass("liked")) {
+          $.ajax({
+            url: 'https://my.csdn.net/my/favorite/do_add/2',
+            dataType: 'json',
+            type: 'POST',
+            xhrFields: {
+              withCredentials: true
+            },
+            data: {
+              title: articleTit,
+              url: curentUrl,
+              share: 1,
+              map_name: ''
+            },
+            success: function(data) {
+              if (data.succ == 1) {
+                $('.btn-bookmark').addClass("liked");
+                $('.article-footer-bookmark-btn').addClass("liked").children('span').text('已收藏');
+                
+                alert('收藏成功,可以在个人中心查看我的收藏');
+              } else {
+                if (data.msg === "您已经收藏过") {
+                  $('.btn-bookmark').addClass("liked");
+                  $('.article-footer-bookmark-btn').addClass("liked").children('span').text('已收藏');
+                }
+                alert(data.msg);
+              }
+            }
+          });
+        } else {
+          alert('您已经收藏过');
+        }
+      } else {
+        window.csdn.loginBox.show();
+      }
+    }
+    window.csdn = window.csdn ? window.csdn : {};
+    window.csdn.articleCollection = collection;
+    function setArticleH(btnReadmore,posi){
+      var winH = $(window).height();
+      var articleBox = $("div.article_content");
+      var artH = articleBox.height();
+      if(artH > winH*posi){
+        articleBox.css({
+          'height':winH*posi+'px',
+          'overflow':'hidden'
+        })
+        btnReadmore.click(function(){
+          articleBox.removeAttr("style");
+          $(this).parent().remove()
+        })
+      }else{
+        btnReadmore.parent().remove()
+      }
+    }
+    var btnReadmore = $("#btn-readmore");
+    $('.article-footer-bookmark-btn').click(window.csdn.articleCollection)
+    if(btnReadmore.length>0){
+      if(currentUserName){
+        setArticleH(btnReadmore,3);
+      }else{
+        setArticleH(btnReadmore,1.2);
+      }
+    }else{
+      $('.hide-article-box').addClass('hide-article-style');
+    }
+  })()
+</script>
+<script>
+		$(".MathJax").remove();
+		if($('div.markdown_views pre.prettyprint code.hljs').length > 0 ){
+				$('div.markdown_views')[0].className = 'markdown_views';
+		}
+</script>
+                <a id="commentBox"></a>
+<div class="comment-box">
+	
+	<div class="comment-edit-box d-flex">
+		<a id="commentsedit"></a>
+		<div class="user-img">
+			<a href="//me.csdn.net/qq_37507975" target="_blank">
+				<img class="" src="https://avatar.csdn.net/1/6/8/3_qq_37507975.jpg">
+			</a>
+		</div>
+		<form id="commentform">
+			<input type="hidden" id="comment_replyId">
+			<textarea class="comment-content" name="comment_content" id="comment_content" placeholder="想对作者说点什么"></textarea>
+			<div class="opt-box"> <!-- d-flex -->
+				<div id="ubbtools" class="add_code">
+					<a href="#insertcode" code="code" target="_self"><i class="icon iconfont icon-daima"></i></a>
+				</div>
+				<input type="hidden" id="comment_replyId" name="comment_replyId">
+				<input type="hidden" id="article_id" name="article_id" value="77341116">
+				<input type="hidden" id="comment_userId" name="comment_userId" value="">
+				<input type="hidden" id="commentId" name="commentId" value="">
+				<div style="display: none;" class="csdn-tracking-statistics tracking-click" data-mod="popu_384"><a href="#" target="_blank" class="comment_area_btn">发表评论</a></div>
+				<div class="dropdown" id="myDrap">
+					<a class="dropdown-face d-flex align-items-center" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					<div class="txt-selected text-truncate">添加代码片</div>
+					<svg class="icon d-block" aria-hidden="true">
+						<use xlink:href="#csdnc-triangledown"></use>
+					</svg>
+					</a>
+					<ul class="dropdown-menu" id="commentCode" aria-labelledby="drop4">
+						<li><a data-code="html">HTML/XML</a></li>
+						<li><a data-code="objc">objective-c</a></li>
+						<li><a data-code="ruby">Ruby</a></li>
+						<li><a data-code="php">PHP</a></li>
+						<li><a data-code="csharp">C</a></li>
+						<li><a data-code="cpp">C++</a></li>
+						<li><a data-code="javascript">JavaScript</a></li>
+						<li><a data-code="python">Python</a></li>
+						<li><a data-code="java">Java</a></li>
+						<li><a data-code="css">CSS</a></li>
+						<li><a data-code="sql">SQL</a></li>
+						<li><a data-code="plain">其它</a></li>
+					</ul>
+				</div>  
+				<div class="right-box">
+					<span id="tip_comment" class="tip">还能输入<em>1000</em>个字符</span>
+					<input type="submit" class="btn btn-sm btn-red btn-comment" value="发表评论">
+				</div>
+			</div>
+		</form>
+	</div>
+
+		<div class="comment-list-container">
+		<a id="comments"></a>
+		<div class="comment-list-box">
+		</div>
+		<div id="commentPage" class="pagination-box d-none"></div>
+		<div class="opt-box text-center">
+			<button class="btn btn-sm btn-link-blue" id="btnMoreComment"></button>
+		</div>
+	</div>
+</div>
+        <div class="recommend-box">
+            		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/zhengzhenxian/article/details/79052185,BlogCommendFromBaidu_0"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/zhengzhenxian/article/details/79052185,BlogCommendFromBaidu_0"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/zhengzhenxian/article/details/79052185" target="_blank" title="机器学习实战  朴素贝叶斯原理及代码">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>  <em>朴素贝叶斯</em>原理及代码				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-13</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1210</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/zhengzhenxian/article/details/79052185" target="_blank" title="机器学习实战  朴素贝叶斯原理及代码">
+							<span class="desc oneline">朴素贝叶斯（naiveBayes）法是是基于贝叶斯定理和特征条件独立假设的分类方法，对于给定的训练数据集，首先基于特征条件独立假设学习输入/输出的联合分布概率；然后基于此模型，对给定的输入x，再利用贝...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/zhengzhenxian">来自：	<span class="blog_title"> zhengzhenxian的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/Gamer_gyt/article/details/47860945,BlogCommendFromBaidu_1"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/Gamer_gyt/article/details/47860945,BlogCommendFromBaidu_1"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Gamer_gyt/article/details/47860945" target="_blank" title="《机器学习实战》基于朴素贝叶斯分类算法构建文本分类器的Python实现">
+				<h4 class="text-truncate oneline">
+						《<em>机器学习</em><em>实战</em>》基于<em>朴素贝叶斯</em>分类算法构建文本分类器的Python实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-22</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							5732</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Gamer_gyt/article/details/47860945" target="_blank" title="《机器学习实战》基于朴素贝叶斯分类算法构建文本分类器的Python实现">
+							<span class="desc oneline">关于朴素贝叶斯分类算法的理解请参考：http://blog.csdn.net/gamer_gyt/article/details/47205371Python代码实现：#encoding:utf-8f...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Gamer_gyt">来自：	<span class="blog_title"> Thinkgamer博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/jiafeier_555/article/details/69808992,BlogCommendFromBaidu_2"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/jiafeier_555/article/details/69808992,BlogCommendFromBaidu_2"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/jiafeier_555/article/details/69808992" target="_blank" title="机器学习实战之贝叶斯（一）">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>之贝叶斯（一）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-09</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1347</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/jiafeier_555/article/details/69808992" target="_blank" title="机器学习实战之贝叶斯（一）">
+							<span class="desc oneline">1算法概括贝叶斯分类是一类分类算法的总称，这类算法均以贝叶斯定理为基础，故统称为贝叶斯分类。而朴素朴素贝叶斯分类是贝叶斯分类中最简单，也是常见的一种分类方法。贝叶斯公式：这种形式可能对于分类问题不太明...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/jiafeier_555">来自：	<span class="blog_title"> 丝萝愿为乔木的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/Xw_Classmate/article/details/51397074,BlogCommendFromBaidu_3"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/Xw_Classmate/article/details/51397074,BlogCommendFromBaidu_3"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Xw_Classmate/article/details/51397074" target="_blank" title="4.机器学习实战之朴素贝叶斯">
+				<h4 class="text-truncate oneline">
+						4.<em>机器学习</em><em>实战</em>之<em>朴素贝叶斯</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-15</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							6566</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Xw_Classmate/article/details/51397074" target="_blank" title="4.机器学习实战之朴素贝叶斯">
+							<span class="desc oneline">返回目录上一篇：决策树1. 简单理论介绍1.1 贝叶斯定理    了解贝叶斯定理之前，需要先了解下条件概率。P(A|B)表示在事件B已经发生的条件下事件A发生的概率：  P(A|B)=P(AB)  P...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Xw_Classmate">来自：	<span class="blog_title"> Oner.wv的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/chuhang_zhqr/article/details/50755369,BlogCommendFromBaidu_4"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/chuhang_zhqr/article/details/50755369,BlogCommendFromBaidu_4"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/chuhang_zhqr/article/details/50755369" target="_blank" title="机器学习实战4--朴素贝叶斯">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>4--<em>朴素贝叶斯</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">02-27</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2174</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/chuhang_zhqr/article/details/50755369" target="_blank" title="机器学习实战4--朴素贝叶斯">
+							<span class="desc oneline">分类器在进行分类的时候会给出一个最优的类别猜测结果，同时给出这个猜测的概率估计值。若p1&gt;p2,那么属于类别1,反之属于类别2。朴素贝叶斯属于贝叶斯决策理论的一部分：贝叶斯准则是计算条件概率的方法，若...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/chuhang_zhqr">来自：	<span class="blog_title"> chuhang_zhqr的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/qq_37633207/article/details/79172021,BlogCommendFromBaidu_5"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_37633207/article/details/79172021,BlogCommendFromBaidu_5"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_37633207/article/details/79172021" target="_blank" title="机器学习实战脱坑手册-贝叶斯（超详细注释）">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>脱坑手册-贝叶斯（超详细注释）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-26</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							138</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_37633207/article/details/79172021" target="_blank" title="机器学习实战脱坑手册-贝叶斯（超详细注释）">
+							<span class="desc oneline">机器学习实战的坑实战太多了，这里把贝叶斯这一章的坑都将一下。首先是有个报错'gbk'codeccan'tdecodebyte0xaeinposition199:illegalmultibytesequ...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_37633207">来自：	<span class="blog_title"> qq_37633207的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/c406495762/article/details/77500679,BlogCommendFromBaidu_6"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/c406495762/article/details/77500679,BlogCommendFromBaidu_6"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/c406495762/article/details/77500679" target="_blank" title="Python3《机器学习实战》学习笔记（五）：朴素贝叶斯实战篇之新浪新闻分类">
+				<h4 class="text-truncate oneline">
+						<em>Python3</em>《<em>机器学习</em><em>实战</em>》<em>学习笔记</em>（五）：<em>朴素贝叶斯</em><em>实战</em>篇之新浪新闻分类				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-23</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1.5万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/c406495762/article/details/77500679" target="_blank" title="Python3《机器学习实战》学习笔记（五）：朴素贝叶斯实战篇之新浪新闻分类">
+							<span class="desc oneline">上篇文章讲解了朴素贝叶斯的基础知识。本篇文章将在此基础上进行扩展，你将看到一下内容：拉普拉斯平滑、垃圾邮件过滤、新浪新闻分类...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/c406495762">来自：	<span class="blog_title"> Jack-Cui</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/qq_18293213/article/details/78241279,BlogCommendFromBaidu_7"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_18293213/article/details/78241279,BlogCommendFromBaidu_7"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_18293213/article/details/78241279" target="_blank" title="&lt;机器学习实战&gt;--朴素贝叶斯实战(二)">
+				<h4 class="text-truncate oneline">
+						&lt;<em>机器学习</em><em>实战</em>&gt;--<em>朴素贝叶斯</em><em>实战</em>(二)				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-15</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1856</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_18293213/article/details/78241279" target="_blank" title="&lt;机器学习实战&gt;--朴素贝叶斯实战(二)">
+							<span class="desc oneline">一前言  上一篇文章介绍了朴素贝叶斯的基本原理,现在就来实践一下吧,阅读了部分上的代码,自己也敲了一遍,做了一下验证,现在就在这里分享一下.  环境:  Ubuntu16.04  Python3.5....</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_18293213">来自：	<span class="blog_title"> Silence的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/Lu597203933/article/details/38445315,BlogCommendFromBaidu_8"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/Lu597203933/article/details/38445315,BlogCommendFromBaidu_8"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Lu597203933/article/details/38445315" target="_blank" title="机器学习实战笔记4(朴素贝叶斯)">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>笔记4(<em>朴素贝叶斯</em>)				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-08</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							8738</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Lu597203933/article/details/38445315" target="_blank" title="机器学习实战笔记4(朴素贝叶斯)">
+							<span class="desc oneline">前面介绍的kNN和决策树都给出了“该数据实例属于哪一类”这类问题的明确答案，而有时候的分类并不能给出明确的答案，本节讲解使用概率论进行分类的方法。1：简单概念描述概念比较简单，这里我摘抄自百度百科，很...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Lu597203933">来自：	<span class="blog_title"> 小村长技术blog</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/CharlieLincy/article/details/70244028,BlogCommendFromBaidu_9"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/CharlieLincy/article/details/70244028,BlogCommendFromBaidu_9"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/CharlieLincy/article/details/70244028" target="_blank" title="《机器学习实战》第四章：朴素贝叶斯（2）两个实例">
+				<h4 class="text-truncate oneline">
+						《<em>机器学习</em><em>实战</em>》第四章：<em>朴素贝叶斯</em>（2）两个实例				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-19</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1149</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/CharlieLincy/article/details/70244028" target="_blank" title="《机器学习实战》第四章：朴素贝叶斯（2）两个实例">
+							<span class="desc oneline">这一篇是两个朴素贝叶斯的实例。分别是：（1）过滤垃圾邮件（2）从个人广告中获取区域倾向---------------------------------------------------------...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/CharlieLincy">来自：	<span class="blog_title"> 快看是Charlie！</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+          <div class="recommend-item-box blog-expert-recommend-box">
+				<div class="d-flex">
+					<div class="blog-expert-recommend">
+						<div class="blog-expert">
+							<div class="blog-expert-flexbox"></div>
+						</div>
+					</div>
+				</div>
+      </div>
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/rujin_shi/article/details/78997271,BlogCommendClickRateRank_10"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/rujin_shi/article/details/78997271,BlogCommendClickRateRank_10"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/rujin_shi/article/details/78997271" target="_blank" title="《机器学习实战》5.Logistic回归源码实现">
+				<h4 class="text-truncate oneline">
+						《<em>机器学习</em><em>实战</em>》5.Logistic回归源码实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-07</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2685</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/rujin_shi/article/details/78997271" target="_blank" title="《机器学习实战》5.Logistic回归源码实现">
+							<span class="desc oneline">结合源码分析第五章中实现的Demo运行环境：Anaconda——JupyterNotebookPython版本为：3.6.2（原书代码实现为2.x所以在一些代码上略有改动）参考资料:Apachecn专...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/rujin_shi">来自：	<span class="blog_title"> rujin_shi的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix" data-track-view='{"mod":"popu_614","con":",https://download.csdn.net/download/qq_38184409/10488856,BlogCommendClickRateRank_11"}' data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/qq_38184409/10488856,BlogCommendClickRateRank_11"}'>
+			<a href="https://download.csdn.net/download/qq_38184409/10488856" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							<em>机器学习</em><em>实战</em>(高清PDF+源代码)						</h4>
+						<span class="data float-right">06-20</span>
+					</div>
+					<div class="desc oneline">
+							本书第一部分主要介绍机器学习基础，以及如何利用算法进行分类，并逐步介绍了多种经典的监督学习算法，如k近邻算法、朴素贝叶斯算法、Logistic回归算法、支持向量机、AdaBoost集成方法、基于树的回					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix" data-track-view='{"mod":"popu_614","con":",https://download.csdn.net/download/axiem/10203111,BlogCommendClickRateRank_12"}' data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/axiem/10203111,BlogCommendClickRateRank_12"}'>
+			<a href="https://download.csdn.net/download/axiem/10203111" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							<em>机器学习</em><em>实战</em>高清版(绝对高清)						</h4>
+						<span class="data float-right">01-12</span>
+					</div>
+					<div class="desc oneline">
+							机器学习实战高清版，绝对高清，我从另外一个网站上付费下下来的，现在共享出来。					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/zhouhong0284/article/details/79130675,BlogCommendClickRateRank_13"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/zhouhong0284/article/details/79130675,BlogCommendClickRateRank_13"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/zhouhong0284/article/details/79130675" target="_blank" title="用python3.0实现《机器学习实战》一书的总结">
+				<h4 class="text-truncate oneline">
+						用<em>python3</em>.0实现《<em>机器学习</em><em>实战</em>》一书的总结				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">02-26</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							715</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/zhouhong0284/article/details/79130675" target="_blank" title="用python3.0实现《机器学习实战》一书的总结">
+							<span class="desc oneline">因为自己开始学习Python就是使用的3.0版本，但是在学习中发现很多给出的python代码都是2.0版本，因此一直会有程序报错。这里给出自己整理的代码报错及如何改动。这里的错误代码主要来自《机器学习...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/zhouhong0284">来自：	<span class="blog_title"> Icevivian</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/qq_41010142/article/details/79952166,BlogCommendESEnWordWeight_14"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_41010142/article/details/79952166,BlogCommendESEnWordWeight_14"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_41010142/article/details/79952166" target="_blank" title="《机器学习实战》个人学习记录笔记（四）———决策树">
+				<h4 class="text-truncate oneline">
+						《<em>机器学习</em><em>实战</em>》个人学习记录笔记（四）———决策树				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-15</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							72</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_41010142/article/details/79952166" target="_blank" title="《机器学习实战》个人学习记录笔记（四）———决策树">
+							<span class="desc oneline">第三章决策树PS：个人笔记根据《机器学习实战》这本书，Jack-Cui的博客，以及深度眸的视频进行学习1决策树原理决策树(decisiontree)是一种基本的分类与回归方法。决策树模型呈树形结构，在...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_41010142">来自：	<span class="blog_title"> qq_41010142的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/u011475210/article/details/77922565,BlogCommendESEnWordWeight_15"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u011475210/article/details/77922565,BlogCommendESEnWordWeight_15"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u011475210/article/details/77922565" target="_blank" title="Python3：《机器学习实战》之朴素贝叶斯（2）使用Python进行文本分类">
+				<h4 class="text-truncate oneline">
+						<em>Python3</em>：《<em>机器学习</em><em>实战</em>》之<em>朴素贝叶斯</em>（2）使用Python进行文本分类				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-10</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							5291</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u011475210/article/details/77922565" target="_blank" title="Python3：《机器学习实战》之朴素贝叶斯（2）使用Python进行文本分类">
+							<span class="desc oneline">Python3：《机器学习实战》之朴素贝叶斯（2）使用Python进行文本分类转载请注明作者和出处：http://blog.csdn.net/u011475210代码地址：https://github...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u011475210">来自：	<span class="blog_title"> WordZzzz</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/HowardWood/article/details/79329152,BlogCommendESEnWordWeight_16"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/HowardWood/article/details/79329152,BlogCommendESEnWordWeight_16"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/HowardWood/article/details/79329152" target="_blank" title="资源|28本必读的经典机器学习/数据挖掘书籍">
+				<h4 class="text-truncate oneline">
+						资源|28本必读的经典<em>机器学习</em>/数据挖掘书籍				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">02-15</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							3992</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/HowardWood/article/details/79329152" target="_blank" title="资源|28本必读的经典机器学习/数据挖掘书籍">
+							<span class="desc oneline">资源|28本必读的经典机器学习/数据挖掘书籍全部pdf免费下载链接：http://www.aibbt.com/a/13787.htmlRealWorldMachineLearning（现实世界中的机器...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/HowardWood">来自：	<span class="blog_title"> HowardWood的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/FontThrone/article/details/70834647,BlogCommendFromBaidu_17"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/FontThrone/article/details/70834647,BlogCommendFromBaidu_17"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/FontThrone/article/details/70834647" target="_blank" title="朴素贝叶斯法分类器的Python3 实现">
+				<h4 class="text-truncate oneline">
+						<em>朴素贝叶斯</em>法分类器的<em>Python3</em> 实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-26</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							2929</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/FontThrone/article/details/70834647" target="_blank" title="朴素贝叶斯法分类器的Python3 实现">
+							<span class="desc oneline">本篇文章是我在读了李航的后手写的算法实现之一原理请参考统计学习方法第四章朴素贝叶斯法-李航代码,NaiveBayesMethod的内部计算方式现在为数值计算,符号计算的代码已经注释,如果需要请手动修改...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/FontThrone">来自：	<span class="blog_title"> FontTian的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/u011475210/article/details/77926012,BlogCommendFromBaidu_18"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u011475210/article/details/77926012,BlogCommendFromBaidu_18"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u011475210/article/details/77926012" target="_blank" title="Python3：《机器学习实战》之朴素贝叶斯（3）过滤垃圾邮件">
+				<h4 class="text-truncate oneline">
+						<em>Python3</em>：《<em>机器学习</em><em>实战</em>》之<em>朴素贝叶斯</em>（3）过滤垃圾邮件				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-10</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							6066</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u011475210/article/details/77926012" target="_blank" title="Python3：《机器学习实战》之朴素贝叶斯（3）过滤垃圾邮件">
+							<span class="desc oneline">Python3：《机器学习实战》之朴素贝叶斯（3）过滤垃圾邮件转载请注明作者和出处：http://blog.csdn.net/u011475210代码地址：https://github.com/Wor...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u011475210">来自：	<span class="blog_title"> WordZzzz</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/wgx571859177/article/details/79275001,BlogCommendFromBaidu_19"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/wgx571859177/article/details/79275001,BlogCommendFromBaidu_19"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/wgx571859177/article/details/79275001" target="_blank" title="Python3：《机器学习实战》之朴素贝叶斯（4）从个人广告中获取区域倾向">
+				<h4 class="text-truncate oneline">
+						<em>Python3</em>：《<em>机器学习</em><em>实战</em>》之<em>朴素贝叶斯</em>（4）从个人广告中获取区域倾向				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">02-06</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							139</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/wgx571859177/article/details/79275001" target="_blank" title="Python3：《机器学习实战》之朴素贝叶斯（4）从个人广告中获取区域倾向">
+							<span class="desc oneline">Python3：《机器学习实战》之朴素贝叶斯（4）从个人广告中获取区域倾向转载请注明作者和出处：http://blog.csdn.net/u011475210代码地址：https://github.c...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/wgx571859177">来自：	<span class="blog_title"> 咸鱼半条</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/littlely_ll/article/details/54630182,BlogCommendFromBaidu_20"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/littlely_ll/article/details/54630182,BlogCommendFromBaidu_20"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/littlely_ll/article/details/54630182" target="_blank" title="《机器学习实战》朴素贝叶斯（Naive Bayes）分类">
+				<h4 class="text-truncate oneline">
+						《<em>机器学习</em><em>实战</em>》<em>朴素贝叶斯</em>（Naive Bayes）分类				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-20</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							682</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/littlely_ll/article/details/54630182" target="_blank" title="《机器学习实战》朴素贝叶斯（Naive Bayes）分类">
+							<span class="desc oneline">1.《机器学习实战》K近邻(KNN)分类2.《机器学习实战》决策树\quad对于朴素贝叶斯理论分析可看朴素贝叶斯法及其R实现，对于这篇的R实现，只是在这种特殊情况，对于一般的情况并没有实现，所以，本篇...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/littlely_ll">来自：	<span class="blog_title"> littlely_ll的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/qq_39521554/article/details/81029316,searchFromBaidu_21"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_39521554/article/details/81029316,searchFromBaidu_21"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_39521554/article/details/81029316" target="_blank" title="《机器学习实战》原书数据与代码（基于Python3）汇总">
+				<h4 class="text-truncate oneline">
+						《<em>机器学习</em><em>实战</em>》原书数据与代码（基于<em>Python3</em>）汇总				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-13</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1819</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_39521554/article/details/81029316" target="_blank" title="《机器学习实战》原书数据与代码（基于Python3）汇总">
+							<span class="desc oneline">这次做的系列是《机器学习实战》，原书比较久远了，且代码和练习都是基于Python2，我个人是升级到了Python3，因此使用最新的版本来写这些习题。具体2和3其实在基础语法上并没有太多差别，一些高级特...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_39521554">来自：	<span class="blog_title"> Machine Learning with Peppa</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/qq_28168421/article/details/81659992,searchFromBaidu_22"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_28168421/article/details/81659992,searchFromBaidu_22"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_28168421/article/details/81659992" target="_blank" title="推荐 | Python机器学习项目实战（附代码 + 可下载）【一】">
+				<h4 class="text-truncate oneline">
+						推荐 | Python<em>机器学习</em>项目<em>实战</em>（附代码 + 可下载）【一】				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-13</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							594</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_28168421/article/details/81659992" target="_blank" title="推荐 | Python机器学习项目实战（附代码 + 可下载）【一】">
+							<span class="desc oneline">这是一篇完全手把手进行机器学习项目构建的教程，包含：1.数据清理和格式化 2.探索性数据分析 3.特征工程和特征选择 4.在性能指标上比较几种机器学习模型5.对......</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_28168421">来自：	<span class="blog_title"> 机器学习算法与Python学习</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident recommend-other-item-box" data-track-view='{"mod":"popu_614","con":",https://download.csdn.net/download/zssyu0416/10642907,searchFromBaidu_23"}' data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/zssyu0416/10642907,searchFromBaidu_23"}'>
+		<a href="https://download.csdn.net/download/zssyu0416/10642907" target="_blank">
+			<h4 class="text-truncate oneline">
+					<em>机器学习</em><em>实战</em>（基于Python）			</h4>
+			<div class="info-box d-flex align-content-center">
+					<span class="date">09-03</span>
+			</div>
+			<p class="content oneline">
+        <span class="desc oneline">机器学习实战：本书的前七章主要研究分类算法，第2 章讲述最简单的分类算法：匕近邻算法，它使用距离矩阵进行分类；第3 章引入了决策树，它比较直观，容易迎解，但是相对难于实现；第4 章将讨论如何使用概率论</span>
+                  <span class="type-show type-show-download">下载</span>
+        			</p>
+		</a>
+
+	</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/luoganttcc/article/details/77848509,searchFromBaidu_24"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/luoganttcc/article/details/77848509,searchFromBaidu_24"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/luoganttcc/article/details/77848509" target="_blank" title="python 与机器学习实战（何宇健）代码下载">
+				<h4 class="text-truncate oneline">
+						python 与<em>机器学习</em><em>实战</em>（何宇健）代码下载				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-05</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							3534</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/luoganttcc/article/details/77848509" target="_blank" title="python 与机器学习实战（何宇健）代码下载">
+							<span class="desc oneline">代码链接知乎文章链接博客链接</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/luoganttcc">来自：	<span class="blog_title"> luoganttcc的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident recommend-other-item-box" data-track-view='{"mod":"popu_614","con":",https://download.csdn.net/download/yyl424525/10043583,searchFromBaidu_25"}' data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/yyl424525/10043583,searchFromBaidu_25"}'>
+		<a href="https://download.csdn.net/download/yyl424525/10043583" target="_blank">
+			<h4 class="text-truncate oneline">
+					<em>机器学习</em><em>实战</em>（Python 开发 高清 非扫描 可复制文字 pdf）			</h4>
+			<div class="info-box d-flex align-content-center">
+					<span class="date">10-29</span>
+			</div>
+			<p class="content oneline">
+        <span class="desc oneline">机器学习实战（Python 开发 高清 非扫描 可复制文字 pdf） 机器学习实战（Python 开发 高清 非扫描 可复制文字 pdf） 机器学习实战（Python 开发 高清 非扫描 可复制文字</span>
+                  <span class="type-show type-show-download">下载</span>
+        			</p>
+		</a>
+
+	</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/xzfreewind/article/details/74012311,BlogCommendFromGuangxin_26"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/xzfreewind/article/details/74012311,BlogCommendFromGuangxin_26"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/xzfreewind/article/details/74012311" target="_blank" title="朴素贝叶斯原理及python实现">
+				<h4 class="text-truncate oneline">
+						<em>朴素贝叶斯</em>原理及python实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-30</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							4968</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/xzfreewind/article/details/74012311" target="_blank" title="朴素贝叶斯原理及python实现">
+							<span class="desc oneline">一、贝叶斯算法引入     朴素贝叶斯算法是基于贝叶斯定理和特征条件独立假设的分类法，是一种基于概率分布的分类算法。     贝叶斯分类算法，通俗的来讲，在给定数据集的前提下，对于一个新样本（未分类）...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/xzfreewind">来自：	<span class="blog_title"> xzfreewind的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/qq_23617681/article/details/51027199,BlogCommendFromGuangxin_27"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq_23617681/article/details/51027199,BlogCommendFromGuangxin_27"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq_23617681/article/details/51027199" target="_blank" title="python实践之：用朴素贝叶斯实现分类">
+				<h4 class="text-truncate oneline">
+						python实践之：用<em>朴素贝叶斯</em>实现分类				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-31</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							4402</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq_23617681/article/details/51027199" target="_blank" title="python实践之：用朴素贝叶斯实现分类">
+							<span class="desc oneline">第一部分：朴素贝叶斯理论介绍公式如下：其中：p(A)、P(B)称为先验概率，P(A|B)、P(B|A)称为后验概率、条件概率。贝叶斯理论描述这样一件事情：当我们知道历史数据，即等式右边，就可以预测未来...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq_23617681">来自：	<span class="blog_title"> qq_23617681的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/zonghengyuzhou/article/details/78032653,BlogCommendFromGuangxin_28"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/zonghengyuzhou/article/details/78032653,BlogCommendFromGuangxin_28"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/zonghengyuzhou/article/details/78032653" target="_blank" title="朴素贝叶斯分类(Naive Bayesian classification)及其python实现">
+				<h4 class="text-truncate oneline">
+						<em>朴素贝叶斯</em>分类(Naive Bayesian classification)及其python实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-19</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1594</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/zonghengyuzhou/article/details/78032653" target="_blank" title="朴素贝叶斯分类(Naive Bayesian classification)及其python实现">
+							<span class="desc oneline">朴素贝叶斯分类(NaiveBayesianclassification)贝叶斯分类是一类分类算法的总称，这类算法都以贝叶斯定理为基础，所以叫贝叶斯分类。而朴素贝叶斯模型（naiveBayes）是基于贝...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/zonghengyuzhou">来自：	<span class="blog_title"> zonghengyuzhou的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/lwpyh/article/details/79949561,BlogCommendFromGuangxin_29"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/lwpyh/article/details/79949561,BlogCommendFromGuangxin_29"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/lwpyh/article/details/79949561" target="_blank" title="《机器学习实战》（1）kNN小结（小白教学，每行代码都有注释）">
+				<h4 class="text-truncate oneline">
+						《<em>机器学习</em><em>实战</em>》（1）kNN小结（小白教学，每行代码都有注释）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-16</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							682</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/lwpyh/article/details/79949561" target="_blank" title="《机器学习实战》（1）kNN小结（小白教学，每行代码都有注释）">
+							<span class="desc oneline">最近入坑了机器学习，为了快速提高自己的机器学习的代码能力，入坑了《机器学习实战》，目前只学习了第一个重要算法:k近邻算法（kNN），在学习过程中发现许多相关的学习资料要么代码是python2的，要么代...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/lwpyh">来自：	<span class="blog_title"> lwpyh的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/weixin_44124674/article/details/86350857,BlogCommendFromQuerySearch_30"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/weixin_44124674/article/details/86350857,BlogCommendFromQuerySearch_30"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/weixin_44124674/article/details/86350857" target="_blank" title="机器学习实战教程（四）：朴素贝叶斯基础篇之言论过滤器">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>教程（四）：<em>朴素贝叶斯</em><em>基础</em>篇<em>之言</em><em>论过</em><em>滤器</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-12</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							18</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/weixin_44124674/article/details/86350857" target="_blank" title="机器学习实战教程（四）：朴素贝叶斯基础篇之言论过滤器">
+							<span class="desc oneline">原文链接：Jack-Cui，https://cuijiahua.com/blog/2017/11/ml_4_bayes_1.html一、前言朴素贝叶斯算法是有监督的学习算法，解决的是分类问题，如客户是...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/weixin_44124674">来自：	<span class="blog_title"> 圆方圆python学院的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/yuangan1529/article/details/81006219,BlogCommendFromQuerySearch_31"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/yuangan1529/article/details/81006219,BlogCommendFromQuerySearch_31"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/yuangan1529/article/details/81006219" target="_blank" title="机器学习实战（3）——朴素贝叶斯（上）（附带Python3源码与资源分享）">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>（3）——<em>朴素贝叶斯</em>（上）（附带<em>Python3</em>源码与资源分享）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-14</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							226</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/yuangan1529/article/details/81006219" target="_blank" title="机器学习实战（3）——朴素贝叶斯（上）（附带Python3源码与资源分享）">
+							<span class="desc oneline">一、理论基础1、贝叶斯决策理论朴素贝叶斯是贝叶斯决策理论的一部分，后者是前者的基础，所以在讲述朴素贝叶斯之前，有必要快速了解一下贝叶斯决策理论。假设我们现在有一个数据集，它由两类数据（原点和三角）组成...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/yuangan1529">来自：	<span class="blog_title"> 蓝亚之舟的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/yf11112/article/details/51314916,BlogCommendFromQuerySearch_32"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/yf11112/article/details/51314916,BlogCommendFromQuerySearch_32"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/yf11112/article/details/51314916" target="_blank" title="机器学习实战3：决策树学习笔记（python）">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>3：决策树<em>学习笔记</em>（python）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-04</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							4143</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/yf11112/article/details/51314916" target="_blank" title="机器学习实战3：决策树学习笔记（python）">
+							<span class="desc oneline">决策树就是在已知各种情况发生概率的情况下，通过构造决策树，评价项目风险，判断其可行性的决策分析方法，它是运用概率分析的一种图解法。优缺点分析：优点：计算复杂度不高，输出结果较直观，易于理解，对中间值的...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/yf11112">来自：	<span class="blog_title"> yf11112的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/cckchina/article/details/79844797,BlogCommendFromQuerySearch_33"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/cckchina/article/details/79844797,BlogCommendFromQuerySearch_33"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/cckchina/article/details/79844797" target="_blank" title="《机器学习实战》中贝叶斯分类导入RSS源中entries为[]">
+				<h4 class="text-truncate oneline">
+						《<em>机器学习</em><em>实战</em>》中贝叶斯分类导入RSS源中entries为[]				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">04-08</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							725</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/cckchina/article/details/79844797" target="_blank" title="《机器学习实战》中贝叶斯分类导入RSS源中entries为[]">
+							<span class="desc oneline">《机器学习实战》中贝叶斯分类中导入RSS源例子_python_动态网站制作指南http://www.knowsky.com/885215.html参考原文：   http://newyork.crai...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/cckchina">来自：	<span class="blog_title"> cckchina的专栏</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/IAMoldpan/article/details/78032650,BlogCommendFromQuerySearch_34"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/IAMoldpan/article/details/78032650,BlogCommendFromQuerySearch_34"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/IAMoldpan/article/details/78032650" target="_blank" title="机器学习实战：基于概率论的分类方法：朴素贝叶斯（源码解析，错误分析）">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>：基于概率论的分类方法：<em>朴素贝叶斯</em>（源码解析，错误分析）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-19</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							893</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/IAMoldpan/article/details/78032650" target="_blank" title="机器学习实战：基于概率论的分类方法：朴素贝叶斯（源码解析，错误分析）">
+							<span class="desc oneline">按照惯例，先把代码粘到这里fromnumpyimport*defLoadDataSet():postingList=[['my','dog','has','flea','problems','help...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/IAMoldpan">来自：	<span class="blog_title"> OLDPAN的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/c406495762/article/details/75172850,BlogCommendFromBaidu_35"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/c406495762/article/details/75172850,BlogCommendFromBaidu_35"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/c406495762/article/details/75172850" target="_blank" title="Python3《机器学习实战》学习笔记（一）：k-近邻算法(史诗级干货长文)">
+				<h4 class="text-truncate oneline">
+						<em>Python3</em>《<em>机器学习</em><em>实战</em>》<em>学习笔记</em>（一）：k-近邻算法(史诗级干货长文)				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-15</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							6.9万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/c406495762/article/details/75172850" target="_blank" title="Python3《机器学习实战》学习笔记（一）：k-近邻算法(史诗级干货长文)">
+							<span class="desc oneline">本文将从k-邻近算法的思想开始讲起，使用python3一步一步编写代码进行实战训练。并且，我也提供了相应的数据集，对代码进行了详细的注释。除此之外，本文也对sklearn实现k-邻近算法的方法进行了讲...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/c406495762">来自：	<span class="blog_title"> Jack-Cui</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix" data-track-view='{"mod":"popu_614","con":",https://download.csdn.net/download/shuihudiepaul/9966071,BlogCommendFromBaidu_36"}' data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/shuihudiepaul/9966071,BlogCommendFromBaidu_36"}'>
+			<a href="https://download.csdn.net/download/shuihudiepaul/9966071" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							<em>机器学习</em><em>实战</em>中文版（附Python源代码）						</h4>
+						<span class="data float-right">09-06</span>
+					</div>
+					<div class="desc oneline">
+							Peter Harrington 机器学习实战 中文版 英文名称： Machine Learning in Action 中文名称： 机器学习实战 1) PDF格式，带封面带目录带书签。适合电子书阅读					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix" data-track-view='{"mod":"popu_614","con":",https://download.csdn.net/download/beans___lee/9964714,BlogCommendFromBaidu_37"}' data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/beans___lee/9964714,BlogCommendFromBaidu_37"}'>
+			<a href="https://download.csdn.net/download/beans___lee/9964714" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							python<em>机器学习</em><em>实战</em>						</h4>
+						<span class="data float-right">09-05</span>
+					</div>
+					<div class="desc oneline">
+							机器学习实战》主要介绍机器学习基础，以及如何利用算法进行分类，并逐步介绍了多种经典的监督学习算法，如k近邻算法、朴素贝叶斯算法、Logistic回归算法、支持向量机、AdaBoost集成方法、基于树的					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix" data-track-view='{"mod":"popu_614","con":",https://download.csdn.net/download/roler_/8050797,BlogCommendFromBaidu_38"}' data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/roler_/8050797,BlogCommendFromBaidu_38"}'>
+			<a href="https://download.csdn.net/download/roler_/8050797" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							<em>机器学习</em><em>实战</em>（python实现）						</h4>
+						<span class="data float-right">10-17</span>
+					</div>
+					<div class="desc oneline">
+							机器学习实战（python实现)					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident recommend-other-item-box" data-track-view='{"mod":"popu_614","con":",http://ask.csdn.net/questions/716014,BlogCommendClickRateRank_39"}' data-track-click='{"mod":"popu_614","con":",http://ask.csdn.net/questions/716014,BlogCommendClickRateRank_39"}'>
+		<a href="http://ask.csdn.net/questions/716014" target="_blank">
+			<h4 class="text-truncate oneline">
+					<em>机器学习</em>为什么熵可以衡量数据集划分的优劣？			</h4>
+			<div class="info-box d-flex align-content-center">
+					<span class="date">12-05</span>
+			</div>
+			<p class="content oneline">
+        <span class="desc oneline">-</span>
+                  <span class="type-show type-show-ask">问答</span>
+        			</p>
+		</a>
+
+	</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix" data-track-view='{"mod":"popu_614","con":",https://download.csdn.net/download/shaoyou223/10260357,BlogCommendClickRateRank_40"}' data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/shaoyou223/10260357,BlogCommendClickRateRank_40"}'>
+			<a href="https://download.csdn.net/download/shaoyou223/10260357" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							<em>机器学习</em><em>实战</em>						</h4>
+						<span class="data float-right">02-26</span>
+					</div>
+					<div class="desc oneline">
+							机器学习实战里面的具体代码，数据，文档等等。都按文件夹整理好了，可以配着我的博客里面的代码一起使用，里面好多错误我也在博客里及时更新					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix" data-track-view='{"mod":"popu_614","con":",https://download.csdn.net/download/u013685323/7253519,BlogCommendClickRateRank_41"}' data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/u013685323/7253519,BlogCommendClickRateRank_41"}'>
+			<a href="https://download.csdn.net/download/u013685323/7253519" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							<em>机器学习</em><em>实战</em> 高清完整版PDF						</h4>
+						<span class="data float-right">04-25</span>
+					</div>
+					<div class="desc oneline">
+							本书第一部分主要介绍机器学习基础，以及如何利用算法进行分类，并逐步介绍了多种经典的监督学习算法，如k近邻算法、朴素贝叶斯算法、Logistic回归算法、支持向量机、AdaBoost集成方法、基于树的回					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/hjw199089/article/details/74855055,BlogCommendClickRateRank_42"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/hjw199089/article/details/74855055,BlogCommendClickRateRank_42"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/hjw199089/article/details/74855055" target="_blank" title="《机器学习实战》学习">
+				<h4 class="text-truncate oneline">
+						《<em>机器学习</em><em>实战</em>》学习				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-08</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							516</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/hjw199089/article/details/74855055" target="_blank" title="《机器学习实战》学习">
+							<span class="desc oneline">《机器学习实战》学习笔记-[1]-K近邻_第一个分类器《机器学习实战》学习笔记-[2]-K近邻_网站约会实例《机器学习实战》学习笔记-[3]-决策树_1_基础《机器学习实战》学习笔记-[3]-决策树_...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/hjw199089">来自：	<span class="blog_title"> hjw199089的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix" data-track-view='{"mod":"popu_614","con":",https://download.csdn.net/download/chy2010054060/5221068,BlogCommendClickRateRank_43"}' data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/chy2010054060/5221068,BlogCommendClickRateRank_43"}'>
+			<a href="https://download.csdn.net/download/chy2010054060/5221068" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							基于SVM的Web文本分类						</h4>
+						<span class="data float-right">04-04</span>
+					</div>
+					<div class="desc oneline">
+							基于SVM的Web文本分类，对短文本以及社交网络文本分类效果不错，推荐该学习资料。					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/mogoweb/article/details/79712701,BlogCommendFromBaidu_44"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/mogoweb/article/details/79712701,BlogCommendFromBaidu_44"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/mogoweb/article/details/79712701" target="_blank" title="[机器学习实战札记] 朴素贝叶斯">
+				<h4 class="text-truncate oneline">
+						[<em>机器学习</em><em>实战</em>札记] <em>朴素贝叶斯</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-27</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							239</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/mogoweb/article/details/79712701" target="_blank" title="[机器学习实战札记] 朴素贝叶斯">
+							<span class="desc oneline">《概率论》（当年我学习的课程为《概率论与数理统计》，涵盖了概率论与统计学）应该是每个理工科大学生都要学习的课程，不知道有多少同学和我一样，学得一头雾水。悲催的是，考研的时候又学习了一遍，依然不着门路，...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/mogoweb">来自：	<span class="blog_title"> 云水木石</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/kevinelstri/article/details/52268566,BlogCommendFromBaidu_45"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/kevinelstri/article/details/52268566,BlogCommendFromBaidu_45"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/kevinelstri/article/details/52268566" target="_blank" title="【机器学习实战06】贝叶斯网络">
+				<h4 class="text-truncate oneline">
+						【<em>机器学习</em><em>实战</em>06】贝叶斯网络				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-21</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1669</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/kevinelstri/article/details/52268566" target="_blank" title="【机器学习实战06】贝叶斯网络">
+							<span class="desc oneline">1、概率知识条件概率：事件A在另外一个事件B已经发生条件下的发生概率。表示：P(A|B)记作“在B条件下A的概率”乘法定理：设P(A)&gt;0，则有                            ...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/kevinelstri">来自：	<span class="blog_title"> 算法魔功</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/moxigandashu/article/details/71480251,BlogCommendFromBaidu_46"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/moxigandashu/article/details/71480251,BlogCommendFromBaidu_46"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/moxigandashu/article/details/71480251" target="_blank" title="机器学习之朴素贝叶斯(NB)分类算法与Python实现">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em>之<em>朴素贝叶斯</em>(NB)分类算法与Python实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-09</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							1.7万</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/moxigandashu/article/details/71480251" target="_blank" title="机器学习之朴素贝叶斯(NB)分类算法与Python实现">
+							<span class="desc oneline">朴素贝叶斯（NaiveBayesian）是最为广泛使用的分类方法，它以概率论为基础，是基于贝叶斯定理和特征条件独立假设的分类方法。文章总结在学习《机器学习实战》过程中的心得体会，对朴素贝叶斯的原理和P...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/moxigandashu">来自：	<span class="blog_title"> moxigandashu的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/u014253173/article/details/80409119,BlogCommendFromBaidu_47"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u014253173/article/details/80409119,BlogCommendFromBaidu_47"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/u014253173/article/details/80409119" target="_blank" title="机器学习实战笔记（三）朴素贝叶斯">
+				<h4 class="text-truncate oneline">
+						<em>机器学习</em><em>实战</em>笔记（三）<em>朴素贝叶斯</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-22</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							185</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/u014253173/article/details/80409119" target="_blank" title="机器学习实战笔记（三）朴素贝叶斯">
+							<span class="desc oneline">朴素贝叶斯朴素贝叶斯是一种基于贝叶斯决策理论的分类方法。我们用p1(x,y)表示数据点(x,y)属于类别1的概率，用p2(x,y)表示数据点(x,y)属于类别2的概率，那么对于一个新数据点(x,y)，...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/u014253173">来自：	<span class="blog_title"> Just do it !</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    			<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix" data-track-view='{"mod":"popu_614","con":",https://download.csdn.net/download/architectzsu/9919518,BlogCommendFromBaidu_48"}' data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/architectzsu/9919518,BlogCommendFromBaidu_48"}'>
+			<a href="https://download.csdn.net/download/architectzsu/9919518" target="_blank">
+				<div class="content clearfix">
+					<div class="">
+						<h4 class="text-truncate oneline clearfix">
+							<em>机器学习</em><em>实战</em> 第四章 源码（<em>Python3</em>版本）						</h4>
+						<span class="data float-right">08-03</span>
+					</div>
+					<div class="desc oneline">
+							机器学习实战 第四章 源码（Python3版本）。原书是python2					</div>
+          <span class="type-show type-show-download">下载</span>
+				</div>
+			</a>
+		</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident recommend-other-item-box" data-track-view='{"mod":"popu_614","con":",https://download.csdn.net/download/zhansdfas/10832583,searchFromBaidu_49"}' data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/zhansdfas/10832583,searchFromBaidu_49"}'>
+		<a href="https://download.csdn.net/download/zhansdfas/10832583" target="_blank">
+			<h4 class="text-truncate oneline">
+					Python与<em>机器学习</em><em>实战</em>(所有代码)			</h4>
+			<div class="info-box d-flex align-content-center">
+					<span class="date">12-06</span>
+			</div>
+			<p class="content oneline">
+        <span class="desc oneline">下载后请先看代码目录： 代码2贝叶斯分类器b_NaiveBayes 2-1朴素贝叶斯模型基本架构Basic 2-2离散型朴素贝叶斯MultinomialNB 2-3获取数据的类Util（Util文件夹</span>
+                  <span class="type-show type-show-download">下载</span>
+        			</p>
+		</a>
+
+	</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/wuchengzeng/article/details/50037611,BlogCommendHotData_0"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/wuchengzeng/article/details/50037611,BlogCommendHotData_0"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/wuchengzeng/article/details/50037611" target="_blank" title="jquery/js实现一个网页同时调用多个倒计时(最新的)">
+				<h4 class="text-truncate oneline">
+						jquery/js实现一个网页同时调用多个倒计时(最新的)				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-25</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							62952</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/wuchengzeng/article/details/50037611" target="_blank" title="jquery/js实现一个网页同时调用多个倒计时(最新的)">
+							<span class="desc oneline">jquery/js实现一个网页同时调用多个倒计时(最新的)
+
+最近需要网页添加多个倒计时. 查阅网络,基本上都是千遍一律的不好用. 自己按需写了个.希望对大家有用. 有用请赞一个哦!
+
+
+
+//js
+...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/wuchengzeng">来自：	<span class="blog_title"> websites</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/roguesir/article/details/77104246,BlogCommendHotData_1"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/roguesir/article/details/77104246,BlogCommendHotData_1"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/roguesir/article/details/77104246" target="_blank" title="人脸检测工具face_recognition的安装与应用">
+				<h4 class="text-truncate oneline">
+						人脸检测工具face_recognition的安装与应用				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-11</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							20086</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/roguesir/article/details/77104246" target="_blank" title="人脸检测工具face_recognition的安装与应用">
+							<span class="desc oneline">人脸检测工具face_recognition的安装与应用</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/roguesir">来自：	<span class="blog_title"> roguesir的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/gefangshuai/article/details/50328451,BlogCommendHotData_2"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/gefangshuai/article/details/50328451,BlogCommendHotData_2"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/gefangshuai/article/details/50328451" target="_blank" title="关于SpringBoot bean无法注入的问题（与文件包位置有关）">
+				<h4 class="text-truncate oneline">
+						关于SpringBoot bean无法注入的问题（与文件包位置有关）				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-16</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							70068</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/gefangshuai/article/details/50328451" target="_blank" title="关于SpringBoot bean无法注入的问题（与文件包位置有关）">
+							<span class="desc oneline">问题场景描述整个项目通过Maven构建，大致结构如下：
+核心Spring框架一个module spring-boot-base
+service和dao一个module server-core
+提供系统...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/gefangshuai">来自：	<span class="blog_title"> 开发随笔</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/Tiaaaaa/article/details/58116346,BlogCommendHotData_3"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/Tiaaaaa/article/details/58116346,BlogCommendHotData_3"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/Tiaaaaa/article/details/58116346" target="_blank" title="R语言逻辑回归、ROC曲线和十折交叉验证">
+				<h4 class="text-truncate oneline">
+						R语言逻辑回归、ROC曲线和十折交叉验证				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">02-27</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							20060</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/Tiaaaaa/article/details/58116346" target="_blank" title="R语言逻辑回归、ROC曲线和十折交叉验证">
+							<span class="desc oneline">自己整理编写的逻辑回归模板，作为学习笔记记录分享。数据集用的是14个自变量Xi，一个因变量Y的australian数据集。
+
+
+1. 测试集和训练集3、7分组
+australian ...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/Tiaaaaa">来自：	<span class="blog_title"> Tiaaaaa的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+    		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/qq574857122/article/details/16361033,BlogCommendHotData_4"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/qq574857122/article/details/16361033,BlogCommendHotData_4"}'>
+			<div class="content">
+				<a href="https://blog.csdn.net/qq574857122/article/details/16361033" target="_blank" title="强连通分量及缩点tarjan算法解析">
+				<h4 class="text-truncate oneline">
+						强连通分量及缩点tarjan算法解析				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-16</span>
+						<span class="read-num hover-hide">
+              阅读数 
+							184795</span>
+						</p>
+					</div>
+				</a>
+					<p class="content">
+						<a href="https://blog.csdn.net/qq574857122/article/details/16361033" target="_blank" title="强连通分量及缩点tarjan算法解析">
+							<span class="desc oneline">强连通分量：
+简言之 就是找环（每条边只走一次，两两可达）
+孤立的一个点也是一个连通分量 
+ 
+使用tarjan算法 在嵌套的多个环中优先得到最大环( 最小环就是每个孤立点）
+ 
+定义：
+int Ti...</span>
+						</a>
+            						  <span class="blog_title_box oneline">
+                <span class="type-show type-show-blog type-show-after">博文</span>
+                <a target="_blank" href="https://blog.csdn.net/qq574857122">来自：	<span class="blog_title"> 九野的博客</span></a>
+              </span>
+            					</p>
+			</div>
+					</div>
+	
+    
+    
+        <div class="recommend-item-box type_hot_word">
+            <div class="content clearfix">
+        <div class="word float-left">
+                          <span>
+            <a href="https://edu.csdn.net/courses/o5329_s5330_k " target="_blank">
+            机器学习          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/combos/o5329_s5330_l0_t " target="_blank">
+            机器学习学习          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/courses/o5329_s5330_k " target="_blank">
+            机器学习培训          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/courses/o5329_s5330_k " target="_blank">
+            机器学习课程          </a></span>
+                                  <span>
+            <a href="https://edu.csdn.net/courses/o5329_s5330_k " target="_blank">
+            机器学习教程          </a></span>
+                        </div>
+      </div>
+                  <div class="content clearfix">
+        <div class="float-left">
+                  <span>
+            <a href="https://www.csdn.net/gather_2a/MtTaUg1sODItYmxvZwO0O0OO0O0O.html" target="_blank">
+            c#机器学习实战</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_24/NtzaUg0sMzk3LWJsb2cO0O0O.html" target="_blank">
+            bootstrap4学习笔记</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_2c/MtTaUgwsNTAtYmxvZwO0O0OO0O0O.html" target="_blank">
+            c# 控件应用篇</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_26/NtzaQg2sMDA5LWJsb2cO0O0O.html" target="_blank">
+            bootstrap 学习笔记</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_22/OtTaQg5sNjQtYmxvZwO0O0OO0O0O.html" target="_blank">
+            c++定义四乘四矩阵类</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_4a/NtTacgysMi1lZHUO0O0O.html" target="_blank">
+            机器学习实战python实现</a>
+          </span>
+                  <span>
+            <a href="https://www.csdn.net/gather_4a/MtTagg3sNC1lZHUO0O0O.html" target="_blank">
+            python3机器学习教程</a>
+          </span>
+                </div>
+      </div>
+          </div>
+
+
+            <div class="recommend-loading-box">
+                <img src='https://csdnimg.cn/release/phoenix/images/feedLoading.gif'>
+            </div>
+            <div class="recommend-end-box">
+                <p class="text-center">没有更多推荐了，<a href="https://blog.csdn.net/" class="c-blue c-blue-hover c-blue-focus">返回首页</a></p>
+            </div>
+        </div>
+    </main>
+
+    <aside>
+		    <div id="asideProfile" class="aside-box">
+    <!-- <h3 class="aside-title">个人资料</h3> -->
+    <div class="profile-intro d-flex">
+        <div class="avatar-box d-flex justify-content-center flex-column">
+            <a href="https://blog.csdn.net/c406495762">
+                <img src="https://avatar.csdn.net/F/1/C/3_c406495762.jpg" class="avatar_pic">
+            </a>
+              <div style="position: absolute;width: 48px;height: 63px;top: -17px;overflow: hidden;box-sizing: content-box;">
+                <div class="rotate-memberhead" style="position: absolute;top: 0;width: 48px;height: 81px;transition: transform .5s ease-out;/* transform: rotate(-180deg); */z-index: 1;">
+                  <img class="memberhead" style="display:none;top: 62px;transform: rotate(-180deg);" src="https://csdnimg.cn/release/phoenix/static_blog/images/pig.png" alt="">
+                                    <svg id="csdnc-memberhead" style="top: -1px;" viewBox="0 0 1303 1024"><path d="M1129.770822 419.281455A93.090909 93.090909 0 1 1 1210.201367 465.454545h-2.141091l-56.971636 478.952728c-5.399273 45.242182-46.731636 79.592727-95.790545 79.592727H249.875549c-48.965818 0-90.112-34.164364-95.697454-79.406545L95.34464 465.454545H93.110458a93.090909 93.090909 0 1 1 80.337455-46.08l229.189818 142.056728 187.485091-398.429091A93.184 93.184 0 0 1 651.655913 0a93.090909 93.090909 0 0 1 61.160727 163.281455l187.485091 398.149818 229.469091-142.149818z" fill="#FDD840"></path><path d="M1117.110458 372.363636a93.090909 93.090909 0 1 1 93.090909 93.090909h-2.141091l-56.971636 478.952728c-5.399273 45.242182-46.731636 79.592727-95.790545 79.592727H652.586822C651.935185 845.451636 651.655913 504.087273 651.655913 0a93.090909 93.090909 0 0 1 61.160727 163.281455l187.485091 398.149818 229.469091-142.149818A93.090909 93.090909 0 0 1 1117.110458 372.363636z" fill="#FFBE00"></path></svg>
+                                  </div>
+                <script type="text/javascript">
+                  $(function(){
+                    if($('#csdnc-memberhead').length){
+                      $(document).on('click','.memberhead, #csdnc-memberhead',function(){
+                        if($(this).hasClass('memberhead')){
+                          $('.rotate-memberhead').css({'transform': 'rotate(0deg)'})
+                          $('.memberhead').fadeOut()
+                        }else{
+                          $('.rotate-memberhead').css({'transform': 'rotate(-180deg)'})
+                          $('.memberhead').fadeIn()
+                        }
+                      })
+                    }else{
+                      $('.rotate-memberhead').css({'transform': 'rotate(-180deg)'})
+                      $('.memberhead').fadeIn()
+                    }
+                  })
+                </script>
+              </div>
+        </div>
+        <div class="user-info d-flex justify-content-center flex-column">
+            <p class="name csdn-tracking-statistics tracking-click" data-mod="popu_379">
+                <a href="https://blog.csdn.net/c406495762" target="_blank" class="" id="uid">Jack-Cui</a>
+            </p>
+                          <p class="flag expert">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#csdnc-blogexpert"></use>
+                </svg>
+                博客专家
+              </p>
+                    </div>
+                <div class="opt-box d-flex justify-content-center flex-column">
+            <span  class="csdn-tracking-statistics tracking-click" data-mod="popu_379">
+                <a class="btn btn-sm btn-red-hollow attention" id="btnAttent">关注</a>
+            </span>
+        </div>
+            </div>
+    <div class="data-info d-flex item-tiling">
+                <dl class="text-center" title="107">
+                        <dt><a href="https://blog.csdn.net/c406495762?t=1">原创</a></dt>
+            <dd><a href="https://blog.csdn.net/c406495762?t=1"><span class="count">107</span></a></dd>
+                    </dl>
+        <dl class="text-center" id="fanBox" title="6001">
+            <dt>粉丝</dt>
+            <dd><span class="count" id="fan">6001</span></dd>
+        </dl>
+        <dl class="text-center" title="1688">
+            <dt>喜欢</dt>
+            <dd><span class="count">1688</span></dd>
+        </dl>
+        <dl class="text-center" title="1979">
+            <dt>评论</dt>
+            <dd><span class="count">1979</span></dd>
+        </dl>
+    </div>
+    <div class="grade-box clearfix">
+        <dl>
+            <dt>等级：</dt>
+            <dd>
+                <a href="https://blog.csdn.net/home/help.html#level" title="6级,点击查看等级说明" target="_blank">
+                    <svg class="icon icon-level" aria-hidden="true">
+                        <use xlink:href="#csdnc-bloglevel-6"></use>
+                    </svg>
+                </a>
+            </dd>
+        </dl>
+        <dl>
+            <dt>访问：</dt>
+            <dd title="1266293">
+                126万+            </dd>
+        </dl>
+        <dl>
+            <dt>积分：</dt>
+            <dd title="8761">
+                8761            </dd>
+        </dl>
+        <dl title="3481">
+            <dt>排名：</dt>
+            <dd>3481</dd>
+        </dl>
+    </div>
+        <div class="badge-box d-flex">
+        <span>勋章：</span>
+                <div class="icon-badge" title="专栏达人">
+            <div class="mouse-box">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#csdnc-m-columns"></use>
+                </svg>
+                <div class="icon-arrow"></div>
+            </div>
+            <div class="grade-detail-box">
+                <div class="pos-box">
+                    <div class="left-box d-flex justify-content-center align-items-center flex-column">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#csdnc-m-columns"></use>
+                        </svg>
+                        <p>专栏达人</p>
+                    </div>
+                    <div class="right-box d-flex justify-content-center align-items-center">
+                        授予成功创建个人博客专栏的用户。专栏中添加五篇以上博文即可点亮！撰写博客专栏浓缩技术精华，专栏达人就是你！
+                    </div>
+                </div>
+            </div>
+        </div>
+                        <div class="icon-badge" title="持之以恒">
+            <div class="mouse-box">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#csdnc-m-lasting"></use>
+                </svg>
+                <div class="icon-arrow"></div>
+            </div>
+            <div class="grade-detail-box">
+                <div class="pos-box">
+                    <div class="left-box d-flex justify-content-center align-items-center flex-column">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#csdnc-m-lasting"></use>
+                        </svg>
+                        <p>持之以恒</p>
+                    </div>
+                    <div class="right-box d-flex justify-content-center align-items-center">
+                        授予每个自然月内发布4篇或4篇以上原创或翻译IT博文的用户。不积跬步无以至千里，不积小流无以成江海，程序人生的精彩需要坚持不懈地积累！
+                    </div>
+                </div>
+            </div>
+        </div>
+                                                <script>
+            (function ($) {
+                setTimeout(function(){
+                    $('div.icon-badge.show-moment').removeClass('show-moment');
+                }, 5000);
+            })(window.jQuery)
+        </script>
+    </div>
+    </div>
+		    		    <!--自定义模块-->
+<div id="asideCustom60787210" class="aside-box custom-box">
+    <h3 class="aside-title">关于</h3>
+    <div class="aside-content clearfix">
+        <strong>微信公众号</strong>
+<img src="https://ww2.sinaimg.cn/large/0072Lfvtly1fxuhd2t2jqj309k09kglk.jpg" width="250" height="250">
+<strong>QQ交流群</strong>
+<div>Coder：328127489（满）</div>
+<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=f7f3508b9c23f6bc7d117ea2f9dc088d166b1053c4bc786fe4badec36b0df8ea"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="Coder" title="Coder"></a>
+<div>Coder2：868084847</div>
+<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=c720c839143ce211b656f9a810e4a6ed04d1332a430da993df1734e67c0db73d"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="Coder-2" title="Coder-2"></a>
+</ul>
+<ul xss=removed>
+<strong>其他</strong>
+<div>个人网站(<font color="red">文章首发</font>) : </div>
+<div><a href="https://cuijiahua.com/" rel="me follow" target="_black">https://cuijiahua.com</a>
+</div>
+<div>Github : </div>
+<div><a href="https://github.com/Jack-Cherish" target="_black">https://github.com/Jack-Cheris</a>
+</div>
+<div>知乎： </div>
+<div><a href="https://www.zhihu.com/people/Jack--Cui/" target="_black">https://www.zhihu.com/people/Jack--Cui/</a>
+</div>
+</ul>
+    </div>
+</div>
+		    <div id="asideNewArticle" class="aside-box">
+    <h3 class="aside-title">最新文章</h3>
+    <div class="aside-content">
+        <ul class="inf_list clearfix csdn-tracking-statistics tracking-click" data-mod="popu_382">
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/82967529" target="_blank">Python3《机器学习实战》学习笔记（十二）：线性回归提高篇之乐高玩具套件二手价预测</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/79984221" target="_blank">2018年春招实习面试经验总结</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/79247243" target="_blank">剑指Offer系列刷题笔记汇总</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/78979946" target="_blank">程序员内功：八大排序算法</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/c406495762/article/details/78760239" target="_blank">Python3《机器学习实战》学习笔记（十一）：线性回归基础篇之预测鲍鱼年龄</a>
+            </li>
+                    </ul>
+    </div>
+</div>
+		    <div id="asideColumn" class="aside-box">
+    <h3 class="aside-title">博主专栏</h3>
+    <div class="aside-content">
+        <ul class="column-box csdn-tracking-statistics tracking-click" data-mod="popu_520" >
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/15321">
+                            <img src="https://img-blog.csdn.net/20170421162245548?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/15321">Python3网络爬虫入门</a></p>
+                        <div class="data">文章数：<span class="count">15 篇</span> 访问量：<span>706243</span></div>
+                    </div>
+                </li>
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/15390">
+                            <img src="https://img-blog.csdn.net/20170510181713373?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/15390">Caffe入门教程</a></p>
+                        <div class="data">文章数：<span class="count">8 篇</span> 访问量：<span>63288</span></div>
+                    </div>
+                </li>
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/15522">
+                            <img src="https://img-blog.csdn.net/20170510095831800?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/15522">Jeston TX1入门教程</a></p>
+                        <div class="data">文章数：<span class="count">6 篇</span> 访问量：<span>63169</span></div>
+                    </div>
+                </li>
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/15523">
+                            <img src="https://img-blog.csdn.net/20170510181945953?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/15523">LeetCode</a></p>
+                        <div class="data">文章数：<span class="count">23 篇</span> 访问量：<span>25954</span></div>
+                    </div>
+                </li>
+                            <li class="clearfix">
+                    <div class="img-box float-left">
+                        <a class="d-flex align-items-center" href="https://blog.csdn.net/c406495762/column/info/16415">
+                            <img src="https://img-blog.csdn.net/20170717161641862?imageView2/5/w/120/h/120" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <p class="title"><a href="https://blog.csdn.net/c406495762/column/info/16415">Python3机器学习</a></p>
+                        <div class="data">文章数：<span class="count">12 篇</span> 访问量：<span>212030</span></div>
+                    </div>
+                </li>
+                    </ul>
+    </div>
+    </div>
+		    <div id="asideCategory" class="aside-box flexible-box">
+    <h3 class="aside-title">个人分类</h3>
+    <div class="aside-content">
+        <ul>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/7029976">
+                    <span class="title oneline">机器学习</span>
+                    <span class="count float-right">12篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6144934">
+                    <span class="title oneline">Python</span>
+                    <span class="count float-right">27篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6816210">
+                    <span class="title oneline">Caffe</span>
+                    <span class="count float-right">9篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6134244">
+                    <span class="title oneline">嵌入式</span>
+                    <span class="count float-right">12篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6133011">
+                    <span class="title oneline">C/C++</span>
+                    <span class="count float-right">18篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6718576">
+                    <span class="title oneline">LeetCode</span>
+                    <span class="count float-right">23篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6541830">
+                    <span class="title oneline">STM32</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6391075">
+                    <span class="title oneline">Java</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6796780">
+                    <span class="title oneline">OpenCV</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/6964968">
+                    <span class="title oneline">程序人生</span>
+                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/c406495762/article/category/7383243">
+                    <span class="title oneline">算法</span>
+                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                    </ul>
+    </div>
+        <p class="text-center">
+        <a class="btn btn-link-blue flexible-btn" data-fbox="aside-archive">展开</a>
+    </p>
+    </div>
+		    <div id="asideArchive" class="aside-box flexible-box">
+    <h3 class="aside-title">归档</h3>
+    <div class="aside-content">
+        <ul class="archive-list">
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2018/10">
+                    2018年10月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2018/04">
+                    2018年4月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2018/02">
+                    2018年2月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2018/01">
+                    2018年1月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/12">
+                    2017年12月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/10">
+                    2017年10月                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/09">
+                    2017年9月                    <span class="count float-right">5篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/08">
+                    2017年8月                    <span class="count float-right">4篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/07">
+                    2017年7月                    <span class="count float-right">7篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/06">
+                    2017年6月                    <span class="count float-right">4篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/05">
+                    2017年5月                    <span class="count float-right">10篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/04">
+                    2017年4月                    <span class="count float-right">16篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/03">
+                    2017年3月                    <span class="count float-right">14篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2017/02">
+                    2017年2月                    <span class="count float-right">5篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/12">
+                    2016年12月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/11">
+                    2016年11月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/08">
+                    2016年8月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/07">
+                    2016年7月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/04">
+                    2016年4月                    <span class="count float-right">12篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/c406495762/article/month/2016/03">
+                    2016年3月                    <span class="count float-right">19篇</span>
+                </a>
+            </li>
+                    </ul>
+    </div>
+        <p class="text-center">
+        <a class="btn btn-link-blue flexible-btn" data-fbox="aside-archive">展开</a>
+    </p>
+    </div>
+		    <div id="asideHotArticle" class="aside-box">
+	<h3 class="aside-title">热门文章</h3>
+	<div class="aside-content">
+		<ul class="hotArticle-list csdn-tracking-statistics tracking-click" data-mod="popu_521">
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/58716886">Python3网络爬虫(一)：利用urllib进行简单的网页抓取</a>
+					<p class="read">阅读数 <span>150910</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/60137956">Python3网络爬虫(四)：使用User Agent和代理IP隐藏身份</a>
+					<p class="read">阅读数 <span>73717</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/75172850">Python3《机器学习实战》学习笔记（一）：k-近邻算法(史诗级干货长文)</a>
+					<p class="read">阅读数 <span>69350</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/69817490">Python3网络爬虫(六)：Python3使用Cookie-模拟登陆获取妹子联系方式</a>
+					<p class="read">阅读数 <span>68621</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/c406495762/article/details/71334633">Python3网络爬虫(八)：爱奇艺等主流视频网站的VIP视频破解(在线观看+视频下载)</a>
+					<p class="read">阅读数 <span>65659</span></p>
+				</li>
+					</ul>
+	</div>
+</div>
+		    <div id="asideNewComments" class="aside-box">
+    <h3 class="aside-title">最新评论</h3>
+    <div class="aside-content">
+        <ul class="newcomment-list">
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/77723333#comments">Python3《机器学习实战》学习...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/weixin_41792829" class="user-name" target="_blank">weixin_41792829</a>：[reply]m0_37723350[/reply]
+weights=ones((n,1))  w...                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/77723333#comments">Python3《机器学习实战》学习...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/weixin_41792829" class="user-name" target="_blank">weixin_41792829</a>：[reply]weixin_43179017[/reply]
+b站和网易云课堂都有                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/77723333#comments">Python3《机器学习实战》学习...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/weixin_41792829" class="user-name" target="_blank">weixin_41792829</a>：为什么计算y=(-weights[0]-weights[1]*x)/weights[2]的时候要除...                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/78123502#comments">Python3网络爬虫快速入门实战...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/qq_41531835" class="user-name" target="_blank">qq_41531835</a>：[reply]Elucidator[/reply]
+需要用encoding将他改成utf-8的格式                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/c406495762/article/details/71158264#comments">Python3网络爬虫(七)：使用...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/qq_37016255" class="user-name" target="_blank">qq_37016255</a>：[code=python]
+ #找到《一念永恒》正文卷,使能标志位
+            if ...                </p>
+            </li>
+                    </ul>
+    </div>
+</div>
+		<div id="asideFooter">
+				<div class="aside-box">
+			<div class="persion_article">
+			</div>
+		</div>
+	</div>
+</aside>
+<script src="https://csdnimg.cn/pubfooter/js/publib_footer-1.0.3.js" data-isfootertrack="false" type="text/javascript"></script>
+<script>
+	$("a.flexible-btn").click(function(){
+		$(this).parents('div.aside-box').removeClass('flexible-box');
+		$(this).remove();
+	})
+</script>
+</div>
+<div class="mask-dark"></div>
+<div class="tool-box">
+	<ul class="meau-list">
+		<li class="btn-like-box long-width">
+			<button class=" long-height hover-box btn-like " title="点赞">
+				<svg class="icon active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-thumbsup-ok"></use>
+				</svg>
+				<svg class="icon no-active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-thumbsup"></use>
+				</svg>
+				<span class="hover-show text-box text">
+					<span class="no-active">点赞</span>
+					<span class="active">取消点赞</span>
+				</span>
+				<p>37</p>
+			</button>
+		</li>
+		<li class="">
+						<a class="btn-comments long-height hover-box" title="写评论" href="#commentBox">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-comments"></use>
+				</svg>
+				<span class="hover-show text">评论</span>
+				<p class="">
+						55				</p>
+			</a>
+		</li>
+		<li class="toc-container-box" id="liTocBox">
+			<button class="btn-toc low-height hover-box" title="目录">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-contents"></use>
+				</svg>
+				<span class="hover-show text">目录</span>
+			</button>
+			<div class="toc-container">
+				<div class="pos-box">
+					<div class="icon-arrow"></div>
+					<div class="scroll-box">
+						<div class="toc-box"></div>
+					</div>
+				</div>
+				<div class="opt-box">
+					<button class="btn-opt prev nomore" title="向上">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#csdnc-chevronup"></use>
+						</svg>
+					</button>
+					<button class="btn-opt next">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#csdnc-chevrondown"></use>
+						</svg>
+					</button>
+				</div>
+			</div>
+		</li>
+		<li>
+			<button class="btn-bookmark low-height hover-box" title="收藏">
+				<svg class="icon active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-bookmark-ok"></use>
+				</svg>
+				<svg class="icon no-active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-bookmark"></use>
+				</svg>
+					<span class="hover-show text">收藏</span>
+				<!-- <span class="hover-show text-box text">
+					<span class="no-active">收藏</span>
+					<span class="active">取消收藏</span>
+				</span> -->
+			</button>
+		</li>
+		<li class="bdsharebuttonbox">
+			<div class="weixin-qr btn-comments low-height hover-box" >
+        <a href="#" class="bds_weixin clear-share-style" data-cmd="weixin" title="手机看"></a>
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-usephone"></use>
+				</svg>
+				<span class="hover-show text text3">
+					手机看
+				</span>
+			</div>
+		</li>
+							<li class="widescreen-hide">
+				<a class="btn-comments low-height hover-box" href="https://blog.csdn.net/c406495762/article/details/76850843" title="Python3网络爬虫(十三)：王者荣耀那些事！(Fiddler之手机APP爬取)">
+					<svg class="icon hover-hide" aria-hidden="true">
+						<use xlink:href="#csdnc-chevronleft"></use>
+					</svg>
+					<span class="hover-show text text3">上一篇</span>
+				</a>
+			</li>
+								<li class="widescreen-hide">
+			<a class="btn-comments hover-box low-height" href="https://blog.csdn.net/c406495762/article/details/77500679" title="Python3《机器学习实战》学习笔记（五）：朴素贝叶斯实战篇之新浪新闻分类">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-chevronright"></use>
+				</svg>
+				<span class="hover-show text text3">下一篇</span>
+			</a>
+		</li>
+						<!-- 宽屏更多按钮 -->
+		<li class="widescreen-more">
+			<a class="btn-comments chat-ask-button low-height hover-box" title="快问" href="#chatqa">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-more"></use>
+				</svg>
+				<span class="hover-show text">更多</span>
+				
+			</a>
+			<ul class="widescreen-more-box">
+													<li class="widescreen-more">
+						<a class="btn-comments low-height hover-box" href="https://blog.csdn.net/c406495762/article/details/76850843" title="Python3网络爬虫(十三)：王者荣耀那些事！(Fiddler之手机APP爬取)">
+							<svg class="icon hover-hide" aria-hidden="true">
+								<use xlink:href="#csdnc-chevronleft"></use>
+							</svg>
+							<span class="hover-show text text3">上一篇</span>
+						</a>
+					</li>
+																<li class="widescreen-more">
+					<a class="btn-comments hover-box low-height" href="https://blog.csdn.net/c406495762/article/details/77500679" title="Python3《机器学习实战》学习笔记（五）：朴素贝叶斯实战篇之新浪新闻分类">
+						<svg class="icon hover-hide" aria-hidden="true">
+							<use xlink:href="#csdnc-chevronright"></use>
+						</svg>
+						<span class="hover-show text text3">下一篇</span>
+					</a>
+				</li>
+							</ul>
+		</li>
+	</ul>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'https://csdnimg.cn/static/api/js/share.js?v=89860594'];</script>
+<script>
+    var recommendCount = 55;
+    recommendCount = recommendCount > 1 ? (recommendCount + (recommendCount>6 ? 2 : 1)) : recommendCount;
+    var articleTit = articleTitles;
+    var ChannelId = 28;
+    var articleId = "77341116";
+    var commentscount = 55;
+    var islock = false;
+    var curentUrl = "https://blog.csdn.net/c406495762/article/details/77341116";
+    var myUrl = "https://my.csdn.net/";
+    //1禁止评论，2正常
+    var commentAuth = 2;
+    //百度搜索
+    var baiduKey = "Python3《机器学习实战》学习笔记（四）：朴素贝叶斯基础篇之言论过滤器 - Jack-Cui";
+    var needInsertBaidu = false;
+    // 代码段样式
+    var codeStyle = 'atom-one-dark';
+		var highlight = ["python3","\u673a\u5668\u5b66\u4e60","\u5b9e\u6218","\u5b66\u4e60\u7b14\u8bb0","\u6734\u7d20\u8d1d\u53f6\u65af","\u57fa\u7840","\u4e4b\u8a00","\u8bba\u8fc7","\u6ee4\u5668"];//高亮数组
+		// 相关推荐博主数据
+    var RecommendBlogExpertList = [{"user_name":"HHTNAN","nick_name":"IT\u754c\u7684\u5c0f\u5c0f\u5c0f\u5b66\u751f","avatar":"https:\/\/avatar.csdn.net\/7\/0\/0\/3_hhtnan.jpg","is_expert":true,"article_count":370,"rank":"3000+"},{"user_name":"Quincuntial","nick_name":"SnailTyan","avatar":"https:\/\/avatar.csdn.net\/E\/0\/0\/3_quincuntial.jpg","is_expert":true,"article_count":697,"rank":"792"},{"user_name":"yuangan1529","nick_name":"\u84dd\u4e9a\u4f60\u597d","avatar":"https:\/\/avatar.csdn.net\/1\/F\/5\/3_yuangan1529.jpg","is_expert":false,"article_count":43,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"yf11112","nick_name":"yfhen","avatar":"https:\/\/avatar.csdn.net\/4\/C\/F\/3_yf11112.jpg","is_expert":false,"article_count":5,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"cckchina","nick_name":"cckchina","avatar":"https:\/\/avatar.csdn.net\/4\/7\/A\/3_cckchina.jpg","is_expert":false,"article_count":13,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"IAMoldpan","nick_name":"IAMoldpan","avatar":"https:\/\/avatar.csdn.net\/C\/2\/A\/3_iamoldpan.jpg","is_expert":false,"article_count":115,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"usernameisone","nick_name":"usernameisone","avatar":"https:\/\/avatar.csdn.net\/8\/0\/E\/3_usernameisone.jpg","is_expert":false,"article_count":16,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"u011475210","nick_name":"WordZzzz","avatar":"https:\/\/avatar.csdn.net\/A\/8\/E\/3_u011475210.jpg","is_expert":false,"article_count":173,"rank":"5000+"},{"user_name":"john_bh","nick_name":"john_bh","avatar":"https:\/\/avatar.csdn.net\/2\/D\/B\/3_john_bh.jpg","is_expert":false,"article_count":89,"rank":"\u5343\u91cc\u4e4b\u5916"},{"user_name":"u013829973","nick_name":"weepon","avatar":"https:\/\/avatar.csdn.net\/7\/F\/8\/3_u013829973.jpg","is_expert":false,"article_count":22,"rank":"\u5343\u91cc\u4e4b\u5916"}];
+	var articleType = 1;
+	var CopyrightContent = '本文为博主原创文章，未经博主允许不得转载。个人网站：http://cuijiahua.com。';
+</script>
+<script src="https://csdnimg.cn/public/sandalstrap/1.4/js/sandalstrap.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.js"></script>
+<script src='https://csdnimg.cn/public/common/gotop/js/goTop-v1.0.min.js?v201811201455'></script>
+<script>
+    GoTop({
+        right: 8,
+        hasReport: true,
+        reportFun: function() {
+            showReport(false,articleTit);
+        }
+    })
+</script>
+
+
+</body>
+
+<!-- 高亮未与 markdown兼容  -->
+	<link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.3.7/ckeditor/plugins/codesnippet/lib/highlight/styles/atom-one-dark.css">
+	<script type="text/javascript" src="https://csdnimg.cn/release/phoenix/production/pc_wap_common-98040b5dc6.js" /></script>
+	
+	<!-- <script type="text/javascript" src="https://csdnimg.cn/release/phoenix/production/markdownCopy-718168246b.js" /></script> -->
+
+
+<script src="https://g.csdnimg.cn/login-box/1.0.4/??login-box.js,login-auto.js?t=20190103145159"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/js/common-2dfea49d18.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/js/detail-bb53a9b64c.min.js"></script>
+	<script src="https://csdnimg.cn/release/phoenix/themes/skin-yellow/skin-yellow-fc7383b956.min.js"></script>
+
+
+<!-- <script type="text/javascript" src="//g.csdnimg.cn/check-adb/1.0.2/check-adb.js"></script> -->
+
+<script type="text/javascript" src="https://csdnimg.cn/release/blog_mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            "HTML-CSS": {
+                    linebreaks: { automatic: true, width: "94%container" },
+                    imageFont: null
+            },
+            tex2jax: {
+                preview: "none"
+            },
+            mml2jax: {
+                preview: 'none'
+            }
+    });
+</script>
+<script type="text/javascript">
+    </script>
+<script src="https://gh.bdstatic.com/static/gh/js/sdk/bword.min.js"></script>
+</html>
