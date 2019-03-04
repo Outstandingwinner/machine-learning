@@ -5,10 +5,10 @@
 * Kmeans  
 * CF  
 * LR  
-* id3  
-* c45  
+* ID3  
+* C45  
 * CART  
-* adaboost  
+* Adaboost 
 * Apriori  
 * FP-growth  
 * PCA  
@@ -24,6 +24,6 @@
 * RNN  
 * LSTM  
 * DNN  
-* BiLSTM+CRF  
-* IDCNN+CRF   
+* Bi-LSTM+CRF  
+* ID-CNN+CRF   
 
